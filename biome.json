@@ -13,6 +13,7 @@
       "!**/.next",
       "!src/app/(payload)",
       "!src/payload-types.ts",
+      "!src/migrations",
       "!package-lock.json",
       "!next-env.d.ts",
       "!**/*.md"
