@@ -12,6 +12,7 @@
   --color-graphit: #24282a;
   --color-schiefer: #5b6266;
   --color-linie: #d6dbd8;
+  --color-feldrand: #7c8482;
   --color-tannengruen: #1f4537;
   --color-tannengruen-dunkel: #15332a;
   --color-moos: #e4ebe6;
@@ -36,8 +37,10 @@
   --container-page: 80rem;
   --container-measure: 68ch;
 
-  /* One spacing unit is 8px: 1, 2, 3, 4, 6, 8, 12, 16 give 8…128px. */
-  --spacing: 0.5rem;
+  /*
+   * Spacing unit stays the Tailwind default (4px).
+   * The 8px grid uses even steps: 2, 4, 6, 8, 12, 16, 24, 32 give 8…128px.
+   */
   --spacing-gutter-mobile: 1.25rem;
   --spacing-gutter-desktop: 2.5rem;
   --spacing-section: clamp(4rem, 3.1712rem + 3.5359vw, 6rem);
