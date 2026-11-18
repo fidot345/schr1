@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { Media } from "./collections/Media";
@@ -9,6 +10,8 @@ import { Users } from "./collections/Users";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 
 export default buildConfig({
   admin: {
@@ -29,5 +32,12 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    vercelBlobStorage({
+      enabled: Boolean(blobToken),
+      token: blobToken,
+      collections: { media: true },
+      alwaysInsertFields: true,
+    }),
+  ],
 });
