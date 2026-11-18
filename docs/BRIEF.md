@@ -682,9 +682,9 @@ Schr1/
 | `SITE_INDEXING` | `false` для демо |
 
 ### Хостинг
-- **Neon:** проект `schr1`, регион Франкфурт. Две ветки базы: `main` — для сайта в интернете, `dev` — для работы на своём компьютере.
+- **Neon:** проект `schr1`, регион Франкфурт. Три ветки базы, `DATABASE_URI` в Vercel разведена по окружениям: `production` — для Production (сайт в интернете), `preview` (создана от `production`) — для Preview-деплоев, `dev` — для работы на своём компьютере. Превью `dev` не использует: на ней Payload работает в push-режиме.
 - **Vercel:** проект `schr1` из GitHub-репозитория. `main` — продакшен, каждый pull request — превью. Регион функций — Франкфурт (`fra1`). В `package.json` указано `"engines": { "node": "26.x" }`.
-- **Vercel Blob:** хранилище подключено к проекту, ключ добавляется сам.
+- **Vercel Blob:** хранилище подключено к проекту через OIDC, и сам токен Vercel не добавляет. `BLOB_READ_WRITE_TOKEN` добавляется в переменные окружения проекта вручную.
 - **Адрес:** пока у Максона нет своего домена — `schr1.vercel.app`. Потом — поддомен его портфолио.
 - **Миграции базы:** на своём компьютере Payload сам подстраивает базу под схему. Перед слиянием изменений схемы — `npx payload migrate:create` и коммит файла миграции. На Vercel скрипт `vercel-build`: `payload migrate && next build`.
 
@@ -706,7 +706,7 @@ Schr1/
 ### Скрипты в `package.json`
 `dev`, `build`, `start`, `vercel-build`, `typecheck` (`tsc --noEmit`), `lint` (`biome check .`), `format` (`biome format --write .`), `test` (`vitest run`), `test:e2e` (`playwright test`), `seed` (`payload run seed/content.ts`), `generate:types`, `generate:importmap`.
 
-ESLint и Prettier из шаблона удалить, вместо них Biome. В `biome.json` исключить `src/app/(payload)`, `src/payload-types.ts`, `.next`, `node_modules`.
+ESLint и Prettier из шаблона удалить, вместо них Biome. В `biome.json` исключить `src/app/(payload)`, `src/payload-types.ts`, `src/migrations`, `.next`, `node_modules`.
 
 ---
 
