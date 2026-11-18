@@ -718,7 +718,7 @@ ESLint и Prettier из шаблона удалить, вместо них Biome
 **Задачи**
 1. Аккаунты GitHub, Vercel, Neon, Resend. Node.js 26 LTS.
 2. Сверить версии по правилу из раздела 1.
-3. Neon: проект `schr1`, регион Франкфурт, ветки `main` и `dev`.
+3. Neon: проект `schr1`, регион Франкфурт, ветки `production` и `dev`.
 4. Создать проект через `create-payload-app` (шаблон blank, PostgreSQL), переименовать папку в `Schr1`.
 5. Положить в корень `AGENTS.md` и `docs/`.
 6. Заменить ESLint и Prettier на Biome, добавить скрипты из раздела 5.
