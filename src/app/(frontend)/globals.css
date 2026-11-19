@@ -89,13 +89,36 @@
   }
 
   /*
+   * Keyboard focus never hides under the sticky bars (WCAG 2.4.11): 96px for
+   * the header (up to 80px and its border), 80px for the mobile action bar
+   * (65px, below md), each with room for the 4px focus ring.
+   * A margin on the focused element, not scroll-padding on <html>: with that,
+   * every Tab through the sticky header scrolled the page up.
+   */
+  :focus {
+    scroll-margin-top: calc(var(--spacing) * 24);
+
+    @variant max-md {
+      scroll-margin-bottom: calc(var(--spacing) * 20);
+    }
+  }
+
+  /*
    * Anchor jumps (#id, for example from the error summary) stop below the
    * sticky header (64–80px) with room for a field's label: 128px.
-   * On :target only, not as scroll-padding on <html>: that would also
-   * scroll the page when the open mobile menu moves focus inside itself.
+   * After :focus, because the field is both target and focused.
    */
   :target {
     scroll-margin-top: calc(var(--spacing) * 32);
+  }
+
+  /*
+   * The sticky bars are always on screen, so their own elements need no
+   * margin; with one, focus in the header or the open mobile menu would
+   * scroll the page behind it.
+   */
+  [data-sticky-bar] :focus {
+    scroll-margin: 0;
   }
 
   body {

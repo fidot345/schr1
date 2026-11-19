@@ -42,6 +42,7 @@ export function HeaderShell({ children }: HeaderShellProps) {
       <div ref={sentinel} aria-hidden="true" className="-mb-px h-px" />
       <header
         data-compact={compact ? "" : undefined}
+        data-sticky-bar
         className="group sticky top-0 z-40 border-b border-linie bg-papier"
       >
         {children}

@@ -36,6 +36,7 @@ export function MobileActionBar({ phone }: MobileActionBarProps) {
   return (
     <nav
       aria-label={t("label")}
+      data-sticky-bar
       className="sticky bottom-0 z-30 border-t border-linie bg-papier p-2 md:hidden"
     >
       <ul className="grid grid-cols-2 gap-2">
