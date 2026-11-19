@@ -3,9 +3,15 @@ import { fileURLToPath } from "node:url";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { de } from "@payloadcms/translations/languages/de";
 import { buildConfig } from "payload";
 import sharp from "sharp";
+import { Jobs } from "./collections/Jobs";
 import { Media } from "./collections/Media";
+import { Projects } from "./collections/Projects";
+import { Services } from "./collections/Services";
+import { Team } from "./collections/Team";
+import { Testimonials } from "./collections/Testimonials";
 import { Users } from "./collections/Users";
 
 const filename = fileURLToPath(import.meta.url);
@@ -26,7 +32,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Services, Projects, Jobs, Team, Testimonials, Media, Users],
+  i18n: {
+    supportedLanguages: { de },
+    fallbackLanguage: "de",
+  },
+  localization: {
+    locales: [
+      { code: "de", label: "Deutsch" },
+      { code: "en", label: "English" },
+    ],
+    defaultLocale: "de",
+    fallback: true,
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
