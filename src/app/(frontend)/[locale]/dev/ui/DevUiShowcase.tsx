@@ -308,7 +308,7 @@ export function DevUiShowcase() {
         />
 
         <Group id="dev-locale-switcher" title={t("groups.localeSwitcher")}>
-          <LocaleSwitcher />
+          <LocaleSwitcher label={t("localeSwitcherLabel")} />
         </Group>
 
         <Group

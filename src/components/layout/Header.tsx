@@ -33,6 +33,7 @@ const MENU_LINK_CLASS =
 export function Header({ alternateHref }: HeaderProps) {
   const t = useTranslations("Header");
   const tNavigation = useTranslations("Navigation");
+  const tLocaleSwitcher = useTranslations("LocaleSwitcher");
 
   return (
     <HeaderShell>
@@ -78,7 +79,10 @@ export function Header({ alternateHref }: HeaderProps) {
                     ))}
                   </ul>
                 </nav>
-                <LocaleSwitcher alternateHref={alternateHref} />
+                <LocaleSwitcher
+                  alternateHref={alternateHref}
+                  label={tLocaleSwitcher("menuLabel")}
+                />
                 <div>
                   <Button href="/anfrage">{t("cta")}</Button>
                 </div>

@@ -16,6 +16,8 @@
   },
   "LocaleSwitcher": {
     "label": "Language",
+    "menuLabel": "Language in the menu",
+    "linkLabel": "{short} – {name}",
     "short": {
       "de": "DE",
       "en": "EN"
@@ -77,6 +79,7 @@
       "localeSwitcher": "Language switcher",
       "mobileActionBar": "Quick contact on phones"
     },
+    "localeSwitcherLabel": "Language, example",
     "notes": {
       "vacationBanner": "Sits above the header, as at the top of this page. Without valid dates it shows nothing.",
       "header": "The header is at the top of this page. While scrolling it stays at the top edge and gets lower.",

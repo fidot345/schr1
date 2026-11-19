@@ -19,12 +19,22 @@ type LocaleSwitcherProps = {
    * translated (from Payload). Without it the current route is reused.
    */
   alternateHref?: Href;
+  /**
+   * The navigation's name for screen readers, "Sprache" when left out.
+   * Two switchers shown at once need different names.
+   */
+  label?: string;
   className?: string;
 };
 
-/** DE / EN. The current language is plain text, the other one a link. */
+/**
+ * DE / EN. The current language is plain text, the other one a link.
+ * The link's name starts with what it shows ("EN – English"), so voice
+ * control finds it by "EN" too (WCAG 2.5.3).
+ */
 export function LocaleSwitcher({
   alternateHref,
+  label,
   className,
 }: LocaleSwitcherProps) {
   const t = useTranslations("LocaleSwitcher");
@@ -35,7 +45,7 @@ export function LocaleSwitcher({
 
   return (
     <nav
-      aria-label={t("label")}
+      aria-label={label ?? t("label")}
       className={cn("flex items-center gap-2", className)}
     >
       {routing.locales.map((code) =>
@@ -56,7 +66,10 @@ export function LocaleSwitcher({
             locale={code}
             lang={code}
             hrefLang={code}
-            aria-label={t(`name.${code}`)}
+            aria-label={t("linkLabel", {
+              short: t(`short.${code}`),
+              name: t(`name.${code}`),
+            })}
             className={cn(
               textLinkClassName(),
               "flex min-h-12 items-center px-2",

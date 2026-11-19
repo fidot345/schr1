@@ -16,6 +16,8 @@
   },
   "LocaleSwitcher": {
     "label": "Sprache",
+    "menuLabel": "Sprache im Menü",
+    "linkLabel": "{short} – {name}",
     "short": {
       "de": "DE",
       "en": "EN"
@@ -77,6 +79,7 @@
       "localeSwitcher": "Sprachwahl",
       "mobileActionBar": "Schnellkontakt auf dem Handy"
     },
+    "localeSwitcherLabel": "Sprache, Beispiel",
     "notes": {
       "vacationBanner": "Steht über der Kopfzeile, wie oben auf dieser Seite. Ohne gültige Daten zeigt er nichts.",
       "header": "Die Kopfzeile steht oben auf dieser Seite. Beim Scrollen bleibt sie am oberen Rand und wird niedriger.",
