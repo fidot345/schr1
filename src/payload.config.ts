@@ -16,6 +16,12 @@ const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      graphics: {
+        Logo: "/components/admin/AdminGraphics#AdminLogo",
+        Icon: "/components/admin/AdminGraphics#AdminIcon",
+      },
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

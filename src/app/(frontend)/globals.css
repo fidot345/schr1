@@ -1,1 +1,196 @@
 @import "tailwindcss";
+
+/*
+ * Design tokens, BRIEF.md section 3.
+ * `static` emits every variable even when no utility uses it yet.
+ * Fluid values interpolate between a 375px phone and the 1280px container.
+ */
+@theme static {
+  --color-*: initial;
+  --color-papier: #f8f9f7;
+  --color-weiss: #ffffff;
+  --color-graphit: #24282a;
+  --color-schiefer: #5b6266;
+  --color-linie: #d6dbd8;
+  --color-feldrand: #7c8482;
+  --color-tannengruen: #1f4537;
+  --color-tannengruen-dunkel: #15332a;
+  --color-moos: #e4ebe6;
+  --color-fehler: #b42318;
+
+  --text-*: initial;
+  --text-h1: clamp(2.5rem, 1.982rem + 2.2099vw, 3.75rem);
+  --text-h1--line-height: 1.05;
+  --text-h2: clamp(1.875rem, 1.616rem + 1.105vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h3: clamp(1.375rem, 1.2196rem + 0.663vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-h4: clamp(1.1875rem, 1.1098rem + 0.3315vw, 1.375rem);
+  --text-h4--line-height: 1.3;
+  --text-lead: clamp(1.125rem, 1.0732rem + 0.221vw, 1.25rem);
+  --text-lead--line-height: 1.6;
+  --text-body: clamp(1.0625rem, 1.0366rem + 0.1105vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.5;
+
+  --container-page: 80rem;
+  --container-measure: 68ch;
+
+  /*
+   * Spacing unit stays the Tailwind default (4px).
+   * The 8px grid uses even steps: 2, 4, 6, 8, 12, 16, 24, 32 give 8…128px.
+   */
+  --spacing-gutter-mobile: 1.25rem;
+  --spacing-gutter-desktop: 2.5rem;
+  --spacing-section: clamp(4rem, 3.1712rem + 3.5359vw, 6rem);
+  --spacing-section-large: clamp(4rem, 2.3426rem + 7.0718vw, 8rem);
+
+  --radius-*: initial;
+  --radius: 0.25rem;
+
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+}
+
+/*
+ * `inline` makes utilities use the next/font variables directly.
+ * The variables themselves are set on <html> in layout.tsx.
+ */
+@theme static inline {
+  --font-*: initial;
+  --font-sans:
+    var(--font-atkinson), "Atkinson Hyperlegible Next Fallback", sans-serif;
+  --font-heading: var(--font-zilla-slab), serif;
+}
+
+/*
+ * next/font has no precalculated metrics for Atkinson Hyperlegible Next
+ * (only for the older Atkinson Hyperlegible), so it cannot build the
+ * size-adjusted fallback itself; layout.tsx turns that off.
+ * The values below come from the latin woff2 (wght 400) measured against
+ * Arial with the same algorithm next/font/local uses. Zilla Slab gets its
+ * fallback from next/font automatically.
+ */
+@font-face {
+  font-family: "Atkinson Hyperlegible Next Fallback";
+  src: local("Arial");
+  ascent-override: 99.04%;
+  descent-override: 31.8%;
+  line-gap-override: 0%;
+  size-adjust: 99.36%;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  /*
+   * Keyboard focus never hides under the sticky bars (WCAG 2.4.11): 96px for
+   * the header (up to 80px and its border), 80px for the mobile action bar
+   * (65px, below md), each with room for the 4px focus ring.
+   * A margin on the focused element, not scroll-padding on <html>: with that,
+   * every Tab through the sticky header scrolled the page up.
+   */
+  :focus {
+    scroll-margin-top: calc(var(--spacing) * 24);
+
+    @variant max-md {
+      scroll-margin-bottom: calc(var(--spacing) * 20);
+    }
+  }
+
+  /*
+   * Anchor jumps (#id, for example from the error summary) stop below the
+   * sticky header (64–80px) with room for a field's label: 128px.
+   * After :focus, because the field is both target and focused.
+   */
+  :target {
+    scroll-margin-top: calc(var(--spacing) * 32);
+  }
+
+  /*
+   * The sticky bars are always on screen, so their own elements need no
+   * margin; with one, focus in the header or the open mobile menu would
+   * scroll the page behind it.
+   */
+  [data-sticky-bar] :focus {
+    scroll-margin: 0;
+  }
+
+  body {
+    background-color: var(--color-papier);
+    color: var(--color-graphit);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  /* Raw headings (for example from Payload rich text) get the scale too. */
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+  }
+
+  h4 {
+    font-size: var(--text-h4);
+    line-height: var(--text-h4--line-height);
+  }
+
+  /*
+   * Keyboard focus, BRIEF.md section 3: 2px Tannengrün, 2px offset.
+   * On dark surfaces (Graphit) focus-ring-light switches it to Weiß.
+   */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring-color, var(--color-tannengruen));
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Light focus ring for an element and everything inside it, for Graphit
+ * backgrounds (the footer). Weiß on Graphit is about 15:1, Tannengrün only 1.3:1.
+ */
+@utility focus-ring-light {
+  --focus-ring-color: var(--color-weiss);
+}
+
+/*
+ * Safety net for prefers-reduced-motion. It stays outside @layer on purpose:
+ * unlayered rules win over every Tailwind layer, utilities included, so no
+ * !important is needed. Components still write motion as motion-safe:.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
+}
