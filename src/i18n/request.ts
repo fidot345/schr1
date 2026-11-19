@@ -10,6 +10,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
+    // The workshop is in Bavaria; dates such as the holiday banner use its time.
+    timeZone: "Europe/Berlin",
     messages: (await import(`../../messages/${locale}.json`)).default,
   };
 });
