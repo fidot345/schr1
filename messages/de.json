@@ -42,6 +42,11 @@
     "menuButton": "Menü",
     "cta": "Projekt anfragen"
   },
+  "MobileActionBar": {
+    "label": "Schnellkontakt",
+    "call": "Anrufen",
+    "request": "Anfrage"
+  },
   "Footer": {
     "contactHeading": "Kontakt",
     "hoursHeading": "Öffnungszeiten",
