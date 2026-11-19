@@ -4,5 +4,47 @@
   },
   "HomePage": {
     "placeholder": "The website of Schreinerei Tannrieder is being built here."
+  },
+  "Navigation": {
+    "services": "Services",
+    "projects": "Projects",
+    "about": "About us",
+    "careers": "Careers",
+    "contact": "Contact",
+    "imprint": "Imprint",
+    "privacy": "Privacy policy"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "short": {
+      "de": "DE",
+      "en": "EN"
+    },
+    "name": {
+      "de": "Deutsch",
+      "en": "English"
+    }
+  },
+  "Form": {
+    "optional": "(optional)",
+    "errorPrefix": "Error:",
+    "errorSummary": {
+      "titleFormal": "Please check your details",
+      "titleInformal": "Please check your details"
+    }
+  },
+  "VacationBanner": {
+    "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
+  },
+  "Footer": {
+    "contactHeading": "Contact",
+    "hoursHeading": "Opening hours",
+    "menuHeading": "Menu",
+    "legalHeading": "Legal",
+    "phone": "Phone",
+    "email": "Email"
+  },
+  "Demo": {
+    "notice": "Concept project – Schreinerei Tannrieder is a fictitious company."
   }
 }

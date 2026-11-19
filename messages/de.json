@@ -4,5 +4,47 @@
   },
   "HomePage": {
     "placeholder": "Hier entsteht die Website der Schreinerei Tannrieder."
+  },
+  "Navigation": {
+    "services": "Leistungen",
+    "projects": "Referenzen",
+    "about": "Über uns",
+    "careers": "Karriere",
+    "contact": "Kontakt",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz"
+  },
+  "LocaleSwitcher": {
+    "label": "Sprache",
+    "short": {
+      "de": "DE",
+      "en": "EN"
+    },
+    "name": {
+      "de": "Deutsch",
+      "en": "English"
+    }
+  },
+  "Form": {
+    "optional": "(optional)",
+    "errorPrefix": "Fehler:",
+    "errorSummary": {
+      "titleFormal": "Bitte prüfen Sie Ihre Angaben",
+      "titleInformal": "Bitte prüf deine Angaben"
+    }
+  },
+  "VacationBanner": {
+    "text": "Betriebsurlaub vom {from, date, long} bis {to, date, long}"
+  },
+  "Footer": {
+    "contactHeading": "Kontakt",
+    "hoursHeading": "Öffnungszeiten",
+    "menuHeading": "Menü",
+    "legalHeading": "Rechtliches",
+    "phone": "Telefon",
+    "email": "E-Mail"
+  },
+  "Demo": {
+    "notice": "Konzeptprojekt – die Schreinerei Tannrieder ist ein fiktives Unternehmen."
   }
 }
