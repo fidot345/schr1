@@ -88,6 +88,16 @@
     color-scheme: light;
   }
 
+  /*
+   * Anchor jumps (#id, for example from the error summary) stop below the
+   * sticky header (64–80px) with room for a field's label: 128px.
+   * On :target only, not as scroll-padding on <html>: that would also
+   * scroll the page when the open mobile menu moves focus inside itself.
+   */
+  :target {
+    scroll-margin-top: calc(var(--spacing) * 32);
+  }
+
   body {
     background-color: var(--color-papier);
     color: var(--color-graphit);
