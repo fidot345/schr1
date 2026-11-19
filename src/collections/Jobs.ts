@@ -4,6 +4,7 @@ import type {
   NumberFieldSingleValidation,
   SelectFieldSingleValidation,
 } from "payload";
+import { revalidateSiteHooks } from "../hooks/revalidate-site";
 import { publicRead } from "./shared/access";
 import {
   metaField,
@@ -56,6 +57,7 @@ export const Jobs: CollectionConfig = {
     plural: "Karriere",
   },
   access: publicRead,
+  hooks: revalidateSiteHooks,
   defaultSort: "order",
   admin: {
     group: "Inhalte",

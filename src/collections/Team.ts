@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateSiteHooks } from "../hooks/revalidate-site";
 import { publicRead } from "./shared/access";
 import { orderField } from "./shared/fields";
 
@@ -9,6 +10,7 @@ export const Team: CollectionConfig = {
     plural: "Team",
   },
   access: publicRead,
+  hooks: revalidateSiteHooks,
   defaultSort: "order",
   admin: {
     group: "Inhalte",

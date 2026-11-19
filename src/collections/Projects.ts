@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateSiteHooks } from "../hooks/revalidate-site";
 import { publicRead } from "./shared/access";
 import {
   coverField,
@@ -15,6 +16,7 @@ export const Projects: CollectionConfig = {
     plural: "Referenzen",
   },
   access: publicRead,
+  hooks: revalidateSiteHooks,
   defaultSort: "order",
   admin: {
     group: "Inhalte",

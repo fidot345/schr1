@@ -1,4 +1,5 @@
 import type { CollectionConfig, TextFieldSingleValidation } from "payload";
+import { revalidateSiteHooks } from "../hooks/revalidate-site";
 import { publicRead } from "./shared/access";
 
 const validateSource: TextFieldSingleValidation = (value) => {
@@ -18,6 +19,7 @@ export const Media: CollectionConfig = {
     plural: "Medien",
   },
   access: publicRead,
+  hooks: revalidateSiteHooks,
   admin: {
     group: "Inhalte",
     useAsTitle: "alt",
