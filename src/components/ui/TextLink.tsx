@@ -11,8 +11,20 @@ export type ExternalHref =
   | `mailto:${string}`
   | `tel:${string}`;
 
-export const textLinkClassName =
-  "text-tannengruen underline underline-offset-4 hover:text-tannengruen-dunkel hover:decoration-2 motion-safe:transition-colors";
+/** dark: Tannengrün text on light backgrounds. light: for Graphit backgrounds. */
+export type TextLinkTone = "dark" | "light";
+
+const TONE_CLASS: Record<TextLinkTone, string> = {
+  dark: "text-tannengruen hover:text-tannengruen-dunkel",
+  light: "focus-ring-light text-papier hover:text-weiss",
+};
+
+export function textLinkClassName(tone: TextLinkTone = "dark") {
+  return cn(
+    "underline underline-offset-4 hover:decoration-2 motion-safe:transition-colors",
+    TONE_CLASS[tone],
+  );
+}
 
 export function isExternalHref(
   href: InternalHref | ExternalHref,
@@ -22,12 +34,13 @@ export function isExternalHref(
 
 type TextLinkProps = {
   href: InternalHref | ExternalHref;
+  tone?: TextLinkTone;
   className?: string;
   children: ReactNode;
 };
 
-export function TextLink({ href, className, children }: TextLinkProps) {
-  const classes = cn(textLinkClassName, className);
+export function TextLink({ href, tone, className, children }: TextLinkProps) {
+  const classes = cn(textLinkClassName(tone), className);
 
   if (isExternalHref(href)) {
     return (
