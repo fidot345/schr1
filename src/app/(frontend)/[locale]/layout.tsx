@@ -19,6 +19,8 @@ const atkinson = Atkinson_Hyperlegible_Next({
   weight: ["400", "700"],
   variable: "--font-atkinson",
   display: "swap",
+  // No metrics for this family in next/font; the fallback face is in globals.css.
+  adjustFontFallback: false,
 });
 
 type LayoutProps = {

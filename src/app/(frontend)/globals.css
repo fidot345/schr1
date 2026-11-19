@@ -61,6 +61,92 @@
  */
 @theme static inline {
   --font-*: initial;
-  --font-sans: var(--font-atkinson), sans-serif;
+  --font-sans:
+    var(--font-atkinson), "Atkinson Hyperlegible Next Fallback", sans-serif;
   --font-heading: var(--font-zilla-slab), serif;
+}
+
+/*
+ * next/font has no precalculated metrics for Atkinson Hyperlegible Next
+ * (only for the older Atkinson Hyperlegible), so it cannot build the
+ * size-adjusted fallback itself; layout.tsx turns that off.
+ * The values below come from the latin woff2 (wght 400) measured against
+ * Arial with the same algorithm next/font/local uses. Zilla Slab gets its
+ * fallback from next/font automatically.
+ */
+@font-face {
+  font-family: "Atkinson Hyperlegible Next Fallback";
+  src: local("Arial");
+  ascent-override: 99.04%;
+  descent-override: 31.8%;
+  line-gap-override: 0%;
+  size-adjust: 99.36%;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background-color: var(--color-papier);
+    color: var(--color-graphit);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  /* Raw headings (for example from Payload rich text) get the scale too. */
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+  }
+
+  h4 {
+    font-size: var(--text-h4);
+    line-height: var(--text-h4--line-height);
+  }
+
+  /* Keyboard focus, BRIEF.md section 3: 2px Tannengrün, 2px offset. */
+  :focus-visible {
+    outline: 2px solid var(--color-tannengruen);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Safety net for prefers-reduced-motion. It stays outside @layer on purpose:
+ * unlayered rules win over every Tailwind layer, utilities included, so no
+ * !important is needed. Components still write motion as motion-safe:.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
 }
