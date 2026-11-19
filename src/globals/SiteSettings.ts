@@ -144,9 +144,9 @@ export const SiteSettings: GlobalConfig = {
                       type: "text",
                       label: "Uhrzeit",
                       required: true,
-                      localized: true,
                       admin: {
-                        description: "Zum Beispiel „7:00–16:30“.",
+                        description:
+                          "Zum Beispiel „7:00–16:30“, gilt für beide Sprachen.",
                       },
                     },
                   ],

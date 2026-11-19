@@ -838,7 +838,7 @@ export interface SiteSetting {
      */
     days: string;
     /**
-     * Zum Beispiel „7:00–16:30“.
+     * Zum Beispiel „7:00–16:30“, gilt für beide Sprachen.
      */
     hours: string;
     id?: string | null;

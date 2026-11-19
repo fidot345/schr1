@@ -4050,6 +4050,12 @@
           "type": "varchar",
           "primaryKey": true,
           "notNull": true
+        },
+        "hours": {
+          "name": "hours",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
@@ -4111,12 +4117,6 @@
       "columns": {
         "days": {
           "name": "days",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "hours": {
-          "name": "hours",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -4441,6 +4441,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "6cae7290-1abd-4000-892a-79b90429780d",
+  "id": "0f5d7b40-e4e7-4e7c-9945-693c6532cab3",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

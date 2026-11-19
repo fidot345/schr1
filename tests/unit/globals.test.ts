@@ -124,8 +124,9 @@ const requiredFields: Record<string, string[]> = {
   ],
 };
 
-/** Company data stays the same in both languages. */
+/** Company data and opening times stay the same in both languages. */
 const notTranslated = new Set([
+  "site-settings.openingHours.hours",
   "site-settings.company.name",
   "site-settings.company.owner",
   "site-settings.company.street",
@@ -194,6 +195,15 @@ describe("site settings", () => {
       "vacation.from",
       "vacation.until",
     ]);
+  });
+
+  it("translates the days but keeps one set of opening times", () => {
+    expect(prop(find(SiteSettings, "openingHours.days"), "localized")).toBe(
+      true,
+    );
+    expect(
+      prop(find(SiteSettings, "openingHours.hours"), "localized"),
+    ).not.toBe(true);
   });
 
   it("keeps the vacation off by default", () => {

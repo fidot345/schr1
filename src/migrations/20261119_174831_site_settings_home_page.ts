@@ -61,12 +61,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "site_settings_opening_hours" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"hours" varchar NOT NULL
   );
   
   CREATE TABLE "site_settings_opening_hours_locales" (
   	"days" varchar NOT NULL,
-  	"hours" varchar NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
   	"_parent_id" varchar NOT NULL
