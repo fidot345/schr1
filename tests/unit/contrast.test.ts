@@ -33,6 +33,8 @@ describe("contrast of token pairs (BRIEF.md section 3)", () => {
     ["graphit", "papier"],
     ["graphit", "weiss"],
     ["graphit", "moos"],
+    // footer text on Graphit
+    ["papier", "graphit"],
   ])("body text %s on %s passes AAA (7:1)", (text, background) => {
     expect(contrast(text, background)).toBeGreaterThanOrEqual(7);
   });
@@ -47,8 +49,38 @@ describe("contrast of token pairs (BRIEF.md section 3)", () => {
     ["tannengruen", "moos"],
     ["tannengruen-dunkel", "papier"],
     ["tannengruen-dunkel", "moos"],
+    // error text under fields and in the error summary
+    ["fehler", "weiss"],
+    ["fehler", "papier"],
+    ["fehler", "moos"],
+    // field hints
+    ["schiefer", "weiss"],
+    ["schiefer", "papier"],
+    // disabled button
+    ["schiefer", "moos"],
+    // light links in the footer and their hover
+    ["papier", "graphit"],
+    ["weiss", "graphit"],
   ])("text %s on %s passes AA (4.5:1)", (text, background) => {
     expect(contrast(text, background)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each([
+    ["feldrand", "weiss"],
+    ["feldrand", "papier"],
+    ["feldrand", "moos"],
+    ["fehler", "weiss"],
+    ["fehler", "papier"],
+    ["fehler", "moos"],
+  ])(
+    "field border %s (normal, error, checkbox) on %s passes 3:1",
+    (line, background) => {
+      expect(contrast(line, background)).toBeGreaterThanOrEqual(3);
+    },
+  );
+
+  it("light focus ring Weiß on the Graphit footer passes 3:1", () => {
+    expect(contrast("weiss", "graphit")).toBeGreaterThanOrEqual(3);
   });
 
   it.each([

@@ -1,12 +1,20 @@
 import { readFileSync } from "node:fs";
 import type { ReactNode } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { AdminLogo } from "@/components/admin/AdminGraphics";
+import { Footer } from "@/components/layout/Footer";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { VacationBanner } from "@/components/layout/VacationBanner";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Container } from "@/components/ui/Container";
+import { ErrorSummary } from "@/components/ui/ErrorSummary";
 import { Heading } from "@/components/ui/Heading";
+import { Select } from "@/components/ui/Select";
+import { TextArea } from "@/components/ui/TextArea";
+import { TextInput } from "@/components/ui/TextInput";
 import { TextLink } from "@/components/ui/TextLink";
+import { classesOf, render } from "./support/render";
 
 /*
  * next-intl's Link needs a Next.js request. In these tests it is a plain <a>
@@ -30,14 +38,10 @@ vi.mock("@/i18n/navigation", () => ({
       {children}
     </a>
   ),
+  usePathname: () => "/",
 }));
 
-const render = (node: ReactNode): string => renderToStaticMarkup(node);
-
-const classesOf = (html: string): string[] =>
-  [...html.matchAll(/class="([^"]*)"/g)].flatMap((match) =>
-    match[1].split(/\s+/).filter(Boolean),
-  );
+vi.mock("next/navigation", () => ({ useParams: () => ({}) }));
 
 const css = readFileSync("src/app/(frontend)/globals.css", "utf8");
 // Token names from @theme; "h1--line-height" style sub-keys are skipped.
@@ -130,6 +134,22 @@ describe("Button", () => {
     );
     expect(secondary.filter((name) => name.startsWith("bg-"))).toEqual([]);
   });
+
+  it("has a flat Moos disabled state in the box variants", () => {
+    for (const variant of ["primary", "secondary"] as const) {
+      const classes = classesOf(render(<Button variant={variant}>A</Button>));
+      expect(classes).toEqual(
+        expect.arrayContaining([
+          "disabled:bg-moos",
+          "disabled:border-linie",
+          "disabled:text-schiefer",
+          "disabled:cursor-not-allowed",
+        ]),
+      );
+    }
+    const text = classesOf(render(<Button variant="text">C</Button>));
+    expect(text).toContain("disabled:text-schiefer");
+  });
 });
 
 describe("TextLink", () => {
@@ -148,6 +168,24 @@ describe("TextLink", () => {
     expect(phone).toMatch(/^<a href="tel:\+498999998412"/);
     expect(phone).not.toContain("rel=");
   });
+
+  it("is Tannengrün by default and light with a light focus ring", () => {
+    const dark = classesOf(render(<TextLink href="/kontakt">K</TextLink>));
+    expect(dark).toContain("text-tannengruen");
+    expect(dark).not.toContain("focus-ring-light");
+
+    const light = classesOf(
+      render(
+        <TextLink href="/kontakt" tone="light">
+          K
+        </TextLink>,
+      ),
+    );
+    expect(light).toEqual(
+      expect.arrayContaining(["text-papier", "focus-ring-light"]),
+    );
+    expect(light).not.toContain("text-tannengruen");
+  });
 });
 
 describe("design tokens in ui components", () => {
@@ -156,6 +194,32 @@ describe("design tokens in ui components", () => {
     ...LEVELS.map((level) => render(<Heading level={level}>x</Heading>)),
     ...VARIANTS.map((variant) => render(<Button variant={variant}>x</Button>)),
     render(<TextLink href="/">x</TextLink>),
+    render(
+      <TextLink href="/" tone="light">
+        x
+      </TextLink>,
+    ),
+    render(<TextInput id="a" label="A" hint="h" error="e" optional />),
+    render(<TextInput id="b" label="B" />),
+    render(<TextArea id="c" label="C" error="e" />),
+    render(<Select id="d" label="D" options={[{ value: "1", label: "1" }]} />),
+    render(<Checkbox id="e" label="E" error="e" />),
+    render(<ErrorSummary errors={[{ fieldId: "a", message: "m" }]} />),
+    render(<VacationBanner from="2026-12-23" to="2027-01-06" />),
+    render(
+      <Footer
+        company={{
+          name: "n",
+          street: "s",
+          postalCode: "p",
+          city: "c",
+          phone: "089 99998 412",
+          email: "info@tannrieder.example",
+        }}
+        openingHours={[{ days: "d", hours: "h" }]}
+      />,
+    ),
+    render(<LocaleSwitcher />),
   ].join("");
   // Drop variants such as hover: or md: and keep the utility itself.
   const utilities = [
@@ -172,6 +236,7 @@ describe("design tokens in ui components", () => {
       if (!match) return false;
       const [, kind, value] = match;
       if (/^\d+$/.test(value)) return false; // widths: border-2, decoration-2
+      if (kind === "border" && /^[trblxy](-\d+)?$/.test(value)) return false; // sides: border-t
       if (kind === "text" && (textTokens.has(value) || value === "center")) {
         return false;
       }
