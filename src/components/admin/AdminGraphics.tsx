@@ -2,9 +2,12 @@ import { LogoMark } from "@/components/ui/Logo";
 
 const ADMIN_ALT = "Schreinerei Tannrieder";
 
-/** Login page logo, wired in payload.config.ts → admin.components.graphics.Logo. */
+/**
+ * Login page logo, wired in payload.config.ts → admin.components.graphics.Logo.
+ * Eager: it is the largest element on the login page (LCP).
+ */
 export function AdminLogo() {
-  return <LogoMark size={96} alt={ADMIN_ALT} />;
+  return <LogoMark size={96} alt={ADMIN_ALT} loading="eager" />;
 }
 
 /** Navigation icon, wired in payload.config.ts → admin.components.graphics.Icon. */

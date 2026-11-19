@@ -13,9 +13,11 @@ type LogoMarkProps = {
   size: number;
   alt: string;
   className?: string;
+  /** "eager" for marks above the fold (header, admin login). */
+  loading?: "eager" | "lazy";
 };
 
-export function LogoMark({ size, alt, className }: LogoMarkProps) {
+export function LogoMark({ size, alt, className, loading }: LogoMarkProps) {
   return (
     <Image
       src={LOGO_MARK_SRC}
@@ -23,6 +25,7 @@ export function LogoMark({ size, alt, className }: LogoMarkProps) {
       height={size}
       alt={alt}
       className={className}
+      loading={loading}
     />
   );
 }
@@ -36,8 +39,9 @@ export function Logo({ className }: LogoProps) {
     <span
       className={`inline-flex items-center gap-2 font-heading text-h4 font-semibold text-tannengruen ${className ?? ""}`}
     >
-      {/* Decorative: the word next to it already names the company. */}
-      <LogoMark size={32} alt="" className="size-8 shrink-0" />
+      {/* Decorative: the word next to it already names the company.
+          Eager: the logo sits in the header, always above the fold. */}
+      <LogoMark size={32} alt="" className="size-8 shrink-0" loading="eager" />
       <span>{BRAND_WORD}</span>
     </span>
   );
