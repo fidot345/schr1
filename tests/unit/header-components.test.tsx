@@ -56,6 +56,8 @@ describe("Header", () => {
       expect.arrayContaining(["group", "sticky", "top-0", "bg-papier"]),
     );
     expect(header).not.toContain("data-compact");
+    // globals.css: focus inside a sticky bar gets no scroll margin.
+    expect(header).toContain("data-sticky-bar");
   });
 
   it("shrinks the bar only through group-data-compact, with motion-safe transition", () => {
@@ -122,8 +124,17 @@ describe("Header", () => {
         /aria-controls="([^"]+)"/,
       )?.[1] ?? "";
     const panel = html.slice(html.indexOf(tagWithId(html, panelId)));
-    expect(panel).toContain('<nav aria-label="Sprache"');
+    expect(panel).toContain('<nav aria-label="Sprache im Menü"');
     expect(panel).toMatch(/<a href="\/anfrage"[^>]*>Projekt anfragen<\/a>/);
+  });
+
+  it("names the two language switchers differently", () => {
+    const names = [...html.matchAll(/<nav aria-label="(Sprache[^"]*)"/g)].map(
+      (match) => match[1],
+    );
+    expect(names).toEqual(["Sprache", "Sprache im Menü"]);
+    const english = render(<Header />, "en");
+    expect(english).toContain('<nav aria-label="Language in the menu"');
   });
 
   it("is in English on /en", () => {
@@ -149,6 +160,7 @@ describe("MobileActionBar", () => {
       expect.arrayContaining(["sticky", "bottom-0", "md:hidden"]),
     );
     expect(classesOf(nav)).not.toContain("fixed");
+    expect(nav).toContain("data-sticky-bar");
   });
 
   it("calls through a tel: link styled as a button", () => {

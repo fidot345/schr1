@@ -184,7 +184,7 @@ describe("LocaleSwitcher", () => {
     expect(link).toMatch(/data-locale="en"/);
     expect(link).toMatch(/lang="en"/);
     expect(link).toMatch(/hrefLang="en"|hreflang="en"/);
-    expect(link).toMatch(/aria-label="English"/);
+    expect(link).toMatch(/aria-label="EN – English"/);
   });
 
   it("shows the current language as text, not as a link", () => {
@@ -205,7 +205,7 @@ describe("LocaleSwitcher", () => {
     expect(link).toMatch(/href="\/kontakt"/);
     expect(link).toMatch(/data-locale="de"/);
     expect(link).toMatch(/lang="de"/);
-    expect(link).toMatch(/aria-label="Deutsch"/);
+    expect(link).toMatch(/aria-label="DE – Deutsch"/);
     expect(html).toMatch(/^<nav aria-label="Language"/);
   });
 
