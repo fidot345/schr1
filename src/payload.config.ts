@@ -13,6 +13,8 @@ import { Services } from "./collections/Services";
 import { Team } from "./collections/Team";
 import { Testimonials } from "./collections/Testimonials";
 import { Users } from "./collections/Users";
+import { HomePage } from "./globals/HomePage";
+import { SiteSettings } from "./globals/SiteSettings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -33,6 +35,7 @@ export default buildConfig({
     },
   },
   collections: [Services, Projects, Jobs, Team, Testimonials, Media, Users],
+  globals: [HomePage, SiteSettings],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: "de",

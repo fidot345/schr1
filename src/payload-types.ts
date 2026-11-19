@@ -97,8 +97,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('de' | 'en') | ('de' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'home-page': HomePage;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: 'de' | 'en';
   widgets: {
     collections: CollectionsWidget;
@@ -744,6 +750,228 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  hero: {
+    title: string;
+    text: string;
+    /**
+     * Großes Querformat, etwa die Werkstatt oder eine fertige Küche.
+     */
+    image: number | Media;
+  };
+  /**
+   * Genau drei Referenzen, in der Reihenfolge, in der sie erscheinen.
+   */
+  featuredProjects: (number | Project)[];
+  /**
+   * Genau vier Schritte, vom Aufmaß bis zur Montage.
+   */
+  processSteps: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig.
+   */
+  sceneCaptions: {
+    text: string;
+    id?: string | null;
+  }[];
+  about: {
+    title: string;
+    /**
+     * Absätze mit einer Leerzeile trennen.
+     */
+    text: string;
+  };
+  careers: {
+    title: string;
+    /**
+     * Kurz über die Arbeit bei uns. Die offenen Stellen erscheinen darunter von selbst.
+     */
+    text: string;
+  };
+  /**
+   * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
+   */
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Erscheinen in Kopf- und Fußzeile, auf der Kontaktseite und im Impressum.
+   */
+  company: {
+    name: string;
+    owner: string;
+    street: string;
+    postalCode: string;
+    city: string;
+    /**
+     * So, wie die Nummer auf der Website stehen soll, zum Beispiel „089 99998 412“.
+     */
+    phone: string;
+    email: string;
+  };
+  /**
+   * Eine Zeile je Zeitraum, in der richtigen Reihenfolge.
+   */
+  openingHours: {
+    /**
+     * Zum Beispiel „Mo–Do“.
+     */
+    days: string;
+    /**
+     * Zum Beispiel „7:00–16:30“.
+     */
+    hours: string;
+    id?: string | null;
+  }[];
+  /**
+   * Ein bis zwei Sätze für die Kontaktseite, zum Beispiel zum Umkreis von 40 km.
+   */
+  serviceArea: string;
+  /**
+   * Eingeschaltet erscheint auf allen Seiten ein Hinweis mit diesen Daten. Der Wortlaut des Hinweises ist fest auf der Website hinterlegt.
+   */
+  vacation?: {
+    enabled?: boolean | null;
+    from?: string | null;
+    until?: string | null;
+  };
+  imprint: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  privacy: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        image?: T;
+      };
+  featuredProjects?: T;
+  processSteps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  sceneCaptions?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  about?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  careers?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  company?:
+    | T
+    | {
+        name?: T;
+        owner?: T;
+        street?: T;
+        postalCode?: T;
+        city?: T;
+        phone?: T;
+        email?: T;
+      };
+  openingHours?:
+    | T
+    | {
+        days?: T;
+        hours?: T;
+        id?: T;
+      };
+  serviceArea?: T;
+  vacation?:
+    | T
+    | {
+        enabled?: T;
+        from?: T;
+        until?: T;
+      };
+  imprint?: T;
+  privacy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
