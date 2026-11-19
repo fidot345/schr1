@@ -8,6 +8,7 @@
 import { useTranslations } from "next-intl";
 import {
   type ReactNode,
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -15,6 +16,7 @@ import {
 } from "react";
 import { buttonClassName } from "@/components/ui/Button";
 import { usePathname } from "@/i18n/navigation";
+import { useLenis } from "./SmoothScroll";
 
 /** Tailwind's xl breakpoint: from here on the header shows the full menu. */
 const WIDE_SCREEN = "(min-width: 80rem)";
@@ -70,7 +72,9 @@ type MobileMenuProps = {
  * so the button stays in place and closes it again.
  *
  * Open: focus moves to the first link, Tab cycles between the button and the
- * menu, everything outside the header is inert, the page does not scroll.
+ * menu, everything outside the header is inert, the page does not scroll:
+ * overflow on <html> stops native scrolling, lenis.stop() the smooth one,
+ * and data-lenis-prevent leaves wheel and touch in the panel to the panel.
  * Closed by the button, Esc or any link, focus goes back to the button.
  * No transition: the menu appears and disappears at once.
  */
@@ -171,6 +175,15 @@ export function MobileMenu({ children }: MobileMenuProps) {
     };
   }, [open]);
 
+  // Separate from the effect above: Lenis can come or go while the menu is
+  // open (reduced motion switched), and that must not move the focus again.
+  const lenis = useLenis();
+  useEffect(() => {
+    if (!open || !lenis) return;
+    lenis.stop();
+    return () => lenis.start();
+  }, [open, lenis]);
+
   return (
     <>
       <button
@@ -188,6 +201,7 @@ export function MobileMenu({ children }: MobileMenuProps) {
         ref={panelRef}
         id={panelId}
         hidden={!open}
+        data-lenis-prevent
         className="fixed inset-x-0 bottom-0 overflow-y-auto overscroll-contain bg-papier xl:hidden"
       >
         {children}
