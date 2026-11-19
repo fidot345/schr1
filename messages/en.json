@@ -36,6 +36,12 @@
   "VacationBanner": {
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
   },
+  "Header": {
+    "homeLabel": "Tannrieder – home page",
+    "menuLabel": "Main menu",
+    "menuButton": "Menu",
+    "cta": "Request a project"
+  },
   "Footer": {
     "contactHeading": "Contact",
     "hoursHeading": "Opening hours",
