@@ -17,6 +17,11 @@ describe("i18n", () => {
     expect(keyPaths(en).sort()).toEqual(keyPaths(de).sort());
   });
 
+  it("has the same DevUi keys in de.json and en.json", () => {
+    expect(keyPaths(de.DevUi).length).toBeGreaterThan(0);
+    expect(keyPaths(en.DevUi).sort()).toEqual(keyPaths(de.DevUi).sort());
+  });
+
   it("has no empty messages", () => {
     for (const messages of [de, en]) {
       const empty = keyPaths(messages).filter((path) => {
