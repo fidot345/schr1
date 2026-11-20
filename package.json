@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run seed/content.ts",
+    "reset-admin": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/reset-admin-password.ts",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
