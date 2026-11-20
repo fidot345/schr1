@@ -8,7 +8,6 @@ import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { VacationBanner } from "@/components/layout/VacationBanner";
 import { routing } from "@/i18n/routing";
 import { getSiteSettings } from "@/lib/content";
-import { brandWord } from "@/lib/text";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -37,7 +36,7 @@ export default async function SiteLayout({
       {site.vacation && (
         <VacationBanner from={site.vacation.from} to={site.vacation.until} />
       )}
-      <Header brandName={brandWord(site.company.name)} />
+      <Header brandName={site.company.logoWord} />
       <main id="main">{children}</main>
       <Footer company={site.company} openingHours={site.openingHours} />
       <MobileActionBar phone={site.company.phone} />

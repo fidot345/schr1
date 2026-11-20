@@ -19,7 +19,7 @@ export const DEMO_COMPANY: CompanyContact = {
   email: "info@tannrieder.example",
 };
 
-/** The logo word, as brandWord() takes it from the company name. */
+/** The logo word, as SiteSettings holds it. */
 export const DEMO_BRAND_NAME = "Tannrieder";
 
 export const DEMO_OPENING_HOURS: OpeningHoursEntry[] = [

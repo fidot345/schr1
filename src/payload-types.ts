@@ -820,6 +820,10 @@ export interface SiteSetting {
   company: {
     name: string;
     owner: string;
+    /**
+     * Steht neben dem Zeichen in der Kopfzeile, zum Beispiel „Tannrieder“. Gilt für beide Sprachen.
+     */
+    logoWord?: string | null;
     street: string;
     postalCode: string;
     city: string;
@@ -946,6 +950,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         name?: T;
         owner?: T;
+        logoWord?: T;
         street?: T;
         postalCode?: T;
         city?: T;

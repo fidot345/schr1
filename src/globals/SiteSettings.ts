@@ -3,6 +3,7 @@ import { anyone, authenticated } from "../collections/shared/access";
 import { revalidateSite } from "../hooks/revalidate-site";
 import {
   sibling,
+  validateLogoWord,
   validatePostalCode,
   validateVacationFrom,
   validateVacationUntil,
@@ -58,6 +59,19 @@ export const SiteSettings: GlobalConfig = {
                       required: true,
                     },
                   ],
+                },
+                {
+                  name: "logoWord",
+                  type: "text",
+                  label: "Wort im Logo",
+                  // Required through validate, not `required`: a NOT NULL
+                  // column could not be added to the existing settings row.
+                  validate: validateLogoWord,
+                  maxLength: 30,
+                  admin: {
+                    description:
+                      "Steht neben dem Zeichen in der Kopfzeile, zum Beispiel „Tannrieder“. Gilt für beide Sprachen.",
+                  },
                 },
                 {
                   name: "street",

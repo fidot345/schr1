@@ -29,7 +29,7 @@ export function LogoMark({ size, alt, className, loading }: LogoMarkProps) {
 }
 
 type LogoProps = {
-  /** The word next to the mark, "Tannrieder": brandWord() of the company name in SiteSettings. */
+  /** The word next to the mark, "Tannrieder": the logo word from SiteSettings. */
   name: string;
   className?: string;
 };

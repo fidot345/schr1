@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isPopulated, populated, toPhoto } from "@/lib/media";
-import { brandWord, paragraphs } from "@/lib/text";
+import { logoWordOf, paragraphs } from "@/lib/text";
 import type { Media } from "@/payload-types";
 
 const media = (overrides: Partial<Media> = {}): Media => ({
@@ -81,10 +81,17 @@ describe("paragraphs", () => {
   });
 });
 
-describe("brandWord", () => {
-  it("takes the family name from the company name", () => {
-    expect(brandWord("Schreinerei Tannrieder")).toBe("Tannrieder");
-    expect(brandWord("  Schreinerei   Tannrieder ")).toBe("Tannrieder");
-    expect(brandWord("Tannrieder")).toBe("Tannrieder");
+describe("logoWordOf", () => {
+  const name = "Schreinerei Tannrieder";
+
+  it("takes the logo word from its own field", () => {
+    expect(logoWordOf({ name, logoWord: "Tannrieder" })).toBe("Tannrieder");
+    expect(logoWordOf({ name, logoWord: " Tannrieder " })).toBe("Tannrieder");
+  });
+
+  it("shows the company name while the field is empty", () => {
+    expect(logoWordOf({ name, logoWord: null })).toBe(name);
+    expect(logoWordOf({ name, logoWord: "  " })).toBe(name);
+    expect(logoWordOf({ name })).toBe(name);
   });
 });

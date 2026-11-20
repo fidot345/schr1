@@ -4,7 +4,7 @@ import type {
   RelationshipFieldValidation,
   TextFieldSingleValidation,
 } from "payload";
-import { array, relationship } from "payload/shared";
+import { array, relationship, text } from "payload/shared";
 
 export const sibling = (data: unknown, key: string): unknown =>
   typeof data === "object" && data !== null
@@ -39,6 +39,15 @@ export const exactRelations =
     }
     return relationship(value, options);
   };
+
+/**
+ * Required in the admin form, while the column stays nullable; then the
+ * usual text checks (maxLength).
+ */
+export const validateLogoWord: TextFieldSingleValidation = (value, options) =>
+  typeof value === "string" && value.trim() !== ""
+    ? text(value, options)
+    : "Bitte das Wort für das Logo eintragen.";
 
 export const validatePostalCode: TextFieldSingleValidation = (value) =>
   (typeof value === "string" && /^\d{5}$/.test(value)) ||

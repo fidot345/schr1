@@ -138,6 +138,11 @@ describe("seed content", () => {
     expect(siteSettings.company.postalCode).toMatch(/^\d{5}$/);
   });
 
+  it("puts the family name next to the logo mark", () => {
+    expect(siteSettings.company.logoWord).toBe("Tannrieder");
+    expect(siteSettings.company.name).toContain(siteSettings.company.logoWord);
+  });
+
   it("has no walnut, placeholder text or invented counters", () => {
     const text = JSON.stringify({
       services,

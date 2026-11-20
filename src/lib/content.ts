@@ -3,7 +3,7 @@ import type { Locale } from "@/i18n/routing";
 import type { Job } from "@/payload-types";
 import { type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
-import { paragraphs } from "./text";
+import { logoWordOf, paragraphs } from "./text";
 
 /*
  * Reading the site's content from Payload, BRIEF.md section 5.
@@ -19,6 +19,8 @@ import { paragraphs } from "./text";
 
 export type CompanyData = {
   name: string;
+  /** Next to the mark in the header: "Tannrieder". */
+  logoWord: string;
   owner: string;
   street: string;
   postalCode: string;
@@ -60,7 +62,7 @@ export const getSiteSettings = cache(
     const { enabled, from, until } = settings.vacation ?? {};
 
     return {
-      company: settings.company,
+      company: { ...settings.company, logoWord: logoWordOf(settings.company) },
       openingHours: (settings.openingHours ?? []).map((row, index) => ({
         id: row.id ?? String(index),
         days: row.days,

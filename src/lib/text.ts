@@ -10,12 +10,12 @@ export const paragraphs = (text: string | null | undefined): string[] =>
     .filter(Boolean);
 
 /**
- * The word of the logo, BRIEF.md section 3: the family name "Tannrieder"
- * from the company name in SiteSettings ("Schreinerei Tannrieder").
- * The schema has no field of its own for it, so it is the last word of
- * the name; a one-word name is used as it is.
+ * The word of the logo, BRIEF.md section 3: "Tannrieder", from its own
+ * field in SiteSettings. The column is nullable (it came after the first
+ * settings were saved), so until someone fills it in, the header shows the
+ * full company name instead of an empty logo.
  */
-export const brandWord = (companyName: string): string => {
-  const words = companyName.trim().split(/\s+/);
-  return words[words.length - 1] ?? "";
-};
+export const logoWordOf = (company: {
+  name: string;
+  logoWord?: string | null;
+}): string => company.logoWord?.trim() || company.name;

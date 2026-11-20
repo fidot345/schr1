@@ -246,6 +246,7 @@ describe("HomeContact", () => {
     company: {
       name: "Schreinerei Tannrieder",
       owner: "Johannes Tannrieder",
+      logoWord: "Tannrieder",
       street: "Werkstattweg 4",
       postalCode: "85999",
       city: "Wendelfing",

@@ -10,7 +10,7 @@ import { MobileMenu } from "./MobileMenu";
 import { MAIN_NAVIGATION } from "./navigation";
 
 type HeaderProps = {
-  /** The logo word from SiteSettings, see brandWord() in src/lib/text.ts. */
+  /** The logo word from SiteSettings ("Tannrieder"). */
   brandName: string;
   /** Passed on to the language switcher, see LocaleSwitcher. */
   alternateHref?: Href;

@@ -92,6 +92,7 @@ const requiredFields: Record<string, string[]> = {
   "site-settings": [
     "company.name",
     "company.owner",
+    "company.logoWord",
     "company.street",
     "company.postalCode",
     "company.city",
@@ -129,6 +130,7 @@ const notTranslated = new Set([
   "site-settings.openingHours.hours",
   "site-settings.company.name",
   "site-settings.company.owner",
+  "site-settings.company.logoWord",
   "site-settings.company.street",
   "site-settings.company.postalCode",
   "site-settings.company.city",
@@ -238,6 +240,26 @@ describe("site settings", () => {
     expect(validate(postalCode, "85999")).toBe(true);
     expect(validate(postalCode, "8599")).not.toBe(true);
     expect(validate(postalCode, "D-85999")).not.toBe(true);
+  });
+
+  it("needs a logo word, but keeps its column nullable", () => {
+    const logoWord = find(SiteSettings, "company.logoWord");
+    expect(logoWord.type).toBe("text");
+    expect(prop(logoWord, "localized")).not.toBe(true);
+    // A NOT NULL column could not be added to the saved settings row.
+    expect(prop(logoWord, "required")).not.toBe(true);
+    expect(validate(logoWord, "Tannrieder")).toBe(true);
+    expect(validate(logoWord, "")).not.toBe(true);
+    expect(validate(logoWord, "   ")).not.toBe(true);
+    expect(validate(logoWord, undefined)).not.toBe(true);
+    expect(validate(logoWord, null)).not.toBe(true);
+  });
+
+  it("keeps the logo word short enough for the header", () => {
+    const logoWord = find(SiteSettings, "company.logoWord");
+    expect(prop(logoWord, "maxLength")).toBe(30);
+    expect(validate(logoWord, "T".repeat(30))).toBe(true);
+    expect(validate(logoWord, "T".repeat(31))).not.toBe(true);
   });
 
   it("stores the e-mail as an e-mail field", () => {
