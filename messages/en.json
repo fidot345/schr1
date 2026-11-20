@@ -7,7 +7,30 @@
     "label": "Skip to content"
   },
   "HomePage": {
-    "placeholder": "The website of Schreinerei Tannrieder is being built here."
+    "requestCta": "Request a project",
+    "jobsCta": "Jobs with us",
+    "servicesTitle": "What we build",
+    "sceneTitle": "From board to wardrobe",
+    "scenePlaceholder": "Placeholder: a picture of the finished wardrobe goes here soon, the 3D scene later.",
+    "projectsTitle": "Selected projects",
+    "projectMeta": "{objectType}, {year}",
+    "allProjects": "See all projects",
+    "processTitle": "How your project works",
+    "openJobsTitle": "Open positions",
+    "openJobsCta": "See open positions",
+    "noOpenJobs": "All positions are filled at the moment.",
+    "aboutMore": "More about us",
+    "testimonialsTitle": "What our customers say",
+    "contactTitle": "How to reach us",
+    "contactPhone": "Phone",
+    "contactEmail": "Email",
+    "contactAddress": "Address",
+    "contactHours": "Opening hours"
+  },
+  "EmploymentType": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "apprenticeship": "Apprenticeship"
   },
   "Navigation": {
     "services": "Services",

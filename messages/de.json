@@ -7,7 +7,30 @@
     "label": "Zum Inhalt springen"
   },
   "HomePage": {
-    "placeholder": "Hier entsteht die Website der Schreinerei Tannrieder."
+    "requestCta": "Projekt anfragen",
+    "jobsCta": "Jobs bei uns",
+    "servicesTitle": "Was wir bauen",
+    "sceneTitle": "Vom Brett zum Schrank",
+    "scenePlaceholder": "Platzhalter: Hier steht bald das Bild des fertigen Schranks, später die 3D-Szene.",
+    "projectsTitle": "Ausgewählte Projekte",
+    "projectMeta": "{objectType}, {year}",
+    "allProjects": "Alle Referenzen ansehen",
+    "processTitle": "So läuft Ihr Auftrag",
+    "openJobsTitle": "Offene Stellen",
+    "openJobsCta": "Offene Stellen ansehen",
+    "noOpenJobs": "Im Moment sind alle Stellen besetzt.",
+    "aboutMore": "Mehr über uns",
+    "testimonialsTitle": "Kundenstimmen",
+    "contactTitle": "So erreichen Sie uns",
+    "contactPhone": "Telefon",
+    "contactEmail": "E-Mail",
+    "contactAddress": "Adresse",
+    "contactHours": "Öffnungszeiten"
+  },
+  "EmploymentType": {
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "apprenticeship": "Ausbildung"
   },
   "Navigation": {
     "services": "Leistungen",
