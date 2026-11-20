@@ -5,7 +5,7 @@
 | Файл | Что на нём | Автор | Источник (ссылка) | Лицензия |
 |---|---|---|---|---|
 | hero-1.jpg | мастер пилит ножовкой заготовку в тисках, летят опилки | Will Suddreth | https://unsplash.com/photos/man-sawing-in-room-o54RjF-C7xo | Unsplash License |
-| service-kueche-1.jpg | кухонный гарнитур: тёмные деревянные нижние шкафы, светлые верхние, паркет ёлочкой | Prydumano Design | https://unsplash.com/photos/a-large-kitchen-with-a-wooden-floor-and-white-cabinets-So4OCymi_c4 | Unsplash License |
+| service-kueche.jpg | кухня: светлые деревянные фасады, открытые полки с подсветкой, серые нижние шкафы без ручек, остров с деревянными табуретами, каменный пол | ML Design Cuisines | https://www.pexels.com/photo/19192264/ | Pexels License |
 | service-schrank.jpg | деревянный комод-буфет с коваными узорами на дверцах | Erik Mclean | https://www.pexels.com/photo/9899846/ | Pexels License |
 | service-tueren.jpg | деревянная дверь с горизонтальными филёнками в солнечном свете | Nothing Ahead | https://www.pexels.com/photo/32796606/ | Pexels License |
 | service-ausbau.jpg | комната со стенами из деревянной вагонки, белый потолок с балками, диван | Max Vakhtbovych | https://www.pexels.com/photo/7745947/ | Pexels License |
@@ -16,4 +16,4 @@
 | projekt-buecherwand.jpg | белая книжная стена до потолка вокруг дверного проёма | Francesco Ungaro | https://www.pexels.com/photo/32471851/ | Pexels License |
 | projekt-badmoebel.jpg | подвесная деревянная тумба с накладной раковиной у кирпичной стены | Polina | https://www.pexels.com/photo/5644275/ | Pexels License |
 | about-werkstatt.jpg | верстак у окна в мастерской, инструменты на стене | Yaroslav Shuraev | https://www.pexels.com/photo/4888924/ | Pexels License |
-| karriere.jpg | мастер в контровом свете работает на торцовочной пиле | Marcelo Gonzalez | https://www.pexels.com/photo/37681628/ | Pexels License |
+| karriere.jpg | руки столяра в фартуке строгают рубанком брусок на верстаке, рядом стружка | Burst | https://www.pexels.com/photo/374861/ | Pexels License |

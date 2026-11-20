@@ -1,4 +1,4 @@
-service-kueche.jpg | Prydumano Design | https://unsplash.com/photos/a-large-kitchen-with-a-wooden-floor-and-white-cabinets-So4OCymi_c4 | Unsplash  
+service-kueche.jpg | ML Design Cuisines | https://www.pexels.com/photo/19192264/ | Pexels
 hero-1.jpg | Will Suddreth | https://unsplash.com/photos/man-sawing-in-room-o54RjF-C7xo | Unsplash
 service-schrank.jpg | Erik Mclean | https://www.pexels.com/photo/9899846/ | Pexels
 service-tueren.jpg | Nothing Ahead | https://www.pexels.com/photo/32796606/ | Pexels
@@ -10,4 +10,4 @@ projekt-altbau-tueren.jpg | Nim Nim | https://www.pexels.com/photo/34572109/ | P
 projekt-buecherwand.jpg | Francesco Ungaro | https://www.pexels.com/photo/32471851/ | Pexels
 projekt-badmoebel.jpg | Polina | https://www.pexels.com/photo/5644275/ | Pexels
 about-werkstatt.jpg | Yaroslav Shuraev | https://www.pexels.com/photo/4888924/ | Pexels
-karriere.jpg | Marcelo Gonzalez | https://www.pexels.com/photo/37681628/ | Pexels
+karriere.jpg | Burst | https://www.pexels.com/photo/374861/ | Pexels
