@@ -1,4 +1,5 @@
 import type { CollectionConfig, TextFieldSingleValidation } from "payload";
+import { protectUsedMedia } from "../hooks/protect-used-media";
 import { revalidateSiteHooks } from "../hooks/revalidate-site";
 import { publicRead } from "./shared/access";
 
@@ -19,7 +20,10 @@ export const Media: CollectionConfig = {
     plural: "Medien",
   },
   access: publicRead,
-  hooks: revalidateSiteHooks,
+  hooks: {
+    ...revalidateSiteHooks,
+    beforeDelete: [protectUsedMedia],
+  },
   admin: {
     group: "Inhalte",
     useAsTitle: "alt",
