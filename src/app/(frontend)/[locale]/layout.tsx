@@ -41,9 +41,16 @@ export async function generateMetadata({
     return {};
   }
   const t = await getTranslations({ locale, namespace: "Metadata" });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   return {
-    title: t("title"),
+    // Absolute URLs for alternates and previews; unset when the variable is.
+    metadataBase:
+      siteUrl && URL.canParse(siteUrl) ? new URL(siteUrl) : undefined,
+    title: {
+      default: t("title"),
+      template: t("template"),
+    },
   };
 }
 
@@ -53,17 +60,28 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     notFound();
   }
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "SkipLink" });
 
+  /*
+   * <body> holds the skip link and then the page shell: VacationBanner,
+   * Header, <main id="main">, Footer, MobileActionBar, in that order and as
+   * direct children (sticky works only inside the parent). The shell comes
+   * from (site)/layout.tsx; /dev/ui brings its own with demo data.
+   */
   return (
     <html
       lang={locale}
       className={`${zillaSlab.variable} ${atkinson.variable}`}
     >
       <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-weiss focus:px-6 focus:py-3 focus:font-bold focus:text-tannengruen focus:underline focus:underline-offset-4"
+        >
+          {t("label")}
+        </a>
         <NextIntlClientProvider>
-          <SmoothScroll>
-            <main>{children}</main>
-          </SmoothScroll>
+          <SmoothScroll>{children}</SmoothScroll>
         </NextIntlClientProvider>
       </body>
     </html>

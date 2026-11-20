@@ -45,7 +45,7 @@ const openingTag = (html: string, pattern: RegExp): string =>
 
 describe("Header", () => {
   route.pathname = "/";
-  const html = render(<Header />);
+  const html = render(<Header brandName="Tannrieder" />);
 
   it("is a sticky <header> after a sentinel, not yet compact", () => {
     expect(html).toMatch(
@@ -133,12 +133,12 @@ describe("Header", () => {
       (match) => match[1],
     );
     expect(names).toEqual(["Sprache", "Sprache im Menü"]);
-    const english = render(<Header />, "en");
+    const english = render(<Header brandName="Tannrieder" />, "en");
     expect(english).toContain('<nav aria-label="Language in the menu"');
   });
 
   it("is in English on /en", () => {
-    const english = render(<Header />, "en");
+    const english = render(<Header brandName="Tannrieder" />, "en");
     expect(english).toMatch(/aria-label="Tannrieder – home page"/);
     expect(english).toMatch(/<nav aria-label="Main menu"/);
     expect(english).toMatch(/<\/svg>Menu<\/button>/);

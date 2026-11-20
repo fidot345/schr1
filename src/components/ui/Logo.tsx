@@ -7,8 +7,6 @@ import Image from "next/image";
  */
 export const LOGO_MARK_SRC = "/images/logo-mark.svg";
 
-const BRAND_WORD = "Tannrieder";
-
 type LogoMarkProps = {
   size: number;
   alt: string;
@@ -31,10 +29,12 @@ export function LogoMark({ size, alt, className, loading }: LogoMarkProps) {
 }
 
 type LogoProps = {
+  /** The word next to the mark, "Tannrieder": brandWord() of the company name in SiteSettings. */
+  name: string;
   className?: string;
 };
 
-export function Logo({ className }: LogoProps) {
+export function Logo({ name, className }: LogoProps) {
   return (
     <span
       className={`inline-flex items-center gap-2 font-heading text-h4 font-semibold text-tannengruen ${className ?? ""}`}
@@ -42,7 +42,7 @@ export function Logo({ className }: LogoProps) {
       {/* Decorative: the word next to it already names the company.
           Eager: the logo sits in the header, always above the fold. */}
       <LogoMark size={32} alt="" className="size-8 shrink-0" loading="eager" />
-      <span>{BRAND_WORD}</span>
+      <span>{name}</span>
     </span>
   );
 }

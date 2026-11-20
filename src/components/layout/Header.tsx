@@ -10,6 +10,8 @@ import { MobileMenu } from "./MobileMenu";
 import { MAIN_NAVIGATION } from "./navigation";
 
 type HeaderProps = {
+  /** The logo word from SiteSettings, see brandWord() in src/lib/text.ts. */
+  brandName: string;
   /** Passed on to the language switcher, see LocaleSwitcher. */
   alternateHref?: Href;
 };
@@ -30,7 +32,7 @@ const MENU_LINK_CLASS =
  * Sticky; once the page scrolls, the bar shrinks from 80px to 64px in 200ms,
  * at once with prefers-reduced-motion. Put VacationBanner right before it.
  */
-export function Header({ alternateHref }: HeaderProps) {
+export function Header({ brandName, alternateHref }: HeaderProps) {
   const t = useTranslations("Header");
   const tNavigation = useTranslations("Navigation");
   const tLocaleSwitcher = useTranslations("LocaleSwitcher");
@@ -40,10 +42,10 @@ export function Header({ alternateHref }: HeaderProps) {
       <Container className="flex h-20 items-center justify-between gap-6 group-data-compact:h-16 motion-safe:transition-[height] motion-safe:duration-200 motion-safe:ease-out">
         <Link
           href="/"
-          aria-label={t("homeLabel")}
+          aria-label={t("homeLabel", { name: brandName })}
           className="flex min-h-12 shrink-0 items-center"
         >
-          <Logo />
+          <Logo name={brandName} />
         </Link>
 
         <nav aria-label={t("menuLabel")} className="hidden xl:block">

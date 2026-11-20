@@ -1,6 +1,10 @@
 {
   "Metadata": {
-    "title": "Schreinerei Tannrieder"
+    "title": "Schreinerei Tannrieder",
+    "template": "%s | Schreinerei Tannrieder"
+  },
+  "SkipLink": {
+    "label": "Skip to content"
   },
   "HomePage": {
     "placeholder": "The website of Schreinerei Tannrieder is being built here."
@@ -36,10 +40,11 @@
     }
   },
   "VacationBanner": {
+    "label": "Company holidays",
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
   },
   "Header": {
-    "homeLabel": "Tannrieder – home page",
+    "homeLabel": "{name} – home page",
     "menuLabel": "Main menu",
     "menuButton": "Menu",
     "cta": "Request a project"
@@ -80,6 +85,7 @@
       "mobileActionBar": "Quick contact on phones"
     },
     "localeSwitcherLabel": "Language, example",
+    "vacationBannerLabel": "Holiday notice, example",
     "notes": {
       "vacationBanner": "Sits above the header, as at the top of this page. Without valid dates it shows nothing.",
       "header": "The header is at the top of this page. While scrolling it stays at the top edge and gets lower.",

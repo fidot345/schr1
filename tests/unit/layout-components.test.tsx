@@ -97,6 +97,11 @@ describe("VacationBanner", () => {
     ).toContain("vom 23. Dezember 2026");
   });
 
+  it("is a named region, because it stands outside <main>", () => {
+    const html = render(<VacationBanner from="2026-12-23" to="2027-01-06" />);
+    expect(html).toMatch(/^<section aria-label="Betriebsurlaub"/);
+  });
+
   it("is Graphit on Moos", () => {
     const html = render(<VacationBanner from="2026-12-23" to="2027-01-06" />);
     expect(classesOf(html)).toEqual(

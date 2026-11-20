@@ -1,6 +1,10 @@
 {
   "Metadata": {
-    "title": "Schreinerei Tannrieder"
+    "title": "Schreinerei Tannrieder",
+    "template": "%s | Schreinerei Tannrieder"
+  },
+  "SkipLink": {
+    "label": "Zum Inhalt springen"
   },
   "HomePage": {
     "placeholder": "Hier entsteht die Website der Schreinerei Tannrieder."
@@ -36,10 +40,11 @@
     }
   },
   "VacationBanner": {
+    "label": "Betriebsurlaub",
     "text": "Betriebsurlaub vom {from, date, long} bis {to, date, long}"
   },
   "Header": {
-    "homeLabel": "Tannrieder – zur Startseite",
+    "homeLabel": "{name} – zur Startseite",
     "menuLabel": "Hauptmenü",
     "menuButton": "Menü",
     "cta": "Projekt anfragen"
@@ -80,6 +85,7 @@
       "mobileActionBar": "Schnellkontakt auf dem Handy"
     },
     "localeSwitcherLabel": "Sprache, Beispiel",
+    "vacationBannerLabel": "Urlaubshinweis, Beispiel",
     "notes": {
       "vacationBanner": "Steht über der Kopfzeile, wie oben auf dieser Seite. Ohne gültige Daten zeigt er nichts.",
       "header": "Die Kopfzeile steht oben auf dieser Seite. Beim Scrollen bleibt sie am oberen Rand und wird niedriger.",

@@ -19,6 +19,9 @@ export const DEMO_COMPANY: CompanyContact = {
   email: "info@tannrieder.example",
 };
 
+/** The logo word, as brandWord() takes it from the company name. */
+export const DEMO_BRAND_NAME = "Tannrieder";
+
 export const DEMO_OPENING_HOURS: OpeningHoursEntry[] = [
   { days: "Mo–Do", hours: "7:00–16:30" },
   { days: "Fr", hours: "7:00–12:00" },
