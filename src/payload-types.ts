@@ -67,8 +67,13 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    services: Service;
+    projects: Project;
+    jobs: Job;
+    team: Team;
+    testimonials: Testimonial;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +81,13 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    jobs: JobsSelect<false> | JobsSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -86,10 +96,16 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
-  locale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('de' | 'en') | ('de' | 'en')[];
+  globals: {
+    'home-page': HomePage;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
+  locale: 'de' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -119,6 +135,254 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * Letzter Teil der Seitenadresse, je Sprache eigen. Bleibt das Feld leer, entsteht er aus dem Titel.
+   */
+  slug: string;
+  /**
+   * Eine Zeile für die Karte auf der Startseite.
+   */
+  summary: string;
+  intro: string;
+  included?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  materials?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Zum Beispiel „8–10 Wochen vom Aufmaß bis zur Montage“.
+   */
+  duration?: string | null;
+  cover: number | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Kleinere Zahl steht weiter vorn.
+   */
+  order?: number | null;
+  /**
+   * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
+   */
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Beschreibt, was auf dem Bild zu sehen ist – für Screenreader und wenn das Bild nicht lädt.
+   */
+  alt: string;
+  /**
+   * Name der Fotografin oder des Fotografen.
+   */
+  credit?: string | null;
+  /**
+   * Link zur Seite, von der das Bild stammt.
+   */
+  source?: string | null;
+  license: 'unsplash' | 'pexels' | 'cc0' | 'own';
+  prefix?: string | null;
+  _objectKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    w960?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    w1600?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    w2400?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  /**
+   * Letzter Teil der Seitenadresse, je Sprache eigen. Bleibt das Feld leer, entsteht er aus dem Titel.
+   */
+  slug: string;
+  service: number | Service;
+  /**
+   * Zum Beispiel „Einfamilienhaus“, ohne Adresse.
+   */
+  objectType: string;
+  year: number;
+  /**
+   * Zum Beispiel „9 Wochen“.
+   */
+  duration: string;
+  material: string;
+  challenge: string;
+  solution: string;
+  cover: number | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Kleinere Zahl steht weiter vorn.
+   */
+  order?: number | null;
+  /**
+   * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
+   */
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs".
+ */
+export interface Job {
+  id: number;
+  /**
+   * Zum Beispiel „Schreiner (m/w/d)“.
+   */
+  title: string;
+  /**
+   * Letzter Teil der Seitenadresse, je Sprache eigen. Bleibt das Feld leer, entsteht er aus dem Titel.
+   */
+  slug: string;
+  active?: boolean | null;
+  employmentType: 'full_time' | 'part_time' | 'apprenticeship';
+  /**
+   * Zum Beispiel „ab sofort“ oder „September 2027“.
+   */
+  start: string;
+  hours: string;
+  payMin?: number | null;
+  payMax?: number | null;
+  payUnit?: ('hour' | 'month') | null;
+  /**
+   * Wenn eine Spanne nicht passt, etwa bei der Ausbildung: „1. Jahr 900 €, 2. Jahr 1.000 €, 3. Jahr 1.100 €“.
+   */
+  payText?: string | null;
+  intro: string;
+  tasks: {
+    text: string;
+    id?: string | null;
+  }[];
+  requirements: {
+    text: string;
+    id?: string | null;
+  }[];
+  benefits: {
+    text: string;
+    id?: string | null;
+  }[];
+  datePosted: string;
+  /**
+   * Leer lassen, wenn die Stelle offen bleibt.
+   */
+  validThrough?: string | null;
+  /**
+   * Kleinere Zahl steht weiter vorn.
+   */
+  order?: number | null;
+  /**
+   * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
+   */
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  /**
+   * Zum Beispiel „Schreinerin“ oder „Azubi, 2. Lehrjahr“.
+   */
+  role: string;
+  since: number;
+  /**
+   * Kleinere Zahl steht weiter vorn.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  quote: string;
+  /**
+   * Zum Beispiel „Familie K., Einfamilienhaus“.
+   */
+  author: string;
+  /**
+   * Freiwillig: zu welcher Arbeit die Stimme gehört.
+   */
+  project?: (number | null) | Project;
+  /**
+   * Kleinere Zahl steht weiter vorn.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -145,27 +409,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  prefix?: string | null;
-  _objectKey?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -189,12 +432,32 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'jobs';
+        value: number | Job;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -240,6 +503,193 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  intro?: T;
+  included?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  materials?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  duration?: T;
+  cover?: T;
+  gallery?: T;
+  order?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  service?: T;
+  objectType?: T;
+  year?: T;
+  duration?: T;
+  material?: T;
+  challenge?: T;
+  solution?: T;
+  cover?: T;
+  gallery?: T;
+  order?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs_select".
+ */
+export interface JobsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  active?: T;
+  employmentType?: T;
+  start?: T;
+  hours?: T;
+  payMin?: T;
+  payMax?: T;
+  payUnit?: T;
+  payText?: T;
+  intro?: T;
+  tasks?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  requirements?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  benefits?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  datePosted?: T;
+  validThrough?: T;
+  order?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  since?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  author?: T;
+  project?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  credit?: T;
+  source?: T;
+  license?: T;
+  prefix?: T;
+  _objectKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        w960?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        w1600?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        w2400?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -260,26 +710,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  prefix?: T;
-  _objectKey?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -320,6 +750,228 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  hero: {
+    title: string;
+    text: string;
+    /**
+     * Großes Querformat, etwa die Werkstatt oder eine fertige Küche.
+     */
+    image: number | Media;
+  };
+  /**
+   * Genau drei Referenzen, in der Reihenfolge, in der sie erscheinen.
+   */
+  featuredProjects: (number | Project)[];
+  /**
+   * Genau vier Schritte, vom Aufmaß bis zur Montage.
+   */
+  processSteps: {
+    title: string;
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig.
+   */
+  sceneCaptions: {
+    text: string;
+    id?: string | null;
+  }[];
+  about: {
+    title: string;
+    /**
+     * Absätze mit einer Leerzeile trennen.
+     */
+    text: string;
+  };
+  careers: {
+    title: string;
+    /**
+     * Kurz über die Arbeit bei uns. Die offenen Stellen erscheinen darunter von selbst.
+     */
+    text: string;
+  };
+  /**
+   * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
+   */
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Erscheinen in Kopf- und Fußzeile, auf der Kontaktseite und im Impressum.
+   */
+  company: {
+    name: string;
+    owner: string;
+    street: string;
+    postalCode: string;
+    city: string;
+    /**
+     * So, wie die Nummer auf der Website stehen soll, zum Beispiel „089 99998 412“.
+     */
+    phone: string;
+    email: string;
+  };
+  /**
+   * Eine Zeile je Zeitraum, in der richtigen Reihenfolge.
+   */
+  openingHours: {
+    /**
+     * Zum Beispiel „Mo–Do“.
+     */
+    days: string;
+    /**
+     * Zum Beispiel „7:00–16:30“, gilt für beide Sprachen.
+     */
+    hours: string;
+    id?: string | null;
+  }[];
+  /**
+   * Ein bis zwei Sätze für die Kontaktseite, zum Beispiel zum Umkreis von 40 km.
+   */
+  serviceArea: string;
+  /**
+   * Eingeschaltet erscheint auf allen Seiten ein Hinweis mit diesen Daten. Der Wortlaut des Hinweises ist fest auf der Website hinterlegt.
+   */
+  vacation?: {
+    enabled?: boolean | null;
+    from?: string | null;
+    until?: string | null;
+  };
+  imprint: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  privacy: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        image?: T;
+      };
+  featuredProjects?: T;
+  processSteps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  sceneCaptions?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  about?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  careers?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  company?:
+    | T
+    | {
+        name?: T;
+        owner?: T;
+        street?: T;
+        postalCode?: T;
+        city?: T;
+        phone?: T;
+        email?: T;
+      };
+  openingHours?:
+    | T
+    | {
+        days?: T;
+        hours?: T;
+        id?: T;
+      };
+  serviceArea?: T;
+  vacation?:
+    | T
+    | {
+        enabled?: T;
+        from?: T;
+        until?: T;
+      };
+  imprint?: T;
+  privacy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
