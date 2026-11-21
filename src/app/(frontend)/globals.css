@@ -266,6 +266,54 @@
 }
 
 /*
+ * TEMP(stage-2): заменить на next/image + Media из Payload.
+ * The photo stand-in of the mockup (.ph in design/): wood-colored stripes.
+ * Its colors and those of public/images/3d/schrank-platzhalter.svg are the
+ * only colors outside the tokens (docs/REDESIGN.md, session 4). In the
+ * components layer so that utilities (rounded-none, h-*) still override it.
+ */
+@layer components {
+  .photo-placeholder {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background-color: #b98d60;
+    background-image:
+      repeating-linear-gradient(
+        96deg,
+        rgba(70, 45, 20, 0.1) 0px,
+        rgba(70, 45, 20, 0.1) 1px,
+        rgba(255, 255, 255, 0) 1px,
+        rgba(255, 255, 255, 0) 9px
+      ),
+      repeating-linear-gradient(
+        92deg,
+        rgba(255, 255, 255, 0.1) 0px,
+        rgba(255, 255, 255, 0.1) 2px,
+        rgba(255, 255, 255, 0) 2px,
+        rgba(255, 255, 255, 0) 31px
+      ),
+      linear-gradient(
+        165deg,
+        rgba(255, 250, 240, 0.28) 0%,
+        rgba(0, 0, 0, 0.1) 100%
+      );
+  }
+
+  .photo-placeholder-walnut {
+    background-color: #7c5a40;
+  }
+
+  .photo-placeholder-birch {
+    background-color: #d2bb92;
+  }
+
+  .photo-placeholder-shop {
+    background-color: #8e8378;
+  }
+}
+
+/*
  * Safety net for prefers-reduced-motion. It stays outside @layer on purpose:
  * unlayered rules win over every Tailwind layer, utilities included, so no
  * !important is needed. Components still write motion as motion-safe:.

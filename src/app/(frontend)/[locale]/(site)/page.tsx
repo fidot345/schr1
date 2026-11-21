@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { Hero } from "@/components/home/Hero";
+import { Projects } from "@/components/home/Projects";
+import { Services } from "@/components/home/Services";
+import { WardrobeSection } from "@/components/home/WardrobeSection";
+import { getDemoHome } from "@/content/demo-home";
 import { pageAlternates } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage } from "@/lib/content";
@@ -35,8 +40,9 @@ export async function generateMetadata({
 }
 
 /**
- * Only the h1 is left of the old home page. The sections come back in
- * redesign sessions 4 and 5, from the mockup in design/.
+ * The home page, from the mockup in design/ (redesign sessions 4 and 5):
+ * the sections in the order of design/README.md. The data comes from
+ * src/content/demo-home.ts until the pages read from Payload again.
  */
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
@@ -44,7 +50,15 @@ export default async function HomePage({ params }: PageProps) {
     notFound();
   }
   setRequestLocale(locale);
-  const { hero } = await getHomePage(locale);
+  const { hero, services, scene, projects } = getDemoHome(locale);
 
-  return <h1>{hero.title}</h1>;
+  return (
+    <>
+      <Hero {...hero} />
+      <Services {...services} />
+      {/* TEMP(stage-5): the step is fixed until the 3D scene sets it. */}
+      <WardrobeSection {...scene} activeStep={3} />
+      <Projects {...projects} />
+    </>
+  );
 }

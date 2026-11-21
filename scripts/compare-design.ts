@@ -129,6 +129,58 @@ const PAIRS: readonly Pair[] = [
     mockup: "04-startseite-mobil",
     hint: "Leiste Anrufen / Anfrage unten, 81px hoch",
   },
+  // Session 4: the first four sections of the home page, whole sections.
+  {
+    name: "01b-erster-bildschirm",
+    path: "/",
+    selector: 'section[aria-labelledby="hero-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01b-erster-bildschirm",
+    sameCrop: true,
+    // The list under the hero (17px) has 1.5 in the scale, 1.6 in the mockup.
+    tolerancePx: 4,
+  },
+  {
+    name: "01c-leistungen",
+    path: "/",
+    selector: 'section[aria-labelledby="leistungen-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01c-leistungen",
+    sameCrop: true,
+    // The card text (17px) has a line height of 1.5 in the scale, 1.6 in the
+    // mockup: -1.7px per line, -5px on the longest card of three lines. The
+    // title is 26px (h3) instead of 24px: +2.4px. In all, about -3px.
+    tolerancePx: 4,
+  },
+  {
+    name: "01d-3d-szene",
+    path: "/",
+    selector: 'section[aria-labelledby="szene-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01d-3d-szene",
+    sameCrop: true,
+  },
+  {
+    name: "01e-projekte",
+    path: "/",
+    selector: 'section[aria-labelledby="projekte-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01e-projekte",
+    sameCrop: true,
+  },
+  {
+    name: "04-erster-bildschirm",
+    path: "/",
+    selector: 'section[aria-labelledby="hero-titel"]',
+    width: 390,
+    scale: 2,
+    mockup: "04-startseite-mobil",
+    hint: "Foto, Überschrift und Schaltflächen zwischen Kopfzeile und Leiste; unter den Schaltflächen folgt bei uns noch die Liste der Fakten",
+  },
 ];
 
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(
@@ -188,7 +240,18 @@ try {
       await page.evaluate(() => document.fonts.ready);
 
       if (pair.selector) {
-        await page.locator(pair.selector).first().screenshot({ path: file });
+        const target = page.locator(pair.selector).first();
+        // A section far down the page is scrolled into view for the capture,
+        // and the sticky header and phone bar would cover its edge. They stay
+        // in the flow when made static, so the layout does not move.
+        if (
+          !(await target.evaluate((el) => el.hasAttribute("data-sticky-bar")))
+        ) {
+          await page.addStyleTag({
+            content: "[data-sticky-bar]{position:static !important}",
+          });
+        }
+        await target.screenshot({ path: file });
       } else {
         await page.screenshot({ path: file, fullPage: true });
       }
