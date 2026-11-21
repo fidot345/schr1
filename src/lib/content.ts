@@ -2,6 +2,7 @@ import { cache } from "react";
 import type { SlugTranslations } from "@/i18n/locale-switch-href";
 import { type Locale, routing } from "@/i18n/routing";
 import type { Job, Project } from "@/payload-types";
+import { type JobPay, toJobPay } from "./job-pay";
 import { isPopulated, type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
 import { logoWordOf, paragraphs } from "./text";
@@ -167,7 +168,7 @@ type SlugsByLocale = Record<Locale, Map<number, string>>;
 
 /**
  * The slug of every document in each language, by id, from the list the
- * pages' generateStaticParams use (getServices, getProjects), so lookups
+ * pages' generateStaticParams use (getServices, getProjects, getOpenJobs), so lookups
  * agree with the built pages, also when an English slug is missing and the
  * German one stands in.
  */
@@ -402,6 +403,133 @@ export const getProject = cache(
   },
 );
 
+export type JobListItem = {
+  id: number;
+  title: string;
+  slug: string;
+  employmentType: Job["employmentType"];
+  /** "ab sofort", "September 2027". */
+  start: string;
+  hours: string;
+  pay: JobPay;
+};
+
+/**
+ * Open positions (switched on in the admin panel), in their order. A job
+ * that is switched off is not on the list, has no page and no slug for the
+ * language switch.
+ */
+export const getOpenJobs = cache(
+  async (locale: Locale): Promise<JobListItem[]> => {
+    const payload = await payloadClient();
+    const { docs } = await payload.find({
+      collection: "jobs",
+      ...readOptions(locale),
+      depth: 0,
+      sort: "order",
+      pagination: false,
+      where: { active: { equals: true } },
+      select: {
+        title: true,
+        slug: true,
+        employmentType: true,
+        start: true,
+        hours: true,
+        payMin: true,
+        payMax: true,
+        payUnit: true,
+        payText: true,
+      },
+    });
+
+    return docs.map((job) => ({
+      id: job.id,
+      title: job.title,
+      slug: job.slug,
+      employmentType: job.employmentType,
+      start: job.start,
+      hours: job.hours,
+      pay: toJobPay(job),
+    }));
+  },
+);
+
+export type JobDetail = Omit<JobListItem, "slug"> & {
+  intro: string[];
+  tasks: ListItem[];
+  requirements: ListItem[];
+  benefits: ListItem[];
+  /** ISO dates from Payload, for the Google markup. */
+  datePosted: string;
+  validThrough: string | null;
+  /** The job's slug in every language, for alternates and the language switch. */
+  slugs: Record<Locale, string>;
+  meta: {
+    title: string | null;
+    description: string | null;
+  };
+};
+
+const jobSlugsByLocale = () => slugsByLocale(getOpenJobs);
+
+/** One open job by its slug in this language, or null when there is none. */
+export const getJob = cache(
+  async (locale: Locale, slug: string): Promise<JobDetail | null> => {
+    const match = (await getOpenJobs(locale)).find((job) => job.slug === slug);
+    if (!match) return null;
+
+    const payload = await payloadClient();
+    const [job, jobSlugs] = await Promise.all([
+      payload.findByID({
+        collection: "jobs",
+        id: match.id,
+        ...readOptions(locale),
+        depth: 0,
+        disableErrors: true,
+        select: {
+          title: true,
+          employmentType: true,
+          start: true,
+          hours: true,
+          payMin: true,
+          payMax: true,
+          payUnit: true,
+          payText: true,
+          intro: true,
+          tasks: true,
+          requirements: true,
+          benefits: true,
+          datePosted: true,
+          validThrough: true,
+          meta: true,
+        },
+      }),
+      jobSlugsByLocale(),
+    ]);
+    if (!job) return null;
+
+    return {
+      id: job.id,
+      title: job.title,
+      employmentType: job.employmentType,
+      start: job.start,
+      hours: job.hours,
+      pay: toJobPay(job),
+      intro: paragraphs(job.intro),
+      tasks: listItems(job.tasks),
+      requirements: listItems(job.requirements),
+      benefits: listItems(job.benefits),
+      datePosted: job.datePosted,
+      validThrough: job.validThrough ?? null,
+      slugs: slugsOf(jobSlugs, match.id, slug),
+      meta: {
+        title: job.meta?.title ?? null,
+        description: job.meta?.description ?? null,
+      },
+    };
+  },
+);
+
 /** This language's slug → the slug in each other language. */
 const slugTranslationsFor = (
   locale: Locale,
@@ -427,47 +555,42 @@ const slugTranslationsFor = (
  */
 export const getSlugTranslations = cache(
   async (locale: Locale): Promise<SlugTranslations> => {
-    const [services, projects] = await Promise.all([
+    const [services, projects, jobs] = await Promise.all([
       serviceSlugsByLocale(),
       projectSlugsByLocale(),
+      jobSlugsByLocale(),
     ]);
 
     return {
       "/leistungen/[slug]": slugTranslationsFor(locale, services),
       "/referenzen/[slug]": slugTranslationsFor(locale, projects),
+      "/karriere/[slug]": slugTranslationsFor(locale, jobs),
     };
   },
 );
 
-export type JobListItem = {
+export type TeamMember = {
   id: number;
-  title: string;
-  slug: string;
-  employmentType: Job["employmentType"];
+  name: string;
+  role: string;
+  /** The year the person joined the workshop. */
+  since: number;
 };
 
-/** Open positions (switched on in the admin panel), in their order. */
-export const getOpenJobs = cache(
-  async (locale: Locale): Promise<JobListItem[]> => {
-    const payload = await payloadClient();
-    const { docs } = await payload.find({
-      collection: "jobs",
-      ...readOptions(locale),
-      depth: 0,
-      sort: "order",
-      pagination: false,
-      where: { active: { equals: true } },
-      select: { title: true, slug: true, employmentType: true },
-    });
+/** The team in the admin panel's order. */
+export const getTeam = cache(async (locale: Locale): Promise<TeamMember[]> => {
+  const payload = await payloadClient();
+  const { docs } = await payload.find({
+    collection: "team",
+    ...readOptions(locale),
+    depth: 0,
+    sort: "order",
+    pagination: false,
+    select: { name: true, role: true, since: true },
+  });
 
-    return docs.map((job) => ({
-      id: job.id,
-      title: job.title,
-      slug: job.slug,
-      employmentType: job.employmentType,
-    }));
-  },
-);
+  return docs.map(({ id, name, role, since }) => ({ id, name, role, since }));
+});
 
 export type TestimonialItem = {
   id: number;

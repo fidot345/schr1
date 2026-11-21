@@ -66,6 +66,43 @@
     "next": "Nächste Referenz",
     "allProjects": "Alle Referenzen ansehen"
   },
+  "AboutPage": {
+    "title": "Über uns",
+    "master": "Meisterbetrieb",
+    "teamTitle": "Das Team",
+    "since": "seit {year}"
+  },
+  "CareersPage": {
+    "title": "Karriere",
+    "openTitle": "Offene Stellen",
+    "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
+    "trialTitle": "Schnuppertag für Schüler:innen",
+    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}."
+  },
+  "JobPage": {
+    "employmentType": "Art der Stelle",
+    "start": "Start",
+    "hours": "Arbeitszeit",
+    "pay": "Lohn",
+    "detailsTitle": "Das erwartet dich",
+    "tasksTitle": "Deine Aufgaben",
+    "requirementsTitle": "Was du mitbringst",
+    "benefitsTitle": "Was wir bieten",
+    "applyTitle": "Bewirb dich",
+    "applyText": "Ruf uns an und sag, für welche Stelle du dich interessierst: {phone}.",
+    "call": "Jetzt anrufen",
+    "allJobs": "Alle offenen Stellen ansehen"
+  },
+  "JobPay": {
+    "range": "{min}–{max} € {unit}",
+    "from": "ab {min} € {unit}",
+    "upTo": "bis {max} € {unit}",
+    "fixed": "{amount} € {unit}",
+    "unit": {
+      "hour": "pro Stunde",
+      "month": "im Monat"
+    }
+  },
   "RequestCta": {
     "title": "Erzählen Sie uns von Ihrem Projekt",
     "text": "Beschreiben Sie in ein paar Sätzen, was Sie planen. Wir melden uns bei Ihnen und vereinbaren einen Termin für das Aufmaß vor Ort.",

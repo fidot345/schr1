@@ -71,6 +71,43 @@
     "text": "Describe in a few sentences what you are planning. We will get in touch and arrange a visit to measure up at your home.",
     "button": "Request a project"
   },
+  "AboutPage": {
+    "title": "About us",
+    "master": "Master craftsman's workshop",
+    "teamTitle": "The team",
+    "since": "since {year}"
+  },
+  "CareersPage": {
+    "title": "Careers",
+    "openTitle": "Open positions",
+    "noJobs": "We have no open position right now. Feel free to call us if you would still like to work with us: {phone}.",
+    "trialTitle": "Taster day for pupils",
+    "trialText": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Call us and arrange a date: {phone}."
+  },
+  "JobPage": {
+    "employmentType": "Type of job",
+    "start": "Start",
+    "hours": "Working hours",
+    "pay": "Pay",
+    "detailsTitle": "What to expect",
+    "tasksTitle": "Your tasks",
+    "requirementsTitle": "What you bring",
+    "benefitsTitle": "What we offer",
+    "applyTitle": "Apply",
+    "applyText": "Call us and tell us which position you are interested in: {phone}.",
+    "call": "Call now",
+    "allJobs": "See all open positions"
+  },
+  "JobPay": {
+    "range": "€{min}–{max} {unit}",
+    "from": "from €{min} {unit}",
+    "upTo": "up to €{max} {unit}",
+    "fixed": "€{amount} {unit}",
+    "unit": {
+      "hour": "per hour",
+      "month": "per month"
+    }
+  },
   "EmploymentType": {
     "full_time": "Full-time",
     "part_time": "Part-time",
