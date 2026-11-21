@@ -2,12 +2,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { MobileActionBar } from "@/components/layout/MobileActionBar";
-import { VacationBanner } from "@/components/layout/VacationBanner";
 import { routing } from "@/i18n/routing";
-import { getSiteSettings, getSlugTranslations } from "@/lib/content";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -15,9 +10,8 @@ type SiteLayoutProps = {
 };
 
 /**
- * The shell of every page of the site, BRIEF.md section 3, with the
- * company data from SiteSettings: holiday notice (only when switched on),
- * header, the page in <main>, footer and the mobile action bar.
+ * The shell of every page of the site. The header, the footer and the mobile
+ * bar are removed with the old design and come back in redesign session 3.
  * The route group adds no segment to the address.
  */
 export default async function SiteLayout({
@@ -29,23 +23,6 @@ export default async function SiteLayout({
     notFound();
   }
   setRequestLocale(locale);
-  const [site, translatedSlugs] = await Promise.all([
-    getSiteSettings(locale),
-    getSlugTranslations(locale),
-  ]);
 
-  return (
-    <>
-      {site.vacation && (
-        <VacationBanner from={site.vacation.from} to={site.vacation.until} />
-      )}
-      <Header
-        brandName={site.company.logoWord}
-        translatedSlugs={translatedSlugs}
-      />
-      <main id="main">{children}</main>
-      <Footer company={site.company} openingHours={site.openingHours} />
-      <MobileActionBar phone={site.company.phone} />
-    </>
-  );
+  return <main id="main">{children}</main>;
 }
