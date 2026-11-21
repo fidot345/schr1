@@ -16,18 +16,13 @@
     "projectsTitle": "Selected projects",
     "allProjects": "See all projects",
     "jobsTitle": "We are looking for reinforcements",
-    "openJobsTitle": "Open positions",
     "openJobsCta": "See open positions",
     "trialDayCta": "Request a trial day",
-    "noOpenJobs": "All positions are filled at the moment.",
     "aboutTitle": "A family business since 1989",
     "aboutMore": "More about us",
     "testimonialsTitle": "What our customers say",
     "quote": "“{text}”",
     "contactTitle": "Talk to us",
-    "contactPhone": "Phone",
-    "contactEmail": "Email",
-    "contactAddress": "Address",
     "contactHours": "Opening hours"
   },
   "Process": {

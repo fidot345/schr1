@@ -16,18 +16,13 @@
     "projectsTitle": "Ausgewählte Projekte",
     "allProjects": "Alle Referenzen ansehen",
     "jobsTitle": "Wir suchen Verstärkung",
-    "openJobsTitle": "Offene Stellen",
     "openJobsCta": "Offene Stellen ansehen",
     "trialDayCta": "Schnuppertag anfragen",
-    "noOpenJobs": "Im Moment sind alle Stellen besetzt.",
     "aboutTitle": "Familienbetrieb seit 1989",
     "aboutMore": "Mehr über uns",
     "testimonialsTitle": "Was Kunden sagen",
     "quote": "„{text}“",
     "contactTitle": "Sprechen Sie mit uns",
-    "contactPhone": "Telefon",
-    "contactEmail": "E-Mail",
-    "contactAddress": "Adresse",
     "contactHours": "Öffnungszeiten"
   },
   "Process": {
