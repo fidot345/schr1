@@ -1,5 +1,15 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { CallBox } from "@/components/form/CallBox";
+import { ConceptNote } from "@/components/form/ConceptNote";
+import { ErrorSummary } from "@/components/form/ErrorSummary";
+import { Field } from "@/components/form/Field";
+import { FormCard } from "@/components/form/FormCard";
+import { NextSteps } from "@/components/form/NextSteps";
+import { RadioCards } from "@/components/form/RadioCards";
+import { Stepper } from "@/components/form/Stepper";
+import { Textarea } from "@/components/form/Textarea";
+import { TextInput } from "@/components/form/TextInput";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import {
@@ -14,6 +24,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StepNumber } from "@/components/ui/StepNumber";
 import { TextLink } from "@/components/ui/TextLink";
+import { getDemoSite } from "@/content/demo-site";
 
 type ColorSwatch = {
   name: string;
@@ -167,12 +178,13 @@ const STEP_SIZES = [32, 44] as const;
 
 /**
  * The overview of the design tokens and the components: the palette, the type
- * scale, the logo, buttons, links, step numbers, icons and the sections.
- * The form elements come to this page in redesign session 6.
+ * scale, the logo, buttons, links, step numbers, icons, the sections and the
+ * form, put together as in mockup 03 with its error shown.
  */
 export function DevUiShowcase() {
   const t = useTranslations("DevUi");
   const common = useTranslations();
+  const { company, openingHours } = getDemoSite(useLocale());
 
   return (
     <main id="main">
@@ -405,6 +417,105 @@ export function DevUiShowcase() {
           />
         </Container>
       </Section>
+
+      <Container className="py-16">
+        <section aria-labelledby="dev-form">
+          <h2 id="dev-form">{t("groups.form")}</h2>
+          <div
+            id="dev-form-sample"
+            className="mt-8 flex flex-wrap items-start gap-14"
+          >
+            <div className="min-w-0 flex-[7_1_560px]">
+              <Stepper
+                current={1}
+                steps={[
+                  t("form.steps.what"),
+                  t("form.steps.where"),
+                  t("form.steps.contact"),
+                ]}
+              />
+              <FormCard className="mt-8" noValidate>
+                <ErrorSummary
+                  errors={[
+                    {
+                      fieldId: "beschreibung",
+                      message: t("form.description.summary"),
+                    },
+                  ]}
+                />
+                <RadioCards
+                  className="mt-8"
+                  name="typ"
+                  legend={t("form.typeLegend")}
+                  defaultValue="kueche"
+                  options={[
+                    { value: "kueche", label: t("form.types.kitchen") },
+                    { value: "schrank", label: t("form.types.wardrobe") },
+                    { value: "tueren", label: t("form.types.doors") },
+                    { value: "ausbau", label: t("form.types.fitout") },
+                    { value: "anderes", label: t("form.types.other") },
+                  ]}
+                />
+                <Field
+                  id="beschreibung"
+                  className="mt-8"
+                  label={t("form.description.label")}
+                  hint={t("form.description.hint")}
+                  error={t("form.description.error")}
+                >
+                  {(control) => <Textarea name="beschreibung" {...control} />}
+                </Field>
+                <Field
+                  id="masse"
+                  className="mt-7"
+                  label={t("form.size.label")}
+                  optional
+                  hint={t("form.size.hint")}
+                >
+                  {(control) => (
+                    <TextInput
+                      name="masse"
+                      className="max-w-105"
+                      {...control}
+                    />
+                  )}
+                </Field>
+                <div className="mt-9 flex flex-wrap items-center gap-4">
+                  <Button>{t("form.next")}</Button>
+                </div>
+                <p className="mt-6 text-xs text-schiefer">
+                  {t.rich("form.privacy", {
+                    link: (chunks) => (
+                      <TextLink href="#" tone="plain">
+                        {chunks}
+                      </TextLink>
+                    ),
+                  })}
+                </p>
+              </FormCard>
+              <ConceptNote className="mt-4" />
+            </div>
+            <aside
+              aria-labelledby="dev-form-next"
+              className="min-w-0 flex-[4_1_300px]"
+            >
+              <NextSteps
+                headingId="dev-form-next"
+                steps={[
+                  t("form.nextSteps.first"),
+                  t("form.nextSteps.second"),
+                  t("form.nextSteps.third"),
+                ]}
+              />
+              <CallBox
+                className="mt-9"
+                phone={company.phone}
+                openingHours={openingHours}
+              />
+            </aside>
+          </div>
+        </section>
+      </Container>
     </main>
   );
 }

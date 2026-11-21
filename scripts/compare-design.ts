@@ -45,6 +45,11 @@ type Pair = {
   /** Our capture is the same crop as the mockup screenshot: compare sizes. */
   sameCrop?: boolean;
   /**
+   * For a capture that is only a part of the mockup screenshot: the size of
+   * that part in px, measured in the mockup's HTML at the same width.
+   */
+  mockupSize?: { width: number; height: number };
+  /**
    * A wider tolerance than 2px for sizes, only where the difference follows
    * from the type scale (docs/REDESIGN.md, rule 2) and is explained here.
    */
@@ -243,6 +248,23 @@ const PAIRS: readonly Pair[] = [
     mockup: "04-startseite-mobil",
     hint: "Foto, Überschrift und Schaltflächen zwischen Kopfzeile und Leiste; unter den Schaltflächen folgt bei uns noch die Liste der Fakten",
   },
+  // Session 6: the form on /dev/ui, put together as in mockup 03.
+  {
+    name: "03-anfrage",
+    path: "/dev/ui",
+    selector: "#dev-form-sample",
+    width: 1440,
+    scale: 2,
+    mockup: "03-anfrage-desktop",
+    hint: "Alles unter der Einleitung: Schritte, Formular mit Fehler, Spalte «Was passiert danach?»; die Kopfzeile, der Titel und die Einleitung gehören zur Seite, nicht zum Block",
+    // The `main > div` of 03.html at 1440 px, measured in the browser.
+    mockupSize: { width: 1200, height: 1121.1 },
+    // All from the scale: the 15px and 17px lines have a line height of 1.5,
+    // the mockup 1.6 (steps -3px, texts in the column -3px); the heading of
+    // the column is 26px (h3) instead of 28px (-2px); the error title has 1.6
+    // from the body step, the mockup 1.4 (+3px). Together about -3px.
+    tolerancePx: 4,
+  },
 ];
 
 const BASE_URL = (process.env.BASE_URL ?? "http://localhost:3000").replace(
@@ -333,13 +355,15 @@ try {
     };
     let line = `✓ ${pair.name}: ${size.width}×${size.height}px`;
 
-    if (pair.sameCrop) {
-      const mockup = await readMockupSize(pair.mockup, pair.scale);
+    if (pair.sameCrop || pair.mockupSize) {
+      const mockup = pair.sameCrop
+        ? await readMockupSize(pair.mockup, pair.scale)
+        : pair.mockupSize;
       if (!mockup) {
         line += ` (нет design/screenshots/${pair.mockup}.png)`;
       } else {
-        const dw = size.width - mockup.width;
-        const dh = size.height - mockup.height;
+        const dw = Math.round((size.width - mockup.width) * 10) / 10;
+        const dh = Math.round((size.height - mockup.height) * 10) / 10;
         const limit = pair.tolerancePx ?? TOLERANCE_PX;
         const over = Math.abs(dw) > limit || Math.abs(dh) > limit;
         failed += over ? 1 : 0;

@@ -83,6 +83,17 @@
     "errorSummary": {
       "titleFormal": "Bitte prüfen Sie Ihre Angaben",
       "titleInformal": "Bitte prüf deine Angaben"
+    },
+    "stepper": {
+      "label": "Schritte der Anfrage",
+      "step": "Schritt {current} von {total}"
+    },
+    "nextSteps": {
+      "title": "Was passiert danach?"
+    },
+    "callBox": {
+      "title": "Lieber telefonieren?",
+      "hours": "{days} {hours} Uhr"
     }
   },
   "VacationBanner": {
@@ -123,7 +134,8 @@
       "links": "Links",
       "steps": "Schrittnummern",
       "icons": "Icons",
-      "sections": "Abschnitte"
+      "sections": "Abschnitte",
+      "form": "Formular"
     },
     "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing",
     "statesNote": "Hover und Fokus sind hier festgehalten, damit man sie ohne Maus und Tastatur sieht.",
@@ -172,6 +184,38 @@
       "moos": "Moos-Band",
       "line": "Weiß mit Linie oben",
       "intro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut."
+    },
+    "form": {
+      "steps": {
+        "what": "Was planen Sie?",
+        "where": "Wo und wann?",
+        "contact": "Wie erreichen wir Sie?"
+      },
+      "typeLegend": "Was möchten Sie bauen lassen?",
+      "types": {
+        "kitchen": "Küche",
+        "wardrobe": "Schrank oder Möbel nach Maß",
+        "doors": "Innentüren",
+        "fitout": "Innenausbau",
+        "other": "Etwas anderes"
+      },
+      "description": {
+        "label": "Beschreiben Sie kurz Ihr Vorhaben",
+        "hint": "Zum Beispiel: Einbauschrank fürs Schlafzimmer, Wand 3,20 m breit, bis unter die Decke.",
+        "error": "Bitte beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen.",
+        "summary": "Beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen."
+      },
+      "size": {
+        "label": "Ungefähre Maße",
+        "hint": "Breite × Höhe × Tiefe, wenn Sie es schon wissen."
+      },
+      "next": "Weiter zu Schritt 2",
+      "privacy": "Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+      "nextSteps": {
+        "first": "Wir melden uns innerhalb von zwei Werktagen.",
+        "second": "Wir kommen zum Aufmaß zu Ihnen.",
+        "third": "Sie bekommen eine Zeichnung und ein schriftliches Angebot."
+      }
     }
   }
 }

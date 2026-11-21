@@ -101,6 +101,7 @@ describe("/dev/ui", () => {
         "steps",
         "icons",
         "sections",
+        "form",
       ] as const) {
         expect(html).toContain(`>${messages.DevUi.groups[group]}</h2>`);
       }
@@ -126,8 +127,45 @@ describe("/dev/ui", () => {
         expect(html).toContain(`<h2 id="${id}"`);
       }
 
-      // Step numbers: three states in two sizes.
-      expect(html.split("rounded-full").length - 1).toBe(6);
+      // Step numbers: three states in two sizes, plus the three next steps
+      // of the form block.
+      expect(html.split("rounded-full").length - 1).toBe(9);
+    },
+  );
+
+  it.each([
+    ["de", de],
+    ["en", en],
+  ] as const)(
+    "shows the form as in mockup 03, with its error, in %s",
+    async (locale, messages) => {
+      vi.stubEnv("NODE_ENV", "development");
+      const html = render(await DevUiPage(props(locale)), locale);
+      const form = messages.DevUi.form;
+
+      expect(html).toContain('id="dev-form-sample"');
+      expect(html).toContain(`aria-label="${messages.Form.stepper.label}"`);
+      expect(html).toContain('aria-current="step"');
+      expect(html).toContain('role="alert"');
+      expect(html).toContain(`>${form.description.summary}</a>`);
+      expect(html).toContain('href="#beschreibung"');
+
+      // The invalid field is tied to its error and its hint.
+      expect(html).toContain('id="beschreibung-error"');
+      expect(html).toContain(
+        'aria-describedby="beschreibung-hint beschreibung-error"',
+      );
+      expect(html).toContain('aria-invalid="true"');
+
+      // The choice of the type of work: one radio per type, the first chosen.
+      expect(html.split('name="typ"').length - 1).toBe(5);
+      expect(html.split('checked=""').length - 1).toBe(1);
+      expect(html).toContain(`>${form.typeLegend}</legend>`);
+
+      // The column beside the form, and the demo note under it.
+      expect(html).toContain('aria-labelledby="dev-form-next"');
+      expect(html).toContain('href="tel:+498999998412"');
+      expect(html).toContain(messages.Demo.notice);
     },
   );
 });
