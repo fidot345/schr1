@@ -4,6 +4,7 @@ import { type CompanyContact, Footer } from "@/components/layout/Footer";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { VacationBanner } from "@/components/layout/VacationBanner";
 import { localeSwitchHref } from "@/i18n/locale-switch-href";
+import { resolveRoutePathname } from "@/i18n/route-pathname";
 import { telHref } from "@/lib/phone";
 import { classesOf, render } from "./support/render";
 
@@ -239,7 +240,109 @@ describe("LocaleSwitcher", () => {
   });
 });
 
+describe("LocaleSwitcher with translated slugs", () => {
+  const translatedSlugs = {
+    "/leistungen/[slug]": {
+      en: { kuechen: "kitchens" },
+      de: { kitchens: "kuechen" },
+    },
+  };
+
+  it("links a German service page to the English slug", () => {
+    route.pathname = "/leistungen/[slug]";
+    route.params = { locale: "de", slug: "kuechen" };
+    const html = render(<LocaleSwitcher translatedSlugs={translatedSlugs} />);
+    expect(html).toMatch(
+      /<a href="\/leistungen\/kitchens"[^>]*data-locale="en"/,
+    );
+  });
+
+  it("links an English service page back to the German slug", () => {
+    route.pathname = "/leistungen/[slug]";
+    route.params = { locale: "en", slug: "kitchens" };
+    const html = render(
+      <LocaleSwitcher translatedSlugs={translatedSlugs} />,
+      "en",
+    );
+    expect(html).toMatch(
+      /<a href="\/leistungen\/kuechen"[^>]*data-locale="de"/,
+    );
+  });
+
+  it("translates the slug also while an English page is prerendered", () => {
+    // next-intl's usePathname gives the raw internal address there.
+    route.pathname = "/leistungen/kitchens";
+    route.params = { locale: "en", slug: "kitchens" };
+    const html = render(
+      <LocaleSwitcher translatedSlugs={translatedSlugs} />,
+      "en",
+    );
+    expect(html).toMatch(
+      /<a href="\/leistungen\/kuechen"[^>]*data-locale="de"/,
+    );
+  });
+
+  it("leaves other routes alone", () => {
+    route.pathname = "/kontakt";
+    route.params = { locale: "de" };
+    const html = render(<LocaleSwitcher translatedSlugs={translatedSlugs} />);
+    expect(html).toMatch(/<a href="\/kontakt"[^>]*data-locale="en"/);
+  });
+});
+
+describe("resolveRoutePathname", () => {
+  it("keeps route templates and static routes", () => {
+    expect(resolveRoutePathname("/leistungen/[slug]", "kuechen")).toBe(
+      "/leistungen/[slug]",
+    );
+    expect(resolveRoutePathname("/kontakt", undefined)).toBe("/kontakt");
+  });
+
+  it("finds the template of a raw address through the slug", () => {
+    const raw = (path: string) =>
+      path as Parameters<typeof resolveRoutePathname>[0];
+    expect(resolveRoutePathname(raw("/leistungen/kitchens"), "kitchens")).toBe(
+      "/leistungen/[slug]",
+    );
+    expect(resolveRoutePathname(raw("/karriere/joiner"), "joiner")).toBe(
+      "/karriere/[slug]",
+    );
+  });
+
+  it("leaves an address it cannot match as it is", () => {
+    const raw = (path: string) =>
+      path as Parameters<typeof resolveRoutePathname>[0];
+    expect(resolveRoutePathname(raw("/dev/ui"), undefined)).toBe("/dev/ui");
+    expect(resolveRoutePathname(raw("/leistungen/kitchens"), "doors")).toBe(
+      "/leistungen/kitchens",
+    );
+  });
+});
+
 describe("localeSwitchHref", () => {
+  it("translates the slug through the map", () => {
+    expect(
+      localeSwitchHref(
+        "/leistungen/[slug]",
+        { locale: "de", slug: "kuechen" },
+        { kuechen: "kitchens" },
+      ),
+    ).toEqual({ pathname: "/leistungen/[slug]", params: { slug: "kitchens" } });
+  });
+
+  it("keeps a slug the map does not know, even one named like a built-in", () => {
+    const map = { kuechen: "kitchens" };
+    expect(
+      localeSwitchHref("/leistungen/[slug]", { slug: "tueren" }, map),
+    ).toEqual({ pathname: "/leistungen/[slug]", params: { slug: "tueren" } });
+    expect(
+      localeSwitchHref("/leistungen/[slug]", { slug: "constructor" }, map),
+    ).toEqual({
+      pathname: "/leistungen/[slug]",
+      params: { slug: "constructor" },
+    });
+  });
+
   it("returns static routes as they are", () => {
     expect(localeSwitchHref("/kontakt", { locale: "de" })).toBe("/kontakt");
     expect(localeSwitchHref("/", {})).toBe("/");

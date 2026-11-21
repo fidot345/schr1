@@ -12,7 +12,10 @@ import { buttonClassName } from "@/components/ui/Button";
 import { routing } from "@/i18n/routing";
 import { classesOf, render, tagWithId } from "./support/render";
 
-const route = vi.hoisted(() => ({ pathname: "/" as string }));
+const route = vi.hoisted(() => ({
+  pathname: "/" as string,
+  params: {} as Record<string, string>,
+}));
 
 /* Same stand-ins as in layout-components.test.tsx: Link is a plain <a>. */
 vi.mock("@/i18n/navigation", () => ({
@@ -37,7 +40,7 @@ vi.mock("@/i18n/navigation", () => ({
   usePathname: () => route.pathname,
 }));
 
-vi.mock("next/navigation", () => ({ useParams: () => ({}) }));
+vi.mock("next/navigation", () => ({ useParams: () => route.params }));
 
 /** The opening tag of the first element that matches. */
 const openingTag = (html: string, pattern: RegExp): string =>
@@ -148,8 +151,13 @@ describe("Header", () => {
 });
 
 describe("MobileActionBar", () => {
-  const renderOn = (pathname: string, locale: "de" | "en" = "de") => {
+  const renderOn = (
+    pathname: string,
+    locale: "de" | "en" = "de",
+    params: Record<string, string> = {},
+  ) => {
     route.pathname = pathname;
+    route.params = params;
     return render(<MobileActionBar phone="089 99998 412" />, locale);
   };
 
@@ -187,6 +195,11 @@ describe("MobileActionBar", () => {
 
   it.each(PAGES_WITHOUT_ACTION_BAR)("is not shown on %s", (pathname) => {
     expect(renderOn(pathname)).toBe("");
+  });
+
+  it("is not shown on an English job page while it is prerendered", () => {
+    // next-intl's usePathname gives the raw internal address there.
+    expect(renderOn("/karriere/joiner", "en", { slug: "joiner" })).toBe("");
   });
 
   it.each([

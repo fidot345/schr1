@@ -7,7 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { VacationBanner } from "@/components/layout/VacationBanner";
 import { routing } from "@/i18n/routing";
-import { getSiteSettings } from "@/lib/content";
+import { getSiteSettings, getSlugTranslations } from "@/lib/content";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -29,14 +29,20 @@ export default async function SiteLayout({
     notFound();
   }
   setRequestLocale(locale);
-  const site = await getSiteSettings(locale);
+  const [site, translatedSlugs] = await Promise.all([
+    getSiteSettings(locale),
+    getSlugTranslations(locale),
+  ]);
 
   return (
     <>
       {site.vacation && (
         <VacationBanner from={site.vacation.from} to={site.vacation.until} />
       )}
-      <Header brandName={site.company.logoWord} />
+      <Header
+        brandName={site.company.logoWord}
+        translatedSlugs={translatedSlugs}
+      />
       <main id="main">{children}</main>
       <Footer company={site.company} openingHours={site.openingHours} />
       <MobileActionBar phone={site.company.phone} />

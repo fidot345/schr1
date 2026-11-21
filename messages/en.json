@@ -13,9 +13,7 @@
     "sceneTitle": "From board to wardrobe",
     "scenePlaceholder": "Placeholder: a picture of the finished wardrobe goes here soon, the 3D scene later.",
     "projectsTitle": "Selected projects",
-    "projectMeta": "{objectType}, {year}",
     "allProjects": "See all projects",
-    "processTitle": "How your project works",
     "openJobsTitle": "Open positions",
     "openJobsCta": "See open positions",
     "noOpenJobs": "All positions are filled at the moment.",
@@ -26,6 +24,31 @@
     "contactEmail": "Email",
     "contactAddress": "Address",
     "contactHours": "Opening hours"
+  },
+  "Process": {
+    "title": "How your project works"
+  },
+  "ProjectCard": {
+    "meta": "{objectType}, {year}"
+  },
+  "ServicesPage": {
+    "title": "Services",
+    "intro": "We plan every piece for your room, make it in our own workshop and install it with our own team."
+  },
+  "ServicePage": {
+    "requestCta": "Request a project",
+    "includedTitle": "What is included",
+    "materialsTitle": "Materials",
+    "durationTitle": "How long it takes",
+    "galleryTitle": "Photos",
+    "projectsTitle": "Projects of this kind",
+    "allProjects": "See all projects",
+    "allServices": "See all services"
+  },
+  "RequestCta": {
+    "title": "Tell us about your project",
+    "text": "Describe in a few sentences what you are planning. We will get in touch and arrange a visit to measure up at your home.",
+    "button": "Request a project"
   },
   "EmploymentType": {
     "full_time": "Full-time",

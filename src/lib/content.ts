@@ -1,5 +1,6 @@
 import { cache } from "react";
-import type { Locale } from "@/i18n/routing";
+import type { SlugTranslations } from "@/i18n/locale-switch-href";
+import { type Locale, routing } from "@/i18n/routing";
 import type { Job } from "@/payload-types";
 import { type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
@@ -112,6 +113,167 @@ export type ProjectCard = {
   year: number;
   photo: Photo | null;
 };
+
+/** A line of a text list from the admin panel ("Was dazugehört"). */
+export type ListItem = {
+  id: string;
+  text: string;
+};
+
+const listItems = (
+  rows: readonly { id?: string | null; text: string }[] | null | undefined,
+): ListItem[] =>
+  (rows ?? []).map((row, index) => ({
+    id: row.id ?? String(index),
+    text: row.text,
+  }));
+
+export type ServiceDetail = {
+  id: number;
+  title: string;
+  summary: string;
+  intro: string[];
+  included: ListItem[];
+  materials: ListItem[];
+  duration: string | null;
+  photo: Photo | null;
+  gallery: Photo[];
+  /** Projects of this service from "Referenzen", in their order. */
+  projects: ProjectCard[];
+  /** The service's slug in every language, for alternates and the language switch. */
+  slugs: Record<Locale, string>;
+  meta: {
+    title: string | null;
+    description: string | null;
+  };
+};
+
+/**
+ * The slug of every service in each language, by id. getServices is what
+ * generateStaticParams lists, so lookups agree with the built pages, also
+ * when an English slug is missing and the German one stands in.
+ */
+const serviceSlugsByLocale = async (): Promise<
+  Record<Locale, Map<number, string>>
+> => {
+  const lists = await Promise.all(
+    routing.locales.map((code) => getServices(code)),
+  );
+  return Object.fromEntries(
+    routing.locales.map((code, index) => [
+      code,
+      new Map((lists[index] ?? []).map(({ id, slug }) => [id, slug])),
+    ]),
+  ) as Record<Locale, Map<number, string>>;
+};
+
+/** One service by its slug in this language, or null when there is none. */
+export const getService = cache(
+  async (locale: Locale, slug: string): Promise<ServiceDetail | null> => {
+    const match = (await getServices(locale)).find(
+      (service) => service.slug === slug,
+    );
+    if (!match) return null;
+
+    const payload = await payloadClient();
+    const [service, { docs: projects }, slugsByLocale] = await Promise.all([
+      payload.findByID({
+        collection: "services",
+        id: match.id,
+        ...readOptions(locale),
+        depth: 1,
+        disableErrors: true,
+        select: {
+          title: true,
+          summary: true,
+          intro: true,
+          included: true,
+          materials: true,
+          duration: true,
+          cover: true,
+          gallery: true,
+          meta: true,
+        },
+      }),
+      payload.find({
+        collection: "projects",
+        ...readOptions(locale),
+        depth: 1,
+        sort: "order",
+        pagination: false,
+        where: { service: { equals: match.id } },
+        select: {
+          title: true,
+          slug: true,
+          objectType: true,
+          year: true,
+          cover: true,
+        },
+      }),
+      serviceSlugsByLocale(),
+    ]);
+    if (!service) return null;
+
+    return {
+      id: service.id,
+      title: service.title,
+      summary: service.summary,
+      intro: paragraphs(service.intro),
+      included: listItems(service.included),
+      materials: listItems(service.materials),
+      duration: service.duration?.trim() || null,
+      photo: toPhoto(service.cover),
+      gallery: (service.gallery ?? [])
+        .map(toPhoto)
+        .filter((photo): photo is Photo => photo !== null),
+      projects: projects.map((project) => ({
+        id: project.id,
+        title: project.title,
+        slug: project.slug,
+        objectType: project.objectType,
+        year: project.year,
+        photo: toPhoto(project.cover),
+      })),
+      slugs: Object.fromEntries(
+        routing.locales.map((code) => [
+          code,
+          slugsByLocale[code].get(match.id) ?? slug,
+        ]),
+      ) as Record<Locale, string>,
+      meta: {
+        title: service.meta?.title ?? null,
+        description: service.meta?.description ?? null,
+      },
+    };
+  },
+);
+
+/**
+ * For the language switch in the header: on pages whose slug is
+ * translated, the slug of this language → the slug in each other language.
+ */
+export const getSlugTranslations = cache(
+  async (locale: Locale): Promise<SlugTranslations> => {
+    const services = await serviceSlugsByLocale();
+    const here = services[locale];
+
+    return {
+      "/leistungen/[slug]": Object.fromEntries(
+        routing.locales
+          .filter((code) => code !== locale)
+          .map((code) => [
+            code,
+            Object.fromEntries(
+              [...here].map(([id, slug]) => [
+                slug,
+                services[code].get(id) ?? slug,
+              ]),
+            ),
+          ]),
+      ),
+    };
+  },
+);
 
 export type JobListItem = {
   id: number;

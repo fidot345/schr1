@@ -7,7 +7,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button, buttonClassName } from "@/components/ui/Button";
-import { usePathname } from "@/i18n/navigation";
+import { useRoutePathname } from "@/i18n/route-pathname";
 import { telHref } from "@/lib/phone";
 import { showsActionBar } from "./navigation";
 
@@ -27,7 +27,7 @@ type MobileActionBarProps = {
  */
 export function MobileActionBar({ phone }: MobileActionBarProps) {
   const t = useTranslations("MobileActionBar");
-  const pathname = usePathname();
+  const pathname = useRoutePathname();
 
   if (!showsActionBar(pathname)) {
     return null;

@@ -8,8 +8,14 @@
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { textLinkClassName } from "@/components/ui/TextLink";
-import { type Href, localeSwitchHref } from "@/i18n/locale-switch-href";
-import { Link, usePathname } from "@/i18n/navigation";
+import {
+  type Href,
+  isSlugPathname,
+  localeSwitchHref,
+  type SlugTranslations,
+} from "@/i18n/locale-switch-href";
+import { Link } from "@/i18n/navigation";
+import { useRoutePathname } from "@/i18n/route-pathname";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 
@@ -19,6 +25,11 @@ type LocaleSwitcherProps = {
    * translated (from Payload). Without it the current route is reused.
    */
   alternateHref?: Href;
+  /**
+   * Translated slugs from Payload, see getSlugTranslations: the switch on
+   * /leistungen/kuechen links to /en/services/kitchens.
+   */
+  translatedSlugs?: SlugTranslations;
   /**
    * The navigation's name for screen readers, "Sprache" when left out.
    * Two switchers shown at once need different names.
@@ -34,14 +45,21 @@ type LocaleSwitcherProps = {
  */
 export function LocaleSwitcher({
   alternateHref,
+  translatedSlugs,
   label,
   className,
 }: LocaleSwitcherProps) {
   const t = useTranslations("LocaleSwitcher");
   const locale = useLocale();
-  const pathname = usePathname();
+  const pathname = useRoutePathname();
   const params = useParams();
-  const href = alternateHref ?? localeSwitchHref(pathname, params);
+  const hrefFor = (code: (typeof routing.locales)[number]): Href => {
+    if (alternateHref) return alternateHref;
+    const slugMap = isSlugPathname(pathname)
+      ? translatedSlugs?.[pathname]?.[code]
+      : undefined;
+    return localeSwitchHref(pathname, params, slugMap);
+  };
 
   return (
     <nav
@@ -62,7 +80,7 @@ export function LocaleSwitcher({
         ) : (
           <Link
             key={code}
-            href={href}
+            href={hrefFor(code)}
             locale={code}
             lang={code}
             hrefLang={code}

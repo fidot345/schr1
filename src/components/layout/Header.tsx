@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
-import type { Href } from "@/i18n/locale-switch-href";
+import type { Href, SlugTranslations } from "@/i18n/locale-switch-href";
 import { Link } from "@/i18n/navigation";
 import { HeaderShell } from "./HeaderShell";
 import { LocaleSwitcher } from "./LocaleSwitcher";
@@ -14,6 +14,8 @@ type HeaderProps = {
   brandName: string;
   /** Passed on to the language switcher, see LocaleSwitcher. */
   alternateHref?: Href;
+  /** Passed on to the language switcher, see LocaleSwitcher. */
+  translatedSlugs?: SlugTranslations;
 };
 
 const DESKTOP_LINK_CLASS =
@@ -32,7 +34,11 @@ const MENU_LINK_CLASS =
  * Sticky; once the page scrolls, the bar shrinks from 80px to 64px in 200ms,
  * at once with prefers-reduced-motion. Put VacationBanner right before it.
  */
-export function Header({ brandName, alternateHref }: HeaderProps) {
+export function Header({
+  brandName,
+  alternateHref,
+  translatedSlugs,
+}: HeaderProps) {
   const t = useTranslations("Header");
   const tNavigation = useTranslations("Navigation");
   const tLocaleSwitcher = useTranslations("LocaleSwitcher");
@@ -62,7 +68,10 @@ export function Header({ brandName, alternateHref }: HeaderProps) {
 
         <div className="flex items-center gap-4">
           <div className="hidden xl:block">
-            <LocaleSwitcher alternateHref={alternateHref} />
+            <LocaleSwitcher
+              alternateHref={alternateHref}
+              translatedSlugs={translatedSlugs}
+            />
           </div>
           <div className="hidden md:block">
             <Button href="/anfrage">{t("cta")}</Button>
@@ -83,6 +92,7 @@ export function Header({ brandName, alternateHref }: HeaderProps) {
                 </nav>
                 <LocaleSwitcher
                   alternateHref={alternateHref}
+                  translatedSlugs={translatedSlugs}
                   label={tLocaleSwitcher("menuLabel")}
                 />
                 <div>

@@ -1,5 +1,5 @@
 import { CmsImage } from "@/components/ui/CmsImage";
-import { Heading } from "@/components/ui/Heading";
+import { Heading, type HeadingLevel } from "@/components/ui/Heading";
 import type { InternalHref } from "@/components/ui/TextLink";
 import { Link } from "@/i18n/navigation";
 import type { Photo } from "@/lib/media";
@@ -12,6 +12,12 @@ type CardProps = {
   line: string;
   /** next/image `sizes` for the grid the card sits in. */
   sizes: string;
+  /** h3 under a section's h2; h2 where the cards are the page's main list. */
+  headingLevel?: 2 | 3;
+  /** Visual size of the title, h4 by default. */
+  headingSize?: HeadingLevel;
+  /** The first card when it is the page's largest element above the fold. */
+  priority?: boolean;
 };
 
 /**
@@ -19,14 +25,28 @@ type CardProps = {
  * No border, no shadow, no hover animation; the whole card is one link,
  * and the title is underlined while the pointer is on it.
  */
-export function Card({ href, photo, title, line, sizes }: CardProps) {
+export function Card({
+  href,
+  photo,
+  title,
+  line,
+  sizes,
+  headingLevel = 3,
+  headingSize = 4,
+  priority = false,
+}: CardProps) {
   return (
     <Link href={href} className="group flex h-full flex-col gap-4 rounded">
-      <CmsImage photo={photo} frameClassName="aspect-4/3" sizes={sizes} />
+      <CmsImage
+        photo={photo}
+        frameClassName="aspect-4/3"
+        sizes={sizes}
+        priority={priority}
+      />
       <div className="flex flex-col gap-2">
         <Heading
-          level={3}
-          size={4}
+          level={headingLevel}
+          size={headingSize}
           className="text-graphit underline-offset-4 group-hover:text-tannengruen group-hover:underline"
         >
           {title}

@@ -6,12 +6,12 @@ import { HomeAbout } from "@/components/sections/home/HomeAbout";
 import { HomeCareers } from "@/components/sections/home/HomeCareers";
 import { HomeContact } from "@/components/sections/home/HomeContact";
 import { HomeHero } from "@/components/sections/home/HomeHero";
-import { HomeProcess } from "@/components/sections/home/HomeProcess";
 import { HomeProjects } from "@/components/sections/home/HomeProjects";
 import { HomeScene } from "@/components/sections/home/HomeScene";
 import { HomeServices } from "@/components/sections/home/HomeServices";
 import { HomeTestimonials } from "@/components/sections/home/HomeTestimonials";
-import { getPathname } from "@/i18n/navigation";
+import { ProcessSection } from "@/components/sections/ProcessSection";
+import { pageAlternates } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import {
   getHomePage,
@@ -48,18 +48,7 @@ export async function generateMetadata({
     // title goes through the template.
     title: meta.title ? { absolute: meta.title } : hero.title,
     description: meta.description ?? hero.text,
-    alternates: {
-      canonical: getPathname({ locale, href: "/" }),
-      languages: {
-        ...Object.fromEntries(
-          routing.locales.map((code) => [
-            code,
-            getPathname({ locale: code, href: "/" }),
-          ]),
-        ),
-        "x-default": getPathname({ locale: routing.defaultLocale, href: "/" }),
-      },
-    },
+    alternates: pageAlternates(locale, () => "/"),
   };
 }
 
@@ -85,7 +74,7 @@ export default async function HomePage({ params }: PageProps) {
       <HomeServices services={services} />
       <HomeScene captions={home.sceneCaptions} />
       <HomeProjects projects={home.featuredProjects} />
-      <HomeProcess steps={home.processSteps} />
+      <ProcessSection id="home-process" steps={home.processSteps} />
       <HomeCareers block={home.careers} jobs={jobs} />
       <HomeAbout block={home.about} />
       <HomeTestimonials testimonials={testimonials} />

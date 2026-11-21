@@ -13,9 +13,7 @@
     "sceneTitle": "Vom Brett zum Schrank",
     "scenePlaceholder": "Platzhalter: Hier steht bald das Bild des fertigen Schranks, später die 3D-Szene.",
     "projectsTitle": "Ausgewählte Projekte",
-    "projectMeta": "{objectType}, {year}",
     "allProjects": "Alle Referenzen ansehen",
-    "processTitle": "So läuft Ihr Auftrag",
     "openJobsTitle": "Offene Stellen",
     "openJobsCta": "Offene Stellen ansehen",
     "noOpenJobs": "Im Moment sind alle Stellen besetzt.",
@@ -26,6 +24,31 @@
     "contactEmail": "E-Mail",
     "contactAddress": "Adresse",
     "contactHours": "Öffnungszeiten"
+  },
+  "Process": {
+    "title": "So läuft Ihr Auftrag"
+  },
+  "ProjectCard": {
+    "meta": "{objectType}, {year}"
+  },
+  "ServicesPage": {
+    "title": "Leistungen",
+    "intro": "Jedes Stück planen wir für Ihren Raum, fertigen es in unserer eigenen Werkstatt und bauen es mit unserem Team bei Ihnen ein."
+  },
+  "ServicePage": {
+    "requestCta": "Projekt anfragen",
+    "includedTitle": "Was dazugehört",
+    "materialsTitle": "Materialien",
+    "durationTitle": "Wie lange es dauert",
+    "galleryTitle": "Bilder",
+    "projectsTitle": "Referenzen aus diesem Bereich",
+    "allProjects": "Alle Referenzen ansehen",
+    "allServices": "Alle Leistungen ansehen"
+  },
+  "RequestCta": {
+    "title": "Erzählen Sie uns von Ihrem Projekt",
+    "text": "Beschreiben Sie in ein paar Sätzen, was Sie planen. Wir melden uns bei Ihnen und vereinbaren einen Termin für das Aufmaß vor Ort.",
+    "button": "Projekt anfragen"
   },
   "EmploymentType": {
     "full_time": "Vollzeit",

@@ -4,11 +4,11 @@ import { HomeAbout } from "@/components/sections/home/HomeAbout";
 import { HomeCareers } from "@/components/sections/home/HomeCareers";
 import { HomeContact } from "@/components/sections/home/HomeContact";
 import { HomeHero } from "@/components/sections/home/HomeHero";
-import { HomeProcess } from "@/components/sections/home/HomeProcess";
 import { HomeProjects } from "@/components/sections/home/HomeProjects";
 import { HomeScene } from "@/components/sections/home/HomeScene";
 import { HomeServices } from "@/components/sections/home/HomeServices";
 import { HomeTestimonials } from "@/components/sections/home/HomeTestimonials";
+import { ProcessSection } from "@/components/sections/ProcessSection";
 import type { SiteContent } from "@/lib/content";
 import type { Photo } from "@/lib/media";
 import { render, tagWithId } from "./support/render";
@@ -163,16 +163,23 @@ describe("HomeScene", () => {
   });
 });
 
-describe("HomeProcess", () => {
+describe("ProcessSection", () => {
   const steps = ["Aufmaß", "Entwurf", "Fertigung", "Montage"].map(
     (title, index) => ({ id: String(index), title, text: `${title} Text` }),
   );
-  const html = render(<HomeProcess steps={steps} />);
+  const html = render(<ProcessSection id="home-process" steps={steps} />);
 
   it("is an ordered list with the visible number hidden from screen readers", () => {
     expect(html.match(/<li /g)).toHaveLength(4);
     expect(html).toMatch(/<ol /);
     expect(html).toMatch(/<span aria-hidden="true"[^>]*>4<\/span>/);
+  });
+
+  it("is a Moos section named by its heading from the messages", () => {
+    expect(html).toMatch(/^<section id="home-process"/);
+    expect(html).toContain('aria-labelledby="home-process-title"');
+    expect(html).toContain("bg-moos");
+    expect(html).toContain(">So läuft Ihr Auftrag</h2>");
   });
 });
 
