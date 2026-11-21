@@ -12,14 +12,12 @@ export const AXE_TAGS = [
 ];
 
 /*
- * TEMP(stage-3): the pages the site links to but that do not exist yet
- * (request form, contact, legal pages), in German and in English. In a
- * production build next/link prefetches them and the browser logs a 404 for
- * each. Only such 404s are ignored; take each page out when it is built and
- * delete this with the last stage-3 page.
+ * TEMP(stage-4): the request form, which the site links to but which does
+ * not exist yet, in German and in English. In a production build next/link
+ * prefetches it and the browser logs a 404. Only such 404s are ignored;
+ * delete this when the form is built.
  */
-const NOT_BUILT_YET =
-  /^(\/en)?\/(anfrage|request|kontakt|contact|impressum|imprint|datenschutz|privacy)(\/|$)/;
+const NOT_BUILT_YET = /^(\/en)?\/(anfrage|request)(\/|$)/;
 
 const pathOf = (url: string): string => {
   try {
