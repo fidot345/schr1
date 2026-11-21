@@ -44,6 +44,11 @@ type Pair = {
   hint?: string;
   /** Our capture is the same crop as the mockup screenshot: compare sizes. */
   sameCrop?: boolean;
+  /**
+   * A wider tolerance than 2px for sizes, only where the difference follows
+   * from the type scale (docs/REDESIGN.md, rule 2) and is explained here.
+   */
+  tolerancePx?: number;
 };
 
 const PAIRS: readonly Pair[] = [
@@ -83,6 +88,46 @@ const PAIRS: readonly Pair[] = [
     scale: 2,
     mockup: "01b-erster-bildschirm",
     hint: "Projekt anfragen und Jobs bei uns unter dem Text; Menü und Anrufen in 04",
+  },
+  // Session 3: header, footer and mobile bar of the home page.
+  {
+    name: "01a-kopfzeile",
+    path: "/",
+    selector: "header",
+    width: 1440,
+    scale: 2,
+    mockup: "01a-kopfzeile",
+    sameCrop: true,
+  },
+  {
+    name: "01k-fusszeile",
+    path: "/",
+    selector: "footer",
+    width: 1440,
+    scale: 2,
+    mockup: "01k-fusszeile",
+    sameCrop: true,
+    // The mockup sets the 16px and 15px lines with a line height of 1.6, the
+    // scale has 1.5 for them: 1.6px on the headings, 1.5px on the last line.
+    tolerancePx: 4,
+  },
+  {
+    name: "04-kopfzeile",
+    path: "/",
+    selector: "header",
+    width: 390,
+    scale: 2,
+    mockup: "04-startseite-mobil",
+    hint: "Kopfzeile oben, 64px hoch",
+  },
+  {
+    name: "04-leiste",
+    path: "/",
+    selector: 'nav[aria-label="Schnellkontakt"]',
+    width: 390,
+    scale: 2,
+    mockup: "04-startseite-mobil",
+    hint: "Leiste Anrufen / Anfrage unten, 81px hoch",
   },
 ];
 
@@ -137,7 +182,9 @@ try {
     const file = path.join(OUT_DIR, `${pair.name}.png`);
 
     try {
-      await page.goto(`${BASE_URL}${pair.path}`, { waitUntil: "networkidle" });
+      // "load", not "networkidle": a production server prefetches the links
+      // of pages that do not exist yet, and the network never goes quiet.
+      await page.goto(`${BASE_URL}${pair.path}`, { waitUntil: "load" });
       await page.evaluate(() => document.fonts.ready);
 
       if (pair.selector) {
@@ -168,9 +215,10 @@ try {
       } else {
         const dw = size.width - mockup.width;
         const dh = size.height - mockup.height;
-        const over = Math.abs(dw) > TOLERANCE_PX || Math.abs(dh) > TOLERANCE_PX;
+        const limit = pair.tolerancePx ?? TOLERANCE_PX;
+        const over = Math.abs(dw) > limit || Math.abs(dh) > limit;
         failed += over ? 1 : 0;
-        line += ` · макет ${mockup.width}×${mockup.height}px · разница ${dw}/${dh}px${over ? " ✗ больше 2px" : ""}`;
+        line += ` · макет ${mockup.width}×${mockup.height}px · разница ${dw}/${dh}px${over ? ` ✗ больше ${limit}px` : ""}`;
       }
     } else {
       line += ` · сравни с design/screenshots/${pair.mockup}.png${pair.hint ? ` (${pair.hint})` : ""}`;

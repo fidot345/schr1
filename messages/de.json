@@ -105,10 +105,9 @@
   "Footer": {
     "contactHeading": "Kontakt",
     "hoursHeading": "Öffnungszeiten",
-    "menuHeading": "Menü",
-    "legalHeading": "Rechtliches",
-    "phone": "Telefon",
-    "email": "E-Mail"
+    "hours": "{days} {hours} Uhr",
+    "pagesHeading": "Seiten",
+    "legalHeading": "Rechtliches"
   },
   "Demo": {
     "notice": "Konzeptprojekt – die Schreinerei Tannrieder ist ein fiktives Unternehmen."
