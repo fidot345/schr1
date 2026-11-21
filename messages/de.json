@@ -11,18 +11,18 @@
     "jobsCta": "Jobs bei uns",
     "servicesTitle": "Was wir bauen",
     "sceneTitle": "Vom Brett zum Schrank",
-    "scenePlaceholder": "Platzhalter: Hier steht bald das Bild des fertigen Schranks, später die 3D-Szene.",
+    "skipAnimation": "Animation überspringen",
+    "sceneImageAlt": "Zeichnung eines Einbauschranks, der Schritt für Schritt zusammengebaut wird",
     "projectsTitle": "Ausgewählte Projekte",
     "allProjects": "Alle Referenzen ansehen",
-    "openJobsTitle": "Offene Stellen",
+    "jobsTitle": "Wir suchen Verstärkung",
     "openJobsCta": "Offene Stellen ansehen",
-    "noOpenJobs": "Im Moment sind alle Stellen besetzt.",
+    "trialDayCta": "Schnuppertag anfragen",
+    "aboutTitle": "Familienbetrieb seit 1989",
     "aboutMore": "Mehr über uns",
-    "testimonialsTitle": "Kundenstimmen",
-    "contactTitle": "So erreichen Sie uns",
-    "contactPhone": "Telefon",
-    "contactEmail": "E-Mail",
-    "contactAddress": "Adresse",
+    "testimonialsTitle": "Was Kunden sagen",
+    "quote": "„{text}“",
+    "contactTitle": "Sprechen Sie mit uns",
     "contactHours": "Öffnungszeiten"
   },
   "Process": {
@@ -83,6 +83,17 @@
     "errorSummary": {
       "titleFormal": "Bitte prüfen Sie Ihre Angaben",
       "titleInformal": "Bitte prüf deine Angaben"
+    },
+    "stepper": {
+      "label": "Schritte der Anfrage",
+      "step": "Schritt {current} von {total}"
+    },
+    "nextSteps": {
+      "title": "Was passiert danach?"
+    },
+    "callBox": {
+      "title": "Lieber telefonieren?",
+      "hours": "{days} {hours} Uhr"
     }
   },
   "VacationBanner": {
@@ -90,9 +101,11 @@
     "text": "Betriebsurlaub vom {from, date, long} bis {to, date, long}"
   },
   "Header": {
-    "homeLabel": "{name} – zur Startseite",
+    "homeLabel": "{name}, zur Startseite",
+    "logoDescriptor": "Schreinerei",
     "menuLabel": "Hauptmenü",
     "menuButton": "Menü",
+    "menuClose": "Schließen",
     "cta": "Projekt anfragen"
   },
   "MobileActionBar": {
@@ -103,10 +116,9 @@
   "Footer": {
     "contactHeading": "Kontakt",
     "hoursHeading": "Öffnungszeiten",
-    "menuHeading": "Menü",
-    "legalHeading": "Rechtliches",
-    "phone": "Telefon",
-    "email": "E-Mail"
+    "hours": "{days} {hours} Uhr",
+    "pagesHeading": "Seiten",
+    "legalHeading": "Rechtliches"
   },
   "Demo": {
     "notice": "Konzeptprojekt – die Schreinerei Tannrieder ist ein fiktives Unternehmen."
@@ -114,81 +126,96 @@
   "DevUi": {
     "metaTitle": "UI-Komponenten",
     "title": "UI-Komponenten",
-    "intro": "Alle Bausteine der Website auf einer Seite. Die Seite gibt es nur im Entwicklungsmodus.",
     "groups": {
       "colors": "Farben",
-      "typography": "Schriften",
-      "headings": "Überschriften",
-      "buttons": "Buttons",
-      "textLinks": "Textlinks",
-      "fields": "Formularfelder",
-      "errorSummary": "Fehlerliste",
-      "vacationBanner": "Urlaubshinweis",
-      "header": "Kopfzeile",
-      "mobileMenu": "Mobiles Menü",
-      "footer": "Fußzeile",
-      "localeSwitcher": "Sprachwahl",
-      "mobileActionBar": "Schnellkontakt auf dem Handy"
+      "typeScale": "Textgrößen",
+      "logo": "Logo",
+      "buttons": "Schaltflächen",
+      "links": "Links",
+      "steps": "Schrittnummern",
+      "icons": "Icons",
+      "sections": "Abschnitte",
+      "form": "Formular"
     },
-    "localeSwitcherLabel": "Sprache, Beispiel",
-    "vacationBannerLabel": "Urlaubshinweis, Beispiel",
-    "notes": {
-      "vacationBanner": "Steht über der Kopfzeile, wie oben auf dieser Seite. Ohne gültige Daten zeigt er nichts.",
-      "header": "Die Kopfzeile steht oben auf dieser Seite. Beim Scrollen bleibt sie am oberen Rand und wird niedriger.",
-      "mobileMenu": "Das Menü gehört zur Kopfzeile. Bei einer Fensterbreite unter 1280 px oben auf „Menü“ klicken.",
-      "footer": "Die Fußzeile steht ganz unten auf dieser Seite.",
-      "mobileActionBar": "Die Leiste gibt es nur unter 768 px Breite. Sie steht am Ende der Seite und bleibt beim Scrollen am unteren Rand."
+    "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing",
+    "statesNote": "Hover und Fokus sind hier festgehalten, damit man sie ohne Maus und Tastatur sieht.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Fokus"
     },
-    "typography": {
-      "headingFont": "Überschriften: Zilla Slab",
-      "bodyFont": "Text: Atkinson Hyperlegible Next",
-      "semibold": "SemiBold",
-      "bold": "Bold",
-      "regular": "Regular",
-      "lead": "Großer Text",
-      "body": "Grundtext",
-      "small": "Kleiner Text",
-      "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing"
-    },
-    "headings": {
-      "sample": "Überschrift {level}"
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Voll – Kopfzeile ab 1280 px",
+      "compact": "Kompakt – Kopfzeile auf dem Handy",
+      "light": "Hell – Fußzeile"
     },
     "buttons": {
       "primary": "Primär",
       "secondary": "Sekundär",
       "text": "Text",
-      "disabled": "{variant}, deaktiviert"
+      "header": "Primär in der Kopfzeile, 48 px",
+      "menu": "Menü-Schaltfläche, 44 px",
+      "withIcon": "Mit Icon",
+      "fullWidth": "Volle Breite",
+      "textLabel": "Mehr erfahren"
     },
-    "textLinks": {
-      "dark": "Textlink auf hellem Grund",
-      "light": "Textlink auf dunklem Grund"
+    "links": {
+      "strong": "Fett",
+      "plain": "Normal",
+      "muted": "Leise"
     },
-    "fields": {
-      "withoutError": "Ohne Fehler",
-      "withError": "Mit Fehler",
-      "name": "Name",
-      "nameHint": "Vor- und Nachname",
-      "email": "E-Mail",
-      "emailError": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-      "message": "Ihre Nachricht",
-      "messageError": "Bitte beschreiben Sie Ihr Vorhaben in ein paar Sätzen.",
-      "topic": "Worum geht es?",
-      "topicPlaceholder": "Bitte wählen",
-      "topicError": "Bitte wählen Sie ein Thema aus.",
-      "topics": {
-        "kitchen": "Küche",
-        "wardrobe": "Einbauschrank",
-        "doors": "Türen",
-        "interior": "Innenausbau"
+    "steps": {
+      "active": "Aktiv",
+      "default": "Normal",
+      "muted": "Gedämpft",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Telefon",
+      "menu": "Menü",
+      "close": "Schließen",
+      "arrowRight": "Pfeil nach rechts",
+      "error": "Fehler"
+    },
+    "sections": {
+      "default": "Ohne Hintergrund, mit Einleitung und Link",
+      "moos": "Moos-Band",
+      "line": "Weiß mit Linie oben",
+      "intro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut."
+    },
+    "form": {
+      "steps": {
+        "what": "Was planen Sie?",
+        "where": "Wo und wann?",
+        "contact": "Wie erreichen wir Sie?"
       },
-      "consent": "Ich bin einverstanden, dass meine Angaben zur Beantwortung der Anfrage verwendet werden.",
-      "consentError": "Bitte stimmen Sie zu, damit wir antworten können."
-    },
-    "errorSummary": {
-      "formal": "Sie-Form, auf den meisten Seiten",
-      "informal": "Du-Form, auf den Karriereseiten",
-      "informalEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
-      "informalMessage": "Bitte schreib uns ein paar Sätze über dich."
+      "typeLegend": "Was möchten Sie bauen lassen?",
+      "types": {
+        "kitchen": "Küche",
+        "wardrobe": "Schrank oder Möbel nach Maß",
+        "doors": "Innentüren",
+        "fitout": "Innenausbau",
+        "other": "Etwas anderes"
+      },
+      "description": {
+        "label": "Beschreiben Sie kurz Ihr Vorhaben",
+        "hint": "Zum Beispiel: Einbauschrank fürs Schlafzimmer, Wand 3,20 m breit, bis unter die Decke.",
+        "error": "Bitte beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen.",
+        "summary": "Beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen."
+      },
+      "size": {
+        "label": "Ungefähre Maße",
+        "hint": "Breite × Höhe × Tiefe, wenn Sie es schon wissen."
+      },
+      "next": "Weiter zu Schritt 2",
+      "privacy": "Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+      "nextSteps": {
+        "first": "Wir melden uns innerhalb von zwei Werktagen.",
+        "second": "Wir kommen zum Aufmaß zu Ihnen.",
+        "third": "Sie bekommen eine Zeichnung und ein schriftliches Angebot."
+      }
     }
   }
 }

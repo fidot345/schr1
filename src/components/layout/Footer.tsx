@@ -1,99 +1,101 @@
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { Heading } from "@/components/ui/Heading";
+import { Logo } from "@/components/ui/Logo";
 import { TextLink } from "@/components/ui/TextLink";
+import type { CompanyData, OpeningHoursRow } from "@/lib/content";
 import { telHref } from "@/lib/phone";
 import { LEGAL_NAVIGATION, MAIN_NAVIGATION } from "./navigation";
 
-/** Company data from the SiteSettings global in Payload (stage 2). */
-export type CompanyContact = {
-  name: string;
-  street: string;
-  postalCode: string;
-  city: string;
-  /** As people write it: "089 99998 412". */
-  phone: string;
-  email: string;
-};
-
-export type OpeningHoursEntry = {
-  /** "Mo–Do" */
-  days: string;
-  /** "7:00–16:30" */
-  hours: string;
-};
-
 type FooterProps = {
-  company: CompanyContact;
-  openingHours: OpeningHoursEntry[];
+  company: CompanyData;
+  openingHours: OpeningHoursRow[];
+  /** The line under the logo. */
+  tagline: string;
 };
+
+const HEADING_CLASS = "font-sans text-small font-bold text-weiss";
+
+/*
+ * Links on Graphit: Moos, and Weiß on hover (the base hover color is too dark
+ * here). inline-block makes each link as high as its line, 28.8px, so it is
+ * a target of at least 24px (WCAG 2.5.8) and the lines stay where they are.
+ */
+const LINK_CLASS = "inline-block text-moos hover:text-weiss";
+
+/*
+ * The lists of the footer have a line height of 1.8, as in the mockup (01k),
+ * not the 1.5 of the text scale: with it the columns come out 20px shorter.
+ */
+const LIST_CLASS = "mt-3 leading-[1.8]";
 
 /**
- * Site footer on Graphit, BRIEF.md section 3. focus-ring-light turns the
- * focus ring of everything inside to Weiß.
+ * The footer on Graphit, mockup 01k: the logo with a line of text, the
+ * contact, the opening hours, the pages, and under a Schiefer line the
+ * concept note and the legal pages. focus-ring-light turns the focus ring of
+ * everything inside to Weiß.
  */
-export function Footer({ company, openingHours }: FooterProps) {
+export function Footer({ company, openingHours, tagline }: FooterProps) {
   const t = useTranslations("Footer");
   const tNavigation = useTranslations("Navigation");
   const tDemo = useTranslations("Demo");
 
   return (
-    <footer className="focus-ring-light bg-graphit text-papier">
-      <Container className="py-16">
-        <div className="grid gap-12 md:grid-cols-12 md:gap-8">
-          <section aria-labelledby="footer-contact" className="md:col-span-4">
-            <Heading level={2} size={4} id="footer-contact">
-              {t("contactHeading")}
-            </Heading>
-            <address className="mt-4 not-italic">
-              <p className="font-bold">{company.name}</p>
-              <p>{company.street}</p>
-              <p>
-                {company.postalCode} {company.city}
-              </p>
-              <dl className="mt-4 flex flex-col gap-2">
-                <div className="flex flex-wrap gap-2">
-                  <dt className="font-bold">{t("phone")}</dt>
-                  <dd>
-                    <TextLink href={telHref(company.phone)} tone="light">
-                      {company.phone}
-                    </TextLink>
-                  </dd>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <dt className="font-bold">{t("email")}</dt>
-                  <dd>
-                    <TextLink href={`mailto:${company.email}`} tone="light">
-                      {company.email}
-                    </TextLink>
-                  </dd>
-                </div>
-              </dl>
+    <footer className="focus-ring-light bg-graphit pt-16 pb-8 text-small text-moos">
+      <Container>
+        <div className="flex flex-wrap gap-x-16 gap-y-10">
+          <div className="min-w-0 flex-[2_1_240px]">
+            <Logo variant="light" name={company.logoWord} />
+            <p className="mt-4 max-w-[22em]">{tagline}</p>
+          </div>
+
+          <div className="flex-[1_1_180px]">
+            <h2 className={HEADING_CLASS}>{t("contactHeading")}</h2>
+            <address className={`${LIST_CLASS} not-italic`}>
+              <TextLink
+                href={telHref(company.phone)}
+                tone="plain"
+                className={LINK_CLASS}
+              >
+                {company.phone}
+              </TextLink>
+              <br />
+              <TextLink
+                href={`mailto:${company.email}`}
+                tone="plain"
+                className={LINK_CLASS}
+              >
+                {company.email}
+              </TextLink>
+              <br />
+              {company.street}
+              <br />
+              {company.postalCode} {company.city}
             </address>
-          </section>
+          </div>
 
-          <section aria-labelledby="footer-hours" className="md:col-span-4">
-            <Heading level={2} size={4} id="footer-hours">
-              {t("hoursHeading")}
-            </Heading>
-            <dl className="mt-4 flex flex-col gap-2">
-              {openingHours.map((entry) => (
-                <div key={entry.days} className="flex flex-wrap gap-4">
-                  <dt className="w-24 font-bold">{entry.days}</dt>
-                  <dd>{entry.hours}</dd>
-                </div>
+          <div className="flex-[1_1_180px]">
+            <h2 className={HEADING_CLASS}>{t("hoursHeading")}</h2>
+            <ul className={LIST_CLASS}>
+              {openingHours.map((row) => (
+                <li key={row.id}>
+                  {t("hours", { days: row.days, hours: row.hours })}
+                </li>
               ))}
-            </dl>
-          </section>
+            </ul>
+          </div>
 
-          <nav aria-labelledby="footer-menu" className="md:col-span-4">
-            <Heading level={2} size={4} id="footer-menu">
-              {t("menuHeading")}
-            </Heading>
-            <ul className="mt-4 flex flex-col gap-2">
+          <nav aria-labelledby="footer-pages" className="flex-[1_1_160px]">
+            <h2 id="footer-pages" className={HEADING_CLASS}>
+              {t("pagesHeading")}
+            </h2>
+            <ul className={LIST_CLASS}>
               {MAIN_NAVIGATION.map((item) => (
                 <li key={item.href}>
-                  <TextLink href={item.href} tone="light">
+                  <TextLink
+                    href={item.href}
+                    tone="plain"
+                    className={LINK_CLASS}
+                  >
                     {tNavigation(item.label)}
                   </TextLink>
                 </li>
@@ -102,19 +104,23 @@ export function Footer({ company, openingHours }: FooterProps) {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-6 border-t border-schiefer pt-8 md:flex-row md:justify-between">
+        <div className="mt-14 flex flex-wrap justify-between gap-4 border-t border-schiefer pt-6 text-xs">
+          <p className="text-linie">{tDemo("notice")}</p>
           <nav aria-label={t("legalHeading")}>
-            <ul className="flex flex-wrap gap-6">
+            <ul className="flex gap-6">
               {LEGAL_NAVIGATION.map((item) => (
                 <li key={item.href}>
-                  <TextLink href={item.href} tone="light">
+                  <TextLink
+                    href={item.href}
+                    tone="plain"
+                    className={LINK_CLASS}
+                  >
                     {tNavigation(item.label)}
                   </TextLink>
                 </li>
               ))}
             </ul>
           </nav>
-          <p className="text-small">{tDemo("notice")}</p>
         </div>
       </Container>
     </footer>

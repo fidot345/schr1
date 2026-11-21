@@ -1,9 +1,9 @@
 import type { Messages } from "next-intl";
-import type { InternalHref } from "@/components/ui/TextLink";
+import type { Href } from "@/i18n/locale-switch-href";
 import type { routing } from "@/i18n/routing";
 
 export type NavigationItem = {
-  href: InternalHref;
+  href: Href;
   /** Key in the "Navigation" namespace of messages/*.json. */
   label: keyof Messages["Navigation"];
 };

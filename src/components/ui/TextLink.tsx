@@ -1,62 +1,35 @@
-import type { ComponentProps, ReactNode } from "react";
-import { Link } from "@/i18n/navigation";
+import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
+import { AppLink } from "./AppLink";
 
-/** A route from src/i18n/routing.ts, translated per locale by next-intl. */
-export type InternalHref = ComponentProps<typeof Link>["href"];
+/*
+ * Links from the mockup. The color, the underline and the hover color come
+ * from the base styles for `a` in globals.css, so a link on a dark surface
+ * can still set its own color with className.
+ *
+ * strong: bold, "Alle Referenzen ansehen", "Mehr über uns"
+ * plain:  regular weight, in a text, the e-mail address
+ * muted:  small and Schiefer, "Animation überspringen"
+ */
+export type TextLinkTone = "strong" | "plain" | "muted";
 
-/** Anything that leaves the site or the browser. Plain http is not allowed. */
-export type ExternalHref =
-  | `https://${string}`
-  | `mailto:${string}`
-  | `tel:${string}`;
-
-/** dark: Tannengrün text on light backgrounds. light: for Graphit backgrounds. */
-export type TextLinkTone = "dark" | "light";
-
-const TONE_CLASS: Record<TextLinkTone, string> = {
-  dark: "text-tannengruen hover:text-tannengruen-dunkel",
-  light: "focus-ring-light text-papier hover:text-weiss",
+const TONE: Record<TextLinkTone, string | undefined> = {
+  strong: "font-bold",
+  plain: undefined,
+  muted: "text-xs text-schiefer hover:text-tannengruen-dunkel",
 };
 
-export function textLinkClassName(tone: TextLinkTone = "dark") {
-  return cn(
-    "underline underline-offset-4 hover:decoration-2 motion-safe:transition-colors",
-    TONE_CLASS[tone],
-  );
-}
-
-export function isExternalHref(
-  href: InternalHref | ExternalHref,
-): href is ExternalHref {
-  return typeof href === "string" && /^(https:|mailto:|tel:)/.test(href);
-}
-
-type TextLinkProps = {
-  href: InternalHref | ExternalHref;
+type TextLinkProps = ComponentProps<typeof AppLink> & {
   tone?: TextLinkTone;
-  className?: string;
-  children: ReactNode;
 };
 
-export function TextLink({ href, tone, className, children }: TextLinkProps) {
-  const classes = cn(textLinkClassName(tone), className);
-
-  if (isExternalHref(href)) {
-    return (
-      <a
-        href={href}
-        rel={href.startsWith("https:") ? "noreferrer" : undefined}
-        className={classes}
-      >
-        {children}
-      </a>
-    );
-  }
-
+export function TextLink({
+  tone = "strong",
+  className,
+  ...rest
+}: TextLinkProps) {
+  // `|| undefined`: a plain link has no classes, and class="" is just noise.
   return (
-    <Link href={href} className={classes}>
-      {children}
-    </Link>
+    <AppLink className={cn(TONE[tone], className) || undefined} {...rest} />
   );
 }

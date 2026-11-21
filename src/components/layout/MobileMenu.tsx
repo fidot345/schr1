@@ -1,12 +1,15 @@
 "use client";
 
 /*
- * Client component: opening, closing, focus and scroll lock need the browser.
- * The menu content stays a server component and comes in as children.
+ * Client component: opening, closing, focus and the scroll lock need the
+ * browser. The content of the menu stays server-rendered and comes in as
+ * props.
  */
 
 import { useTranslations } from "next-intl";
 import {
+  type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
   useEffect,
   useId,
@@ -14,7 +17,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { buttonClassName } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { usePathname } from "@/i18n/navigation";
 import { useLenis } from "./SmoothScroll";
 
@@ -29,60 +34,34 @@ const focusablesIn = (root: HTMLElement): HTMLElement[] =>
     (element) => element.getClientRects().length > 0,
   );
 
-/** Every element outside `inside`: its siblings and those of its ancestors. */
-const elementsOutside = (inside: Element): Element[] => {
-  const outside: Element[] = [];
-  let node: Element | null = inside;
-  while (node?.parentElement) {
-    for (const sibling of node.parentElement.children) {
-      if (sibling !== node) outside.push(sibling);
-    }
-    node = node.parentElement === document.body ? null : node.parentElement;
-  }
-  return outside;
-};
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      viewBox="0 0 24 24"
-      className="size-6 shrink-0"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      {open ? (
-        <path d="M5 5l14 14M19 5L5 19" />
-      ) : (
-        <path d="M3 6h18M3 12h18M3 18h18" />
-      )}
-    </svg>
-  );
-}
-
 type MobileMenuProps = {
-  /** The menu content: navigation, language switcher, request button. */
+  /** The logo as a link to the home page: the left side of the top row. */
+  home: ReactNode;
+  /** The menu itself: navigation, language switcher, request button. */
   children: ReactNode;
 };
 
 /**
- * Full-screen menu below xl, BRIEF.md section 3. It opens under the header,
- * so the button stays in place and closes it again.
+ * The phone menu below xl, docs/REDESIGN.md, session 3. Not in the mockup.
  *
- * Open: focus moves to the first link, Tab cycles between the button and the
- * menu, everything outside the header is inert, the page does not scroll:
+ * A modal <dialog> over the whole screen on Papier. Its top row is the
+ * header's row: the logo and a "Schließen" button in the place of "Menü".
+ * Below come the menu items in h3, the language switcher and the request
+ * button.
+ *
+ * showModal() makes the page behind inert and puts the dialog in the top
+ * layer. Esc closes it. Tab cycles inside it. The page does not scroll:
  * overflow on <html> stops native scrolling, lenis.stop() the smooth one,
- * and data-lenis-prevent leaves wheel and touch in the panel to the panel.
- * Closed by the button, Esc or any link, focus goes back to the button.
- * No transition: the menu appears and disappears at once.
+ * and data-lenis-prevent leaves wheel and touch in the dialog to the dialog.
+ * After closing, focus goes back to "Menü". A link in the menu closes it
+ * too. There is no transition: the menu appears and disappears at once.
  */
-export function MobileMenu({ children }: MobileMenuProps) {
+export function MobileMenu({ home, children }: MobileMenuProps) {
   const t = useTranslations("Header");
-  const panelId = useId();
+  const dialogId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
 
   // Closes on a route change that did not come from a menu link (back button).
@@ -94,21 +73,11 @@ export function MobileMenu({ children }: MobileMenuProps) {
   }
 
   useLayoutEffect(() => {
-    const button = buttonRef.current;
-    const panel = panelRef.current;
-    const header = button?.closest("header");
-    if (!open || !button || !panel || !header) return;
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
 
-    const close = () => {
-      setOpen(false);
-      button.focus();
-    };
-
-    // The panel starts right under the header, whatever its height is now.
-    const place = () => {
-      panel.style.top = `${header.getBoundingClientRect().bottom}px`;
-    };
-    place();
+    dialog.showModal();
+    closeRef.current?.focus();
 
     const root = document.documentElement;
     const { overflow, scrollbarGutter } = root.style;
@@ -116,62 +85,17 @@ export function MobileMenu({ children }: MobileMenuProps) {
     // Keeps the scrollbar's space, so the page does not jump sideways.
     root.style.scrollbarGutter = "stable";
 
-    const inert = elementsOutside(header).filter(
-      (element): element is HTMLElement =>
-        element instanceof HTMLElement && !element.inert,
-    );
-    for (const element of inert) element.inert = true;
-
-    focusablesIn(panel)[0]?.focus();
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        close();
-        return;
-      }
-      if (event.key !== "Tab") return;
-
-      const cycle = [button, ...focusablesIn(panel)];
-      const first = cycle[0];
-      const last = cycle[cycle.length - 1];
-      const active = document.activeElement;
-      if (!(active instanceof HTMLElement) || !cycle.includes(active)) {
-        event.preventDefault();
-        first.focus();
-      } else if (event.shiftKey && active === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    const onPanelClick = (event: MouseEvent) => {
-      if (event.target instanceof Element && event.target.closest("a")) {
-        close();
-      }
-    };
-
     const wide = window.matchMedia(WIDE_SCREEN);
     const onWide = () => {
       if (wide.matches) setOpen(false);
     };
-
-    document.addEventListener("keydown", onKeyDown);
-    panel.addEventListener("click", onPanelClick);
-    window.addEventListener("resize", place);
     wide.addEventListener("change", onWide);
 
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      panel.removeEventListener("click", onPanelClick);
-      window.removeEventListener("resize", place);
       wide.removeEventListener("change", onWide);
-      for (const element of inert) element.inert = false;
       root.style.overflow = overflow;
       root.style.scrollbarGutter = scrollbarGutter;
+      if (dialog.open) dialog.close();
     };
   }, [open]);
 
@@ -184,28 +108,75 @@ export function MobileMenu({ children }: MobileMenuProps) {
     return () => lenis.start();
   }, [open, lenis]);
 
+  // Esc closes the dialog by itself and fires "close"; so does dialog.close().
+  const onClose = () => {
+    setOpen(false);
+    buttonRef.current?.focus();
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key !== "Tab") return;
+    const items = focusablesIn(event.currentTarget);
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  };
+
+  const closeOnLink = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target instanceof Element && event.target.closest("a")) {
+      setOpen(false);
+    }
+  };
+
   return (
     <>
-      <button
+      <Button
         ref={buttonRef}
-        type="button"
+        variant="menu"
+        icon={<MenuIcon />}
         aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((value) => !value)}
-        className={buttonClassName("secondary")}
+        aria-controls={dialogId}
+        onClick={() => setOpen(true)}
+        className="xl:hidden"
       >
-        <MenuIcon open={open} />
         {t("menuButton")}
-      </button>
-      <div
-        ref={panelRef}
-        id={panelId}
-        hidden={!open}
+      </Button>
+      {/*
+        No display class on the dialog itself: it would override the
+        browser's display:none of a closed dialog.
+      */}
+      <dialog
+        ref={dialogRef}
+        id={dialogId}
+        aria-label={t("menuButton")}
+        data-sticky-bar
         data-lenis-prevent
-        className="fixed inset-x-0 bottom-0 overflow-y-auto overscroll-contain bg-papier xl:hidden"
+        onClose={onClose}
+        onKeyDown={onKeyDown}
+        onClick={closeOnLink}
+        className="m-0 size-full max-h-none max-w-none overflow-y-auto overscroll-contain border-0 bg-papier p-0 text-graphit xl:hidden"
       >
-        {children}
-      </div>
+        <div className="flex min-h-(--header-height) items-center border-b border-linie">
+          <Container className="flex w-full items-center justify-between gap-8 max-md:pr-4">
+            {home}
+            <Button
+              ref={closeRef}
+              variant="menu"
+              icon={<CloseIcon />}
+              onClick={() => setOpen(false)}
+            >
+              {t("menuClose")}
+            </Button>
+          </Container>
+        </div>
+        <Container className="pb-10">{children}</Container>
+      </dialog>
     </>
   );
 }

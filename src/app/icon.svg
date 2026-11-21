@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="#1F4537">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 34" width="30" height="34" fill="#1F4537">
   <title>Tannrieder</title>
-  <path d="M13.5 2h5L23 9H9z"/>
-  <path d="M10.5 11h11l4.5 7H6z"/>
-  <path d="M8 20h16l4 6H4z"/>
-  <path d="M13.5 28h5v3h-5z"/>
+  <rect x="10" y="2" width="10" height="5" rx="1"/>
+  <rect x="5" y="10" width="20" height="5" rx="1"/>
+  <rect x="0" y="18" width="30" height="5" rx="1"/>
+  <rect x="12.5" y="25" width="5" height="9" rx="1"/>
 </svg>

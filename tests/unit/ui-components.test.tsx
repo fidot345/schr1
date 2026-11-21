@@ -1,18 +1,18 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { AdminLogo } from "@/components/admin/AdminGraphics";
-import { Footer } from "@/components/layout/Footer";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
-import { VacationBanner } from "@/components/layout/VacationBanner";
-import { Button } from "@/components/ui/Button";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { ErrorSummary } from "@/components/ui/ErrorSummary";
-import { Heading } from "@/components/ui/Heading";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
-import { TextInput } from "@/components/ui/TextInput";
+import {
+  ArrowRightIcon,
+  CloseIcon,
+  ErrorIcon,
+  MenuIcon,
+  PhoneIcon,
+} from "@/components/ui/icons";
+import { Section } from "@/components/ui/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { StepNumber } from "@/components/ui/StepNumber";
 import { TextLink } from "@/components/ui/TextLink";
 import { classesOf, render } from "./support/render";
 
@@ -38,232 +38,337 @@ vi.mock("@/i18n/navigation", () => ({
       {children}
     </a>
   ),
-  usePathname: () => "/",
 }));
 
-vi.mock("next/navigation", () => ({ useParams: () => ({}) }));
+describe("Button", () => {
+  it("is a primary 52px button by default and never submits by accident", () => {
+    const html = render(<Button>Projekt anfragen</Button>);
 
-const css = readFileSync("src/app/(frontend)/globals.css", "utf8");
-// Token names from @theme; "h1--line-height" style sub-keys are skipped.
-const tokens = (prefix: string): Set<string> =>
-  new Set(
-    [...css.matchAll(new RegExp(`--${prefix}-([a-z0-9-]+):`, "g"))]
-      .map((match) => match[1])
-      .filter((name) => !name.includes("--")),
-  );
-const colorTokens = tokens("color");
-const textTokens = tokens("text");
-const spacingTokens = tokens("spacing");
-
-const LEVELS = [1, 2, 3, 4] as const;
-const VARIANTS = ["primary", "secondary", "text"] as const;
-
-describe("Heading", () => {
-  it("renders the tag from level and the size from size", () => {
-    const html = render(
-      <Heading level={2} size={1}>
-        Werkstatt
-      </Heading>,
-    );
-    expect(html).toMatch(/^<h2 /);
-    expect(classesOf(html)).toContain("text-h1");
-    expect(classesOf(html)).not.toContain("text-h2");
-  });
-
-  it("sizes by level when no size is given", () => {
-    for (const level of LEVELS) {
-      const html = render(<Heading level={level}>Titel</Heading>);
-      expect(html).toMatch(new RegExp(`^<h${level} `));
-      expect(classesOf(html)).toContain(`text-h${level}`);
-      expect(classesOf(html)).toContain("font-heading");
-    }
-  });
-});
-
-describe("Container", () => {
-  it("uses the page width and gutter tokens", () => {
-    expect(classesOf(render(<Container>Inhalt</Container>))).toEqual(
+    expect(html).toMatch(/^<button type="button"/);
+    expect(classesOf(html)).toEqual(
       expect.arrayContaining([
-        "max-w-page",
-        "px-gutter-mobile",
-        "md:px-gutter-desktop",
+        "min-h-13",
+        "px-6.5",
+        "bg-tannengruen",
+        "text-weiss",
+        "hover:bg-tannengruen-dunkel",
+        "rounded",
+        "font-bold",
       ]),
     );
   });
-});
 
-describe("Button", () => {
-  it('is a <button type="button"> by default', () => {
-    expect(render(<Button>Senden</Button>)).toMatch(
-      /^<button [^>]*type="button"/,
+  it("takes the type of a form button", () => {
+    expect(render(<Button type="submit">Senden</Button>)).toMatch(
+      /^<button type="submit"/,
     );
   });
 
-  it("passes button attributes through", () => {
+  it("secondary has a 2px Tannengrün frame and the same total padding", () => {
+    expect(
+      classesOf(render(<Button variant="secondary">Jobs bei uns</Button>)),
+    ).toEqual(
+      expect.arrayContaining([
+        "border-2",
+        "border-tannengruen",
+        "text-tannengruen",
+        "px-6",
+        "hover:border-tannengruen-dunkel",
+      ]),
+    );
+  });
+
+  it("text has no frame, no background and no side padding", () => {
+    const classes = classesOf(render(<Button variant="text">Mehr</Button>));
+
+    expect(classes).toEqual(
+      expect.arrayContaining(["underline", "px-0", "text-tannengruen"]),
+    );
+    expect(classes).not.toContain("bg-tannengruen");
+    expect(classes).not.toContain("border-2");
+  });
+
+  it("is 48px in the header and 44px as the menu button", () => {
+    expect(
+      classesOf(render(<Button size="header">Projekt anfragen</Button>)),
+    ).toEqual(expect.arrayContaining(["min-h-12", "text-small", "px-5.5"]));
+    expect(classesOf(render(<Button variant="menu">Menü</Button>))).toEqual(
+      expect.arrayContaining([
+        "min-h-11",
+        "border",
+        "border-feldrand",
+        "bg-weiss",
+        "text-graphit",
+      ]),
+    );
+  });
+
+  it("can take the whole width and carry an icon before the label", () => {
     const html = render(
-      <Button type="submit" disabled>
-        Senden
+      <Button fullWidth icon={<PhoneIcon />}>
+        Anrufen
       </Button>,
     );
-    expect(html).toMatch(/type="submit"/);
-    expect(html).toMatch(/disabled=""/);
+
+    expect(classesOf(html)).toContain("w-full");
+    expect(html.indexOf("<svg")).toBeLessThan(html.indexOf("Anrufen"));
   });
 
-  it("renders the next-intl Link when it has an href", () => {
-    const html = render(<Button href="/anfrage">Anfrage</Button>);
-    expect(html).toMatch(/^<a [^>]*href="\/anfrage"/);
-    expect(html).toContain("data-intl-link");
+  it("passes attributes through", () => {
+    expect(
+      render(
+        <Button variant="menu" aria-expanded="false">
+          Menü
+        </Button>,
+      ),
+    ).toContain('aria-expanded="false"');
   });
+});
 
-  it("is at least 48px high with a 4px radius in every variant", () => {
-    for (const variant of VARIANTS) {
-      const classes = classesOf(render(<Button variant={variant}>Los</Button>));
-      expect(classes).toContain("min-h-12");
-      expect(classes).toContain("rounded");
-    }
-  });
-
-  it("fills primary and outlines secondary with Tannengrün", () => {
-    const primary = classesOf(render(<Button variant="primary">A</Button>));
-    const secondary = classesOf(render(<Button variant="secondary">B</Button>));
-    expect(primary).toEqual(
-      expect.arrayContaining(["bg-tannengruen", "text-weiss"]),
+describe("ButtonLink", () => {
+  it("is a plain anchor for a phone number, an e-mail address and an anchor", () => {
+    expect(
+      render(<ButtonLink href="tel:+498999998412">Anrufen</ButtonLink>),
+    ).toMatch(/^<a [^>]*href="tel:\+498999998412"/);
+    expect(
+      render(<ButtonLink href="mailto:a@b.example">Mail</ButtonLink>),
+    ).toContain('href="mailto:a@b.example"');
+    expect(render(<ButtonLink href="#projekte">Weiter</ButtonLink>)).toContain(
+      'href="#projekte"',
     );
-    expect(secondary).toEqual(
-      expect.arrayContaining(["border-tannengruen", "text-tannengruen"]),
-    );
-    expect(secondary.filter((name) => name.startsWith("bg-"))).toEqual([]);
   });
 
-  it("has a flat Moos disabled state in the box variants", () => {
-    for (const variant of ["primary", "secondary"] as const) {
-      const classes = classesOf(render(<Button variant={variant}>A</Button>));
-      expect(classes).toEqual(
-        expect.arrayContaining([
-          "disabled:bg-moos",
-          "disabled:border-linie",
-          "disabled:text-schiefer",
-          "disabled:cursor-not-allowed",
-        ]),
+  it("looks like the button of the same variant", () => {
+    expect(
+      classesOf(
+        render(
+          <ButtonLink href="#" variant="secondary">
+            Jobs bei uns
+          </ButtonLink>,
+        ),
+      ),
+    ).toEqual(expect.arrayContaining(["border-2", "min-h-13", "no-underline"]));
+  });
+
+  it("goes through next-intl's Link for a page of the site", () => {
+    const page = render(<ButtonLink href="/kontakt">Kontakt</ButtonLink>);
+
+    expect(page).toContain("data-intl-link");
+    expect(page).toContain('href="/kontakt"');
+  });
+
+  it("does not use it for anything that leaves the router", () => {
+    for (const href of [
+      "tel:+498999998412",
+      "mailto:a@b.example",
+      "#projekte",
+      "https://example.org/",
+    ] as const) {
+      expect(render(<ButtonLink href={href}>x</ButtonLink>)).not.toContain(
+        "data-intl-link",
       );
     }
-    const text = classesOf(render(<Button variant="text">C</Button>));
-    expect(text).toContain("disabled:text-schiefer");
   });
 });
 
 describe("TextLink", () => {
-  it("renders the next-intl Link for internal routes", () => {
-    expect(render(<TextLink href="/kontakt">Kontakt</TextLink>)).toContain(
-      "data-intl-link",
-    );
+  it("is bold by default", () => {
+    expect(
+      classesOf(render(<TextLink href="#">Alle Referenzen ansehen</TextLink>)),
+    ).toContain("font-bold");
   });
 
-  it("renders a plain <a> for external links", () => {
-    const web = render(<TextLink href="https://example.org">Web</TextLink>);
-    expect(web).not.toContain("data-intl-link");
-    expect(web).toMatch(/rel="noreferrer"/);
-
-    const phone = render(<TextLink href="tel:+498999998412">Tel</TextLink>);
-    expect(phone).toMatch(/^<a href="tel:\+498999998412"/);
-    expect(phone).not.toContain("rel=");
-  });
-
-  it("is Tannengrün by default and light with a light focus ring", () => {
-    const dark = classesOf(render(<TextLink href="/kontakt">K</TextLink>));
-    expect(dark).toContain("text-tannengruen");
-    expect(dark).not.toContain("focus-ring-light");
-
-    const light = classesOf(
+  it("plain has no extra classes, the base styles for links do the work", () => {
+    expect(
       render(
-        <TextLink href="/kontakt" tone="light">
-          K
+        <TextLink href="#" tone="plain">
+          Mail
         </TextLink>,
       ),
-    );
-    expect(light).toEqual(
-      expect.arrayContaining(["text-papier", "focus-ring-light"]),
-    );
-    expect(light).not.toContain("text-tannengruen");
+    ).not.toContain("class=");
+  });
+
+  it("muted is small and Schiefer", () => {
+    expect(
+      classesOf(
+        render(
+          <TextLink href="#" tone="muted">
+            Animation überspringen
+          </TextLink>,
+        ),
+      ),
+    ).toEqual(expect.arrayContaining(["text-xs", "text-schiefer"]));
   });
 });
 
-describe("design tokens in ui components", () => {
-  const html = [
-    render(<Container>x</Container>),
-    ...LEVELS.map((level) => render(<Heading level={level}>x</Heading>)),
-    ...VARIANTS.map((variant) => render(<Button variant={variant}>x</Button>)),
-    render(<TextLink href="/">x</TextLink>),
-    render(
-      <TextLink href="/" tone="light">
-        x
-      </TextLink>,
-    ),
-    render(<TextInput id="a" label="A" hint="h" error="e" optional />),
-    render(<TextInput id="b" label="B" />),
-    render(<TextArea id="c" label="C" error="e" />),
-    render(<Select id="d" label="D" options={[{ value: "1", label: "1" }]} />),
-    render(<Checkbox id="e" label="E" error="e" />),
-    render(<ErrorSummary errors={[{ fieldId: "a", message: "m" }]} />),
-    render(<VacationBanner from="2026-12-23" to="2027-01-06" />),
-    render(
-      <Footer
-        company={{
-          name: "n",
-          street: "s",
-          postalCode: "p",
-          city: "c",
-          phone: "089 99998 412",
-          email: "info@tannrieder.example",
-        }}
-        openingHours={[{ days: "d", hours: "h" }]}
+describe("Container", () => {
+  it("is 1280px wide with the fluid side margin", () => {
+    expect(classesOf(render(<Container>x</Container>))).toEqual([
+      "mx-auto",
+      "max-w-page",
+      "px-gutter",
+    ]);
+  });
+});
+
+describe("Section", () => {
+  it("is named by its heading", () => {
+    expect(render(<Section labelledBy="a-titel">x</Section>)).toMatch(
+      /^<section aria-labelledby="a-titel"/,
+    );
+  });
+
+  it("keeps 128px above on the desktop and 64px on the phone", () => {
+    expect(classesOf(render(<Section labelledBy="a">x</Section>))).toEqual([
+      "pt-16",
+      "md:pt-32",
+    ]);
+  });
+
+  it("moos is a Moos band", () => {
+    expect(
+      classesOf(
+        render(
+          <Section variant="moos" labelledBy="a">
+            x
+          </Section>,
+        ),
+      ),
+    ).toEqual(
+      expect.arrayContaining(["bg-moos", "md:py-24", "md:mt-32", "mt-16"]),
+    );
+  });
+
+  it("line is white with a Linie line on top", () => {
+    expect(
+      classesOf(
+        render(
+          <Section variant="line" labelledBy="a">
+            x
+          </Section>,
+        ),
+      ),
+    ).toEqual(expect.arrayContaining(["bg-weiss", "border-t", "border-linie"]));
+  });
+
+  it("can drop the space above for a section that sets its own", () => {
+    expect(
+      classesOf(
+        render(
+          <Section labelledBy="a" topSpace="none" className="pt-14">
+            x
+          </Section>,
+        ),
+      ),
+    ).toEqual(["pt-14"]);
+  });
+});
+
+describe("SectionHeading", () => {
+  it("is an h2 with the id the section points at", () => {
+    const html = render(
+      <SectionHeading id="leistungen-titel" title="Was wir bauen" />,
+    );
+
+    expect(html).toContain('<h2 id="leistungen-titel"');
+    expect(html).toContain(">Was wir bauen</h2>");
+    expect(html).not.toContain("<p");
+    expect(html).not.toContain("<a");
+  });
+
+  it("shows the introduction in Schiefer under the title", () => {
+    const html = render(
+      <SectionHeading id="a" title="Titel" intro="Alles entsteht bei uns." />,
+    );
+
+    expect(html).toMatch(
+      /<p class="[^"]*text-schiefer[^"]*">Alles entsteht bei uns\.<\/p>/,
+    );
+    expect(html.indexOf("Titel")).toBeLessThan(html.indexOf("Alles entsteht"));
+  });
+
+  it("puts the link in the title row, after the title", () => {
+    const html = render(
+      <SectionHeading
+        id="a"
+        title="Ausgewählte Projekte"
+        link={{ href: "#", label: "Alle Referenzen ansehen" }}
       />,
-    ),
-    render(<LocaleSwitcher />),
-  ].join("");
-  // Drop variants such as hover: or md: and keep the utility itself.
-  const utilities = [
-    ...new Set(classesOf(html).map((name) => name.split(":").at(-1) ?? "")),
-  ];
+    );
 
-  it("has no arbitrary values or raw colors", () => {
-    expect(utilities.filter((name) => /[[\]#]/.test(name))).toEqual([]);
-  });
-
-  it("takes colors and text sizes only from tokens", () => {
-    const wrong = utilities.filter((name) => {
-      const match = name.match(/^(bg|text|border|decoration|outline)-(.+)$/);
-      if (!match) return false;
-      const [, kind, value] = match;
-      if (/^\d+$/.test(value)) return false; // widths: border-2, decoration-2
-      if (kind === "border" && /^[trblxy](-\d+)?$/.test(value)) return false; // sides: border-t
-      if (kind === "text" && (textTokens.has(value) || value === "center")) {
-        return false;
-      }
-      return !colorTokens.has(value);
-    });
-    expect(wrong).toEqual([]);
-  });
-
-  it("keeps spacing on the 8px grid", () => {
-    const wrong = utilities.filter((name) => {
-      const match = name.match(/^(?:p|px|py|m|mx|my|gap|min-h)-(.+)$/);
-      if (!match) return false;
-      const value = match[1];
-      if (value === "auto" || spacingTokens.has(value)) return false;
-      return !(/^\d+$/.test(value) && Number(value) % 2 === 0);
-    });
-    expect(wrong).toEqual([]);
-  });
-
-  it("has no shadows and only the one radius", () => {
-    expect(utilities.filter((name) => /shadow/.test(name))).toEqual([]);
-    expect(utilities.filter((name) => name.startsWith("rounded-"))).toEqual([]);
+    expect(html).toContain("justify-between");
+    expect(html.indexOf("Ausgewählte Projekte")).toBeLessThan(
+      html.indexOf("Alle Referenzen ansehen"),
+    );
+    expect(html).toMatch(/<a [^>]*>Alle Referenzen ansehen<\/a>/);
   });
 });
 
-describe("AdminLogo", () => {
-  it("loads eagerly, it is the LCP of the login page", () => {
-    expect(render(<AdminLogo />)).toMatch(/loading="eager"/);
+describe("StepNumber", () => {
+  it("is hidden from assistive technology, the list counts the steps", () => {
+    expect(render(<StepNumber value={1} />)).toMatch(
+      /^<span aria-hidden="true"/,
+    );
+  });
+
+  it("is 32px by default and 44px with the Zilla Slab number", () => {
+    expect(classesOf(render(<StepNumber value={1} />))).toEqual(
+      expect.arrayContaining(["size-8", "text-xs", "rounded-full"]),
+    );
+    expect(classesOf(render(<StepNumber value={1} size={44} />))).toEqual(
+      expect.arrayContaining(["size-11", "font-display", "text-h4"]),
+    );
+  });
+
+  it("has three states: regular, active, muted", () => {
+    expect(classesOf(render(<StepNumber value={1} />))).toEqual(
+      expect.arrayContaining(["border-2", "border-tannengruen"]),
+    );
+    expect(classesOf(render(<StepNumber value={1} state="active" />))).toEqual(
+      expect.arrayContaining(["bg-tannengruen", "text-weiss"]),
+    );
+    expect(classesOf(render(<StepNumber value={1} state="muted" />))).toEqual(
+      expect.arrayContaining(["border-linie", "text-schiefer"]),
+    );
+  });
+});
+
+describe("icons", () => {
+  const icons = {
+    PhoneIcon,
+    MenuIcon,
+    CloseIcon,
+    ArrowRightIcon,
+    ErrorIcon,
+  };
+
+  it.each(Object.entries(icons))(
+    "%s: 2px line in the text color, hidden from assistive technology",
+    (_name, Icon) => {
+      const html = render(<Icon />);
+
+      expect(html).toContain('stroke-width="2"');
+      expect(html).toContain('stroke="currentColor"');
+      expect(html).toContain('aria-hidden="true"');
+      expect(html).toContain('width="20"');
+    },
+  );
+
+  it("takes a size", () => {
+    expect(render(<ArrowRightIcon size={22} />)).toMatch(
+      /width="22" height="22"/,
+    );
+  });
+});
+
+describe("ui components use the tokens only", () => {
+  const dir = "src/components/ui";
+  const files = readdirSync(dir).filter((name) => name.endsWith(".tsx"));
+
+  it.each(files)("%s has no color values of its own", (name) => {
+    const source = readFileSync(`${dir}/${name}`, "utf8");
+
+    expect(source).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+    expect(source).not.toMatch(/\b(?:rgb|hsl)a?\(/);
   });
 });

@@ -6,8 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { VacationBanner } from "@/components/layout/VacationBanner";
+import { getDemoSite } from "@/content/demo-site";
 import { routing } from "@/i18n/routing";
-import { getSiteSettings, getSlugTranslations } from "@/lib/content";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -15,10 +15,10 @@ type SiteLayoutProps = {
 };
 
 /**
- * The shell of every page of the site, BRIEF.md section 3, with the
- * company data from SiteSettings: holiday notice (only when switched on),
- * header, the page in <main>, footer and the mobile action bar.
- * The route group adds no segment to the address.
+ * The shell of every page of the site, docs/REDESIGN.md, session 3:
+ * holiday notice (only when switched on), header, the page in <main>,
+ * footer and the mobile bar. They are direct children of <body>, in this
+ * order. The route group adds no segment to the address.
  */
 export default async function SiteLayout({
   children,
@@ -29,23 +29,21 @@ export default async function SiteLayout({
     notFound();
   }
   setRequestLocale(locale);
-  const [site, translatedSlugs] = await Promise.all([
-    getSiteSettings(locale),
-    getSlugTranslations(locale),
-  ]);
+  const { company, openingHours, tagline, vacation } = getDemoSite(locale);
 
   return (
     <>
-      {site.vacation && (
-        <VacationBanner from={site.vacation.from} to={site.vacation.until} />
-      )}
-      <Header
-        brandName={site.company.logoWord}
-        translatedSlugs={translatedSlugs}
+      <VacationBanner
+        enabled={vacation !== null}
+        from={vacation?.from}
+        to={vacation?.until}
       />
-      <main id="main">{children}</main>
-      <Footer company={site.company} openingHours={site.openingHours} />
-      <MobileActionBar phone={site.company.phone} />
+      <Header companyName={company.name} brandName={company.logoWord} />
+      <main id="main" className="flex-1">
+        {children}
+      </main>
+      <Footer company={company} openingHours={openingHours} tagline={tagline} />
+      <MobileActionBar phone={company.phone} />
     </>
   );
 }

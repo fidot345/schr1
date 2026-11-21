@@ -1,338 +1,521 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
-import { MobileActionBar } from "@/components/layout/MobileActionBar";
-import { VacationBanner } from "@/components/layout/VacationBanner";
-import { Button, type ButtonVariant } from "@/components/ui/Button";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { CallBox } from "@/components/form/CallBox";
+import { ConceptNote } from "@/components/form/ConceptNote";
+import { ErrorSummary } from "@/components/form/ErrorSummary";
+import { Field } from "@/components/form/Field";
+import { FormCard } from "@/components/form/FormCard";
+import { NextSteps } from "@/components/form/NextSteps";
+import { RadioCards } from "@/components/form/RadioCards";
+import { Stepper } from "@/components/form/Stepper";
+import { Textarea } from "@/components/form/Textarea";
+import { TextInput } from "@/components/form/TextInput";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { ErrorSummary } from "@/components/ui/ErrorSummary";
-import { Heading, type HeadingLevel } from "@/components/ui/Heading";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
-import { TextInput } from "@/components/ui/TextInput";
-import { TextLink } from "@/components/ui/TextLink";
-import { cn } from "@/lib/cn";
 import {
-  DEMO_BRAND_NAME,
-  DEMO_COLORS,
-  DEMO_COMPANY,
-  DEMO_OPENING_HOURS,
-  DEMO_VACATION,
-} from "./demo-data";
+  ArrowRightIcon,
+  CloseIcon,
+  ErrorIcon,
+  MenuIcon,
+  PhoneIcon,
+} from "@/components/ui/icons";
+import { Logo } from "@/components/ui/Logo";
+import { Section } from "@/components/ui/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { StepNumber } from "@/components/ui/StepNumber";
+import { TextLink } from "@/components/ui/TextLink";
+import { getDemoSite } from "@/content/demo-site";
 
-const HEADING_LEVELS: HeadingLevel[] = [1, 2, 3, 4];
-const BUTTON_VARIANTS: ButtonVariant[] = ["primary", "secondary", "text"];
-const TOPICS = ["kitchen", "wardrobe", "doors", "interior"] as const;
-
-/** Ids of the fields with an error; the error summaries link to them. */
-const INVALID = {
-  email: "demo-email-invalid",
-  message: "demo-message-invalid",
-  topic: "demo-topic-invalid",
-  consent: "demo-consent-invalid",
+type ColorSwatch = {
+  name: string;
+  hex: string;
+  /** The whole class, so Tailwind finds it in the source. */
+  swatchClass: string;
 };
 
-type GroupProps = {
-  id: string;
-  title: string;
-  note?: string;
-  children?: ReactNode;
+/** docs/REDESIGN.md "Токены", Цвета. tests/unit/tokens.test.ts keeps the hex in step with globals.css. */
+const COLORS: readonly ColorSwatch[] = [
+  { name: "Papier", hex: "#F8F9F7", swatchClass: "bg-papier" },
+  { name: "Weiß", hex: "#FFFFFF", swatchClass: "bg-weiss" },
+  { name: "Graphit", hex: "#24282A", swatchClass: "bg-graphit" },
+  { name: "Schiefer", hex: "#5B6266", swatchClass: "bg-schiefer" },
+  { name: "Linie", hex: "#D6DBD8", swatchClass: "bg-linie" },
+  { name: "Feldrand", hex: "#7C8482", swatchClass: "bg-feldrand" },
+  { name: "Tannengrün", hex: "#1F4537", swatchClass: "bg-tannengruen" },
+  {
+    name: "Tannengrün dunkel",
+    hex: "#15332A",
+    swatchClass: "bg-tannengruen-dunkel",
+  },
+  { name: "Moos", hex: "#E4EBE6", swatchClass: "bg-moos" },
+  { name: "Fehler", hex: "#B42318", swatchClass: "bg-fehler" },
+];
+
+type TextStep = {
+  token: string;
+  font: string;
+  /** Size, line height and weight as in docs/REDESIGN.md. */
+  spec: string;
+  className: string;
 };
 
-function Group({ id, title, note, children }: GroupProps) {
+const ZILLA = "Zilla Slab";
+const ATKINSON = "Atkinson Hyperlegible Next";
+
+/** docs/REDESIGN.md "Токены", Шкала текста: all 12 steps. */
+const TEXT_SCALE: readonly TextStep[] = [
+  {
+    token: "display",
+    font: ZILLA,
+    spec: "clamp(36px, 4.4vw, 60px) · 1.05 · 700",
+    className: "font-display text-display",
+  },
+  {
+    token: "h1",
+    font: ZILLA,
+    spec: "clamp(36px, 3.6vw, 52px) · 1.08 · 700",
+    className: "font-display text-h1",
+  },
+  {
+    token: "h2",
+    font: ZILLA,
+    spec: "clamp(28px, 2.8vw, 40px) · 1.15 · 600",
+    className: "font-display text-h2",
+  },
+  {
+    token: "h3",
+    font: ZILLA,
+    spec: "26px · 1.2 · 600",
+    className: "font-display text-h3",
+  },
+  {
+    token: "h4",
+    font: ZILLA,
+    spec: "22px · 1.25 · 600",
+    className: "font-display text-h4",
+  },
+  {
+    token: "tel-lg",
+    font: ZILLA,
+    spec: "clamp(34px, 3.4vw, 48px) · 1.1 · 700",
+    className: "font-display text-tel-lg",
+  },
+  {
+    token: "tel",
+    font: ZILLA,
+    spec: "32px · 1.15 · 700",
+    className: "font-display text-tel",
+  },
+  {
+    token: "lead",
+    font: ATKINSON,
+    spec: "20px, phone 18px · 1.6 · 400",
+    className: "font-sans text-lead",
+  },
+  {
+    token: "body",
+    font: ATKINSON,
+    spec: "18px, phone 17px · 1.6 · 400",
+    className: "font-sans text-body",
+  },
+  {
+    token: "ui",
+    font: ATKINSON,
+    spec: "17px · 1.5 · 400 / 700",
+    className: "font-sans text-ui",
+  },
+  {
+    token: "small",
+    font: ATKINSON,
+    spec: "16px · 1.5 · 400 / 700",
+    className: "font-sans text-small",
+  },
+  {
+    token: "xs",
+    font: ATKINSON,
+    spec: "15px · 1.5 · 400 / 700",
+    className: "font-sans text-xs",
+  },
+];
+
+type Pin = "hover" | "focus";
+
+/** normal, hover, focus: the three states every interactive component shows. */
+const STATES: readonly (Pin | undefined)[] = [undefined, "hover", "focus"];
+
+/**
+ * data-pin pins a state on an element (globals.css), so the page shows hover
+ * and focus without a mouse or the keyboard.
+ */
+const pinned = (pin: Pin | undefined) => (pin ? { "data-pin": pin } : {});
+
+type StatesRowProps = {
+  label: string;
+  children: (pin: Pin | undefined) => ReactNode;
+};
+
+/** One component in its three states, side by side. */
+function StatesRow({ label, children }: StatesRowProps) {
+  const t = useTranslations("DevUi.states");
+
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-6 border-t border-linie pt-8"
-    >
-      <Heading level={2} size={3} id={id}>
-        {title}
-      </Heading>
-      {note ? <p className="max-w-measure text-schiefer">{note}</p> : null}
-      {children}
-    </section>
+    <div className="border-t border-linie py-6">
+      <p className="text-small font-bold">{label}</p>
+      <div className="mt-4 grid gap-6 sm:grid-cols-3">
+        {STATES.map((pin) => (
+          <div key={pin ?? "normal"}>
+            <p className="text-xs text-schiefer">{t(pin ?? "normal")}</p>
+            <div className="mt-2">{children(pin)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
-/** A small Schiefer caption above an example. */
-function Caption({ children }: { children: ReactNode }) {
-  return <p className="text-small text-schiefer">{children}</p>;
-}
+const STEP_STATES = ["active", "default", "muted"] as const;
+const STEP_SIZES = [32, 44] as const;
 
 /**
- * Every component of the site on one page, BRIEF.md sections 3 and 6.
- * Header, footer and mobile bar stand where they stand on real pages,
- * so sticky, the compact header and the menu behave as they will there.
+ * The overview of the design tokens and the components: the palette, the type
+ * scale, the logo, buttons, links, step numbers, icons, the sections and the
+ * form, put together as in mockup 03 with its error shown.
  */
 export function DevUiShowcase() {
   const t = useTranslations("DevUi");
-
-  const topicOptions = TOPICS.map((topic) => ({
-    value: topic,
-    label: t(`fields.topics.${topic}`),
-  }));
+  const common = useTranslations();
+  const { company, openingHours } = getDemoSite(useLocale());
 
   return (
-    <>
-      <VacationBanner from={DEMO_VACATION.from} to={DEMO_VACATION.to} />
-      <Header brandName={DEMO_BRAND_NAME} />
+    <main id="main">
+      <Container className="py-16">
+        <h1>{t("title")}</h1>
 
-      <main id="main">
-        <Container className="flex flex-col gap-section py-section">
-          <div className="flex flex-col gap-4">
-            <Heading level={1}>{t("title")}</Heading>
-            <p className="max-w-measure text-lead">{t("intro")}</p>
-          </div>
-
-          <Group id="dev-colors" title={t("groups.colors")}>
-            <ul className="grid grid-cols-2 gap-6 md:grid-cols-5">
-              {DEMO_COLORS.map((color) => (
-                <li key={color.token} className="flex flex-col gap-2">
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "h-16 rounded border border-linie",
-                      color.swatch,
-                    )}
-                  />
-                  <span className="font-bold">{color.name}</span>
-                  <code className="text-small break-all text-schiefer">
-                    {color.token}
-                  </code>
-                </li>
-              ))}
-            </ul>
-          </Group>
-
-          <Group id="dev-typography" title={t("groups.typography")}>
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="flex flex-col gap-4">
-                <Heading level={3} size={4}>
-                  {t("typography.headingFont")}
-                </Heading>
-                <div>
-                  <Caption>{t("typography.semibold")}</Caption>
-                  <p className="font-heading text-h3 font-semibold">
-                    {t("typography.sample")}
-                  </p>
-                </div>
-                <div>
-                  <Caption>{t("typography.bold")}</Caption>
-                  <p className="font-heading text-h3 font-bold">
-                    {t("typography.sample")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
-                <Heading level={3} size={4}>
-                  {t("typography.bodyFont")}
-                </Heading>
-                <div>
-                  <Caption>{t("typography.regular")}</Caption>
-                  <p>{t("typography.sample")}</p>
-                </div>
-                <div>
-                  <Caption>{t("typography.bold")}</Caption>
-                  <p className="font-bold">{t("typography.sample")}</p>
-                </div>
-                <div>
-                  <Caption>{t("typography.lead")}</Caption>
-                  <p className="text-lead">{t("typography.sample")}</p>
-                </div>
-                <div>
-                  <Caption>{t("typography.body")}</Caption>
-                  <p className="text-body">{t("typography.sample")}</p>
-                </div>
-                <div>
-                  <Caption>{t("typography.small")}</Caption>
-                  <p className="text-small">{t("typography.sample")}</p>
-                </div>
-              </div>
-            </div>
-          </Group>
-
-          <Group id="dev-headings" title={t("groups.headings")}>
-            {/* Level 3 keeps the page outline; size shows each step. */}
-            {HEADING_LEVELS.map((level) => (
-              <Heading key={level} level={3} size={level}>
-                {t("headings.sample", { level: `H${level}` })}
-              </Heading>
+        <section aria-labelledby="dev-colors" className="mt-16">
+          <h2 id="dev-colors">{t("groups.colors")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-5">
+            {COLORS.map((color) => (
+              <li key={color.name}>
+                <div
+                  className={`h-20 rounded border border-linie ${color.swatchClass}`}
+                />
+                <p className="mt-3 text-small font-bold">{color.name}</p>
+                <p className="text-small text-schiefer">{color.hex}</p>
+              </li>
             ))}
-          </Group>
+          </ul>
+        </section>
 
-          <Group id="dev-buttons" title={t("groups.buttons")}>
-            <div className="flex flex-wrap items-center gap-4">
-              {BUTTON_VARIANTS.map((variant) => (
-                <Button key={variant} variant={variant}>
-                  {t(`buttons.${variant}`)}
+        <section aria-labelledby="dev-type-scale" className="mt-16">
+          <h2 id="dev-type-scale">{t("groups.typeScale")}</h2>
+          <ul className="mt-8">
+            {TEXT_SCALE.map((step) => (
+              <li key={step.token} className="border-t border-linie py-6">
+                <p className="text-xs text-schiefer">
+                  {step.token} · {step.font} · {step.spec}
+                </p>
+                <p className={`mt-2 ${step.className}`}>{t("sample")}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-logo" className="mt-16">
+          <h2 id="dev-logo">{t("groups.logo")}</h2>
+          <ul className="mt-8 grid gap-8 md:grid-cols-3">
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.full")}</p>
+              <div className="mt-3 rounded border border-linie p-6">
+                <div id="dev-logo-full" className="flex w-fit">
+                  <Logo
+                    variant="full"
+                    name={t("logo.name")}
+                    descriptor={t("logo.descriptor")}
+                  />
+                </div>
+              </div>
+            </li>
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.compact")}</p>
+              <div className="mt-3 rounded border border-linie p-6">
+                <div id="dev-logo-compact" className="flex w-fit">
+                  <Logo variant="compact" name={t("logo.name")} />
+                </div>
+              </div>
+            </li>
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.light")}</p>
+              <div className="mt-3 rounded bg-graphit p-6">
+                <div id="dev-logo-light" className="flex w-fit">
+                  <Logo variant="light" name={t("logo.name")} />
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-buttons" className="mt-16">
+          <h2 id="dev-buttons">{t("groups.buttons")}</h2>
+          <p className="mt-4 max-w-[36em] text-schiefer">{t("statesNote")}</p>
+          <div className="mt-8">
+            <StatesRow label={t("buttons.primary")}>
+              {(pin) => (
+                <Button {...pinned(pin)}>{common("Header.cta")}</Button>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.secondary")}>
+              {(pin) => (
+                <ButtonLink href="#" variant="secondary" {...pinned(pin)}>
+                  {common("HomePage.jobsCta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.text")}>
+              {(pin) => (
+                <Button variant="text" {...pinned(pin)}>
+                  {t("buttons.textLabel")}
                 </Button>
-              ))}
-            </div>
-            <div className="flex flex-wrap items-center gap-4">
-              {BUTTON_VARIANTS.map((variant) => (
-                <Button key={variant} variant={variant} disabled>
-                  {t("buttons.disabled", { variant: t(`buttons.${variant}`) })}
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.header")}>
+              {(pin) => (
+                <ButtonLink href="#" size="header" {...pinned(pin)}>
+                  {common("Header.cta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.menu")}>
+              {(pin) => (
+                <Button
+                  variant="menu"
+                  icon={<MenuIcon />}
+                  aria-expanded="false"
+                  {...pinned(pin)}
+                >
+                  {common("Header.menuButton")}
                 </Button>
-              ))}
-            </div>
-          </Group>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.withIcon")}>
+              {(pin) => (
+                <ButtonLink
+                  href="tel:+498999998412"
+                  variant="secondary"
+                  icon={<PhoneIcon />}
+                  {...pinned(pin)}
+                >
+                  {common("MobileActionBar.call")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.fullWidth")}>
+              {(pin) => (
+                <ButtonLink href="#" fullWidth {...pinned(pin)}>
+                  {common("Header.cta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+          </div>
+        </section>
 
-          <Group id="dev-text-links" title={t("groups.textLinks")}>
-            <p>
-              <TextLink href="/kontakt">{t("textLinks.dark")}</TextLink>
-            </p>
-            <p className="rounded bg-graphit p-6 text-papier">
-              <TextLink href="/kontakt" tone="light">
-                {t("textLinks.light")}
-              </TextLink>
-            </p>
-          </Group>
+        <section aria-labelledby="dev-links" className="mt-16">
+          <h2 id="dev-links">{t("groups.links")}</h2>
+          <div className="mt-8">
+            {(["strong", "plain", "muted"] as const).map((tone) => (
+              <StatesRow key={tone} label={t(`links.${tone}`)}>
+                {(pin) => (
+                  <TextLink href="#" tone={tone} {...pinned(pin)}>
+                    {common("HomePage.aboutMore")}
+                  </TextLink>
+                )}
+              </StatesRow>
+            ))}
+          </div>
+        </section>
 
-          <Group id="dev-fields" title={t("groups.fields")}>
-            <div className="grid gap-12 md:grid-cols-2 md:gap-8">
-              <div className="flex flex-col gap-6">
-                <Heading level={3} size={4}>
-                  {t("fields.withoutError")}
-                </Heading>
-                <TextInput
-                  id="demo-name"
-                  label={t("fields.name")}
-                  hint={t("fields.nameHint")}
-                  autoComplete="name"
-                />
-                <TextArea
-                  id="demo-message"
-                  label={t("fields.message")}
-                  optional
-                />
-                <Select
-                  id="demo-topic"
-                  label={t("fields.topic")}
-                  placeholder={t("fields.topicPlaceholder")}
-                  options={topicOptions}
-                />
-                <Checkbox id="demo-consent" label={t("fields.consent")} />
-              </div>
-              <div className="flex flex-col gap-6">
-                <Heading level={3} size={4}>
-                  {t("fields.withError")}
-                </Heading>
-                <TextInput
-                  id={INVALID.email}
-                  type="email"
-                  label={t("fields.email")}
-                  error={t("fields.emailError")}
-                  defaultValue="johannes@tannrieder"
-                  autoComplete="email"
-                />
-                <TextArea
-                  id={INVALID.message}
-                  label={t("fields.message")}
-                  error={t("fields.messageError")}
-                />
-                <Select
-                  id={INVALID.topic}
-                  label={t("fields.topic")}
-                  placeholder={t("fields.topicPlaceholder")}
-                  options={topicOptions}
-                  error={t("fields.topicError")}
-                />
-                <Checkbox
-                  id={INVALID.consent}
-                  label={t("fields.consent")}
-                  error={t("fields.consentError")}
-                />
-              </div>
-            </div>
-          </Group>
+        <section aria-labelledby="dev-steps" className="mt-16">
+          <h2 id="dev-steps">{t("groups.steps")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
+            {STEP_SIZES.flatMap((size) =>
+              STEP_STATES.map((state) => (
+                <li
+                  key={`${size}-${state}`}
+                  className="flex items-center gap-4 border-t border-linie pt-4"
+                >
+                  <StepNumber value={3} size={size} state={state} />
+                  <span className="text-small text-schiefer">
+                    {t(`steps.${state}`)}, {t("steps.size", { size })}
+                  </span>
+                </li>
+              )),
+            )}
+          </ul>
+        </section>
 
-          <Group id="dev-error-summary" title={t("groups.errorSummary")}>
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <Caption>{t("errorSummary.formal")}</Caption>
-                <ErrorSummary
-                  id="error-summary-formal"
-                  errors={[
-                    { fieldId: INVALID.email, message: t("fields.emailError") },
-                    {
-                      fieldId: INVALID.message,
-                      message: t("fields.messageError"),
-                    },
-                    { fieldId: INVALID.topic, message: t("fields.topicError") },
-                    {
-                      fieldId: INVALID.consent,
-                      message: t("fields.consentError"),
-                    },
-                  ]}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Caption>{t("errorSummary.informal")}</Caption>
-                <ErrorSummary
-                  id="error-summary-informal"
-                  address="informal"
-                  errors={[
-                    {
-                      fieldId: INVALID.email,
-                      message: t("errorSummary.informalEmail"),
-                    },
-                    {
-                      fieldId: INVALID.message,
-                      message: t("errorSummary.informalMessage"),
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-          </Group>
+        <section aria-labelledby="dev-icons" className="mt-16">
+          <h2 id="dev-icons">{t("groups.icons")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
+            <li className="flex items-center gap-3">
+              <PhoneIcon />
+              <span className="text-small">{t("icons.phone")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <MenuIcon />
+              <span className="text-small">{t("icons.menu")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <CloseIcon />
+              <span className="text-small">{t("icons.close")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ArrowRightIcon size={22} className="text-tannengruen" />
+              <span className="text-small">{t("icons.arrowRight")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ErrorIcon className="text-fehler" />
+              <span className="text-small">{t("icons.error")}</span>
+            </li>
+          </ul>
+        </section>
 
-          <Group
-            id="dev-vacation-banner"
-            title={t("groups.vacationBanner")}
-            note={t("notes.vacationBanner")}
-          >
-            <VacationBanner
-              from={DEMO_VACATION.from}
-              to={DEMO_VACATION.to}
-              label={t("vacationBannerLabel")}
-            />
-          </Group>
+        <section aria-labelledby="dev-sections" className="mt-16">
+          <h2 id="dev-sections">{t("groups.sections")}</h2>
+        </section>
+      </Container>
 
-          <Group
-            id="dev-header"
-            title={t("groups.header")}
-            note={t("notes.header")}
-          />
-
-          <Group
-            id="dev-mobile-menu"
-            title={t("groups.mobileMenu")}
-            note={t("notes.mobileMenu")}
-          />
-
-          <Group id="dev-locale-switcher" title={t("groups.localeSwitcher")}>
-            <LocaleSwitcher label={t("localeSwitcherLabel")} />
-          </Group>
-
-          <Group
-            id="dev-footer"
-            title={t("groups.footer")}
-            note={t("notes.footer")}
-          />
-
-          <Group
-            id="dev-mobile-action-bar"
-            title={t("groups.mobileActionBar")}
-            note={t("notes.mobileActionBar")}
+      <Section labelledBy="dev-section-default">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.default")}</p>
+          <SectionHeading
+            id="dev-section-default"
+            className="mt-4"
+            title={common("HomePage.servicesTitle")}
+            intro={t("sections.intro")}
+            link={{ href: "#", label: common("HomePage.allProjects") }}
           />
         </Container>
-      </main>
+      </Section>
 
-      <Footer company={DEMO_COMPANY} openingHours={DEMO_OPENING_HOURS} />
-      <MobileActionBar phone={DEMO_COMPANY.phone} />
-    </>
+      <Section variant="moos" labelledBy="dev-section-moos">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.moos")}</p>
+          <SectionHeading
+            id="dev-section-moos"
+            className="mt-4"
+            title={common("Process.title")}
+          />
+        </Container>
+      </Section>
+
+      <Section variant="line" labelledBy="dev-section-line">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.line")}</p>
+          <SectionHeading
+            id="dev-section-line"
+            className="mt-4"
+            title={common("HomePage.contactTitle")}
+          />
+        </Container>
+      </Section>
+
+      <Container className="py-16">
+        <section aria-labelledby="dev-form">
+          <h2 id="dev-form">{t("groups.form")}</h2>
+          <div
+            id="dev-form-sample"
+            className="mt-8 flex flex-wrap items-start gap-14"
+          >
+            <div className="min-w-0 flex-[7_1_560px]">
+              <Stepper
+                current={1}
+                steps={[
+                  t("form.steps.what"),
+                  t("form.steps.where"),
+                  t("form.steps.contact"),
+                ]}
+              />
+              <FormCard className="mt-8" noValidate>
+                <ErrorSummary
+                  errors={[
+                    {
+                      fieldId: "beschreibung",
+                      message: t("form.description.summary"),
+                    },
+                  ]}
+                />
+                <RadioCards
+                  className="mt-8"
+                  name="typ"
+                  legend={t("form.typeLegend")}
+                  defaultValue="kueche"
+                  options={[
+                    { value: "kueche", label: t("form.types.kitchen") },
+                    { value: "schrank", label: t("form.types.wardrobe") },
+                    { value: "tueren", label: t("form.types.doors") },
+                    { value: "ausbau", label: t("form.types.fitout") },
+                    { value: "anderes", label: t("form.types.other") },
+                  ]}
+                />
+                <Field
+                  id="beschreibung"
+                  className="mt-8"
+                  label={t("form.description.label")}
+                  hint={t("form.description.hint")}
+                  error={t("form.description.error")}
+                >
+                  {(control) => <Textarea name="beschreibung" {...control} />}
+                </Field>
+                <Field
+                  id="masse"
+                  className="mt-7"
+                  label={t("form.size.label")}
+                  optional
+                  hint={t("form.size.hint")}
+                >
+                  {(control) => (
+                    <TextInput
+                      name="masse"
+                      className="max-w-105"
+                      {...control}
+                    />
+                  )}
+                </Field>
+                <div className="mt-9 flex flex-wrap items-center gap-4">
+                  <Button>{t("form.next")}</Button>
+                </div>
+                <p className="mt-6 text-xs text-schiefer">
+                  {t.rich("form.privacy", {
+                    link: (chunks) => (
+                      <TextLink href="#" tone="plain">
+                        {chunks}
+                      </TextLink>
+                    ),
+                  })}
+                </p>
+              </FormCard>
+              <ConceptNote className="mt-4" />
+            </div>
+            <aside
+              aria-labelledby="dev-form-next"
+              className="min-w-0 flex-[4_1_300px]"
+            >
+              <NextSteps
+                headingId="dev-form-next"
+                steps={[
+                  t("form.nextSteps.first"),
+                  t("form.nextSteps.second"),
+                  t("form.nextSteps.third"),
+                ]}
+              />
+              <CallBox
+                className="mt-9"
+                phone={company.phone}
+                openingHours={openingHours}
+              />
+            </aside>
+          </div>
+        </section>
+      </Container>
+    </main>
   );
 }

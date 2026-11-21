@@ -11,18 +11,18 @@
     "jobsCta": "Jobs with us",
     "servicesTitle": "What we build",
     "sceneTitle": "From board to wardrobe",
-    "scenePlaceholder": "Placeholder: a picture of the finished wardrobe goes here soon, the 3D scene later.",
+    "skipAnimation": "Skip animation",
+    "sceneImageAlt": "Drawing of a built-in wardrobe being put together step by step",
     "projectsTitle": "Selected projects",
     "allProjects": "See all projects",
-    "openJobsTitle": "Open positions",
+    "jobsTitle": "We are looking for reinforcements",
     "openJobsCta": "See open positions",
-    "noOpenJobs": "All positions are filled at the moment.",
+    "trialDayCta": "Request a trial day",
+    "aboutTitle": "A family business since 1989",
     "aboutMore": "More about us",
     "testimonialsTitle": "What our customers say",
-    "contactTitle": "How to reach us",
-    "contactPhone": "Phone",
-    "contactEmail": "Email",
-    "contactAddress": "Address",
+    "quote": "“{text}”",
+    "contactTitle": "Talk to us",
     "contactHours": "Opening hours"
   },
   "Process": {
@@ -83,6 +83,17 @@
     "errorSummary": {
       "titleFormal": "Please check your details",
       "titleInformal": "Please check your details"
+    },
+    "stepper": {
+      "label": "Steps of the request",
+      "step": "Step {current} of {total}"
+    },
+    "nextSteps": {
+      "title": "What happens next?"
+    },
+    "callBox": {
+      "title": "Prefer to call?",
+      "hours": "{days} {hours}"
     }
   },
   "VacationBanner": {
@@ -90,9 +101,11 @@
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
   },
   "Header": {
-    "homeLabel": "{name} – home page",
+    "homeLabel": "{name}, home page",
+    "logoDescriptor": "Schreinerei",
     "menuLabel": "Main menu",
     "menuButton": "Menu",
+    "menuClose": "Close",
     "cta": "Request a project"
   },
   "MobileActionBar": {
@@ -103,10 +116,9 @@
   "Footer": {
     "contactHeading": "Contact",
     "hoursHeading": "Opening hours",
-    "menuHeading": "Menu",
-    "legalHeading": "Legal",
-    "phone": "Phone",
-    "email": "Email"
+    "hours": "{days} {hours}",
+    "pagesHeading": "Pages",
+    "legalHeading": "Legal"
   },
   "Demo": {
     "notice": "Concept project – Schreinerei Tannrieder is a fictitious company."
@@ -114,81 +126,96 @@
   "DevUi": {
     "metaTitle": "UI components",
     "title": "UI components",
-    "intro": "Every building block of the website on one page. The page exists only in development mode.",
     "groups": {
-      "colors": "Colours",
-      "typography": "Typefaces",
-      "headings": "Headings",
+      "colors": "Colors",
+      "typeScale": "Type scale",
+      "logo": "Logo",
       "buttons": "Buttons",
-      "textLinks": "Text links",
-      "fields": "Form fields",
-      "errorSummary": "Error summary",
-      "vacationBanner": "Holiday notice",
-      "header": "Header",
-      "mobileMenu": "Mobile menu",
-      "footer": "Footer",
-      "localeSwitcher": "Language switcher",
-      "mobileActionBar": "Quick contact on phones"
+      "links": "Links",
+      "steps": "Step numbers",
+      "icons": "Icons",
+      "sections": "Sections",
+      "form": "Form"
     },
-    "localeSwitcherLabel": "Language, example",
-    "vacationBannerLabel": "Holiday notice, example",
-    "notes": {
-      "vacationBanner": "Sits above the header, as at the top of this page. Without valid dates it shows nothing.",
-      "header": "The header is at the top of this page. While scrolling it stays at the top edge and gets lower.",
-      "mobileMenu": "The menu belongs to the header. With a window narrower than 1280 px, click “Menu” at the top.",
-      "footer": "The footer is at the very bottom of this page.",
-      "mobileActionBar": "The bar exists only below 768 px width. It sits at the end of the page and stays at the bottom edge while scrolling."
+    "sample": "Custom furniture from our workshop in Wendelfing",
+    "statesNote": "Hover and focus are pinned here, so you can see them without a mouse or keyboard.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Focus"
     },
-    "typography": {
-      "headingFont": "Headings: Zilla Slab",
-      "bodyFont": "Text: Atkinson Hyperlegible Next",
-      "semibold": "SemiBold",
-      "bold": "Bold",
-      "regular": "Regular",
-      "lead": "Large text",
-      "body": "Body text",
-      "small": "Small text",
-      "sample": "Made-to-measure furniture from our workshop in Wendelfing"
-    },
-    "headings": {
-      "sample": "Heading {level}"
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Full – header from 1280 px",
+      "compact": "Compact – header on the phone",
+      "light": "Light – footer"
     },
     "buttons": {
       "primary": "Primary",
       "secondary": "Secondary",
       "text": "Text",
-      "disabled": "{variant}, disabled"
+      "header": "Primary in the header, 48 px",
+      "menu": "Menu button, 44 px",
+      "withIcon": "With icon",
+      "fullWidth": "Full width",
+      "textLabel": "Learn more"
     },
-    "textLinks": {
-      "dark": "Text link on a light background",
-      "light": "Text link on a dark background"
+    "links": {
+      "strong": "Bold",
+      "plain": "Regular",
+      "muted": "Quiet"
     },
-    "fields": {
-      "withoutError": "Without error",
-      "withError": "With error",
-      "name": "Name",
-      "nameHint": "First and last name",
-      "email": "Email",
-      "emailError": "Please enter a valid email address.",
-      "message": "Your message",
-      "messageError": "Please describe your project in a few sentences.",
-      "topic": "What is it about?",
-      "topicPlaceholder": "Please choose",
-      "topicError": "Please choose a topic.",
-      "topics": {
-        "kitchen": "Kitchen",
-        "wardrobe": "Built-in wardrobe",
-        "doors": "Doors",
-        "interior": "Interior fittings"
+    "steps": {
+      "active": "Active",
+      "default": "Regular",
+      "muted": "Muted",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Phone",
+      "menu": "Menu",
+      "close": "Close",
+      "arrowRight": "Arrow right",
+      "error": "Error"
+    },
+    "sections": {
+      "default": "No background, with intro and link",
+      "moos": "Moss band",
+      "line": "White with a line on top",
+      "intro": "Everything is made in our own workshop and installed by our own team."
+    },
+    "form": {
+      "steps": {
+        "what": "What are you planning?",
+        "where": "Where and when?",
+        "contact": "How can we reach you?"
       },
-      "consent": "I agree that my details are used to answer my request.",
-      "consentError": "Please agree so that we can reply."
-    },
-    "errorSummary": {
-      "formal": "Formal address, on most pages",
-      "informal": "Informal address, on the career pages",
-      "informalEmail": "Please enter a valid email address.",
-      "informalMessage": "Please write us a few sentences about yourself."
+      "typeLegend": "What would you like us to build?",
+      "types": {
+        "kitchen": "Kitchen",
+        "wardrobe": "Wardrobe or made-to-measure furniture",
+        "doors": "Interior doors",
+        "fitout": "Interior fit-out",
+        "other": "Something else"
+      },
+      "description": {
+        "label": "Briefly describe your project",
+        "hint": "For example: built-in wardrobe for the bedroom, wall 3.20 m wide, up to the ceiling.",
+        "error": "Please describe your project in at least 20 characters.",
+        "summary": "Describe your project in at least 20 characters."
+      },
+      "size": {
+        "label": "Approximate dimensions",
+        "hint": "Width × height × depth, if you already know."
+      },
+      "next": "Continue to step 2",
+      "privacy": "We only use your details to process your request. More in our <link>privacy policy</link>.",
+      "nextSteps": {
+        "first": "We will get back to you within two working days.",
+        "second": "We will come to you to take measurements.",
+        "third": "You will receive a drawing and a written quote."
+      }
     }
   }
 }
