@@ -46,6 +46,26 @@
     "allProjects": "Alle Referenzen ansehen",
     "allServices": "Alle Leistungen ansehen"
   },
+  "ProjectsPage": {
+    "title": "Referenzen",
+    "intro": "Küchen, Schränke, Türen und Innenausbau, die wir in den letzten Jahren für Häuser und Wohnungen in der Region gebaut haben.",
+    "filterLabel": "Referenzen nach Leistung filtern",
+    "all": "Alle",
+    "empty": "Aus diesem Bereich zeigen wir noch keine Referenzen."
+  },
+  "ProjectPage": {
+    "objectType": "Objekt",
+    "year": "Jahr",
+    "duration": "Dauer",
+    "material": "Material",
+    "service": "Leistung",
+    "challengeTitle": "Die Aufgabe",
+    "solutionTitle": "Unsere Lösung",
+    "moreTitle": "Weitere Referenzen",
+    "previous": "Vorherige Referenz",
+    "next": "Nächste Referenz",
+    "allProjects": "Alle Referenzen ansehen"
+  },
   "RequestCta": {
     "title": "Erzählen Sie uns von Ihrem Projekt",
     "text": "Beschreiben Sie in ein paar Sätzen, was Sie planen. Wir melden uns bei Ihnen und vereinbaren einen Termin für das Aufmaß vor Ort.",

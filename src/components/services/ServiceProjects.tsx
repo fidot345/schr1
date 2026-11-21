@@ -1,13 +1,12 @@
 import { useTranslations } from "next-intl";
-import { AppLink } from "@/components/ui/AppLink";
-import { CmsImage } from "@/components/ui/CmsImage";
+import { ProjectCard } from "@/components/projects/ProjectCard";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import type { ProjectCard } from "@/lib/content";
+import type { ProjectCard as ProjectCardData } from "@/lib/content";
 
 type ServiceProjectsProps = {
-  projects: ProjectCard[];
+  projects: ProjectCardData[];
 };
 
 /**
@@ -18,7 +17,6 @@ type ServiceProjectsProps = {
  */
 export function ServiceProjects({ projects }: ServiceProjectsProps) {
   const t = useTranslations("ServicePage");
-  const tCard = useTranslations("ProjectCard");
   if (projects.length === 0) {
     return null;
   }
@@ -34,30 +32,11 @@ export function ServiceProjects({ projects }: ServiceProjectsProps) {
         <ul className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <li key={project.id}>
-              <AppLink
-                href={{
-                  pathname: "/referenzen/[slug]",
-                  params: { slug: project.slug },
-                }}
-                className="group flex flex-col gap-4 text-graphit no-underline"
-              >
-                <CmsImage
-                  photo={project.photo}
-                  frameClassName="aspect-4/3"
-                  sizes="(min-width: 80rem) 400px, (min-width: 64rem) 33vw, (min-width: 48rem) 50vw, 100vw"
-                />
-                <div>
-                  <h3 className="font-display text-h4 group-hover:text-tannengruen-dunkel group-hover:underline">
-                    {project.title}
-                  </h3>
-                  <p className="mt-1.5 text-small text-schiefer">
-                    {tCard("meta", {
-                      objectType: project.objectType,
-                      year: project.year,
-                    })}
-                  </p>
-                </div>
-              </AppLink>
+              <ProjectCard
+                project={project}
+                headingLevel="h3"
+                sizes="(min-width: 80rem) 400px, (min-width: 64rem) 33vw, (min-width: 48rem) 50vw, 100vw"
+              />
             </li>
           ))}
         </ul>

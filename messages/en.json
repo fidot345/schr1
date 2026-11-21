@@ -46,6 +46,26 @@
     "allProjects": "See all projects",
     "allServices": "See all services"
   },
+  "ProjectsPage": {
+    "title": "Projects",
+    "intro": "Kitchens, cabinets, doors and interior fit-outs we have built for houses and flats in the region in recent years.",
+    "filterLabel": "Filter projects by service",
+    "all": "All",
+    "empty": "We have no projects of this kind to show yet."
+  },
+  "ProjectPage": {
+    "objectType": "Property",
+    "year": "Year",
+    "duration": "Duration",
+    "material": "Material",
+    "service": "Service",
+    "challengeTitle": "The task",
+    "solutionTitle": "Our solution",
+    "moreTitle": "More projects",
+    "previous": "Previous project",
+    "next": "Next project",
+    "allProjects": "See all projects"
+  },
   "RequestCta": {
     "title": "Tell us about your project",
     "text": "Describe in a few sentences what you are planning. We will get in touch and arrange a visit to measure up at your home.",

@@ -1,8 +1,8 @@
 import { cache } from "react";
 import type { SlugTranslations } from "@/i18n/locale-switch-href";
 import { type Locale, routing } from "@/i18n/routing";
-import type { Job } from "@/payload-types";
-import { type Photo, populated, toPhoto } from "./media";
+import type { Job, Project } from "@/payload-types";
+import { isPopulated, type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
 import { logoWordOf, paragraphs } from "./text";
 
@@ -114,6 +114,21 @@ export type ProjectCard = {
   photo: Photo | null;
 };
 
+/** The fields of a project document a card needs. */
+type ProjectCardFields = Pick<
+  Project,
+  "id" | "title" | "slug" | "objectType" | "year"
+> & { cover?: Project["cover"] | null };
+
+const toProjectCard = (project: ProjectCardFields): ProjectCard => ({
+  id: project.id,
+  title: project.title,
+  slug: project.slug,
+  objectType: project.objectType,
+  year: project.year,
+  photo: toPhoto(project.cover),
+});
+
 /** A line of a text list from the admin panel ("Was dazugehört"). */
 export type ListItem = {
   id: string;
@@ -148,24 +163,37 @@ export type ServiceDetail = {
   };
 };
 
+type SlugsByLocale = Record<Locale, Map<number, string>>;
+
 /**
- * The slug of every service in each language, by id. getServices is what
- * generateStaticParams lists, so lookups agree with the built pages, also
- * when an English slug is missing and the German one stands in.
+ * The slug of every document in each language, by id, from the list the
+ * pages' generateStaticParams use (getServices, getProjects), so lookups
+ * agree with the built pages, also when an English slug is missing and the
+ * German one stands in.
  */
-const serviceSlugsByLocale = async (): Promise<
-  Record<Locale, Map<number, string>>
-> => {
-  const lists = await Promise.all(
-    routing.locales.map((code) => getServices(code)),
-  );
+const slugsByLocale = async (
+  list: (locale: Locale) => Promise<readonly { id: number; slug: string }[]>,
+): Promise<SlugsByLocale> => {
+  const lists = await Promise.all(routing.locales.map((code) => list(code)));
   return Object.fromEntries(
     routing.locales.map((code, index) => [
       code,
       new Map((lists[index] ?? []).map(({ id, slug }) => [id, slug])),
     ]),
-  ) as Record<Locale, Map<number, string>>;
+  ) as SlugsByLocale;
 };
+
+/** The slug of one document in every language; `slug` where one is missing. */
+const slugsOf = (
+  byLocale: SlugsByLocale,
+  id: number,
+  slug: string,
+): Record<Locale, string> =>
+  Object.fromEntries(
+    routing.locales.map((code) => [code, byLocale[code].get(id) ?? slug]),
+  ) as Record<Locale, string>;
+
+const serviceSlugsByLocale = () => slugsByLocale(getServices);
 
 /** One service by its slug in this language, or null when there is none. */
 export const getService = cache(
@@ -176,7 +204,7 @@ export const getService = cache(
     if (!match) return null;
 
     const payload = await payloadClient();
-    const [service, { docs: projects }, slugsByLocale] = await Promise.all([
+    const [service, { docs: projects }, serviceSlugs] = await Promise.all([
       payload.findByID({
         collection: "services",
         id: match.id,
@@ -226,20 +254,8 @@ export const getService = cache(
       gallery: (service.gallery ?? [])
         .map(toPhoto)
         .filter((photo): photo is Photo => photo !== null),
-      projects: projects.map((project) => ({
-        id: project.id,
-        title: project.title,
-        slug: project.slug,
-        objectType: project.objectType,
-        year: project.year,
-        photo: toPhoto(project.cover),
-      })),
-      slugs: Object.fromEntries(
-        routing.locales.map((code) => [
-          code,
-          slugsByLocale[code].get(match.id) ?? slug,
-        ]),
-      ) as Record<Locale, string>,
+      projects: projects.map(toProjectCard),
+      slugs: slugsOf(serviceSlugs, match.id, slug),
       meta: {
         title: service.meta?.title ?? null,
         description: service.meta?.description ?? null,
@@ -248,29 +264,177 @@ export const getService = cache(
   },
 );
 
+export type ProjectListItem = ProjectCard & {
+  /** The id of the project's service, for the filter of /referenzen. */
+  serviceId: number;
+};
+
+/** All projects in the admin panel's order, with the service of each. */
+export const getProjects = cache(
+  async (locale: Locale): Promise<ProjectListItem[]> => {
+    const payload = await payloadClient();
+    const { docs } = await payload.find({
+      collection: "projects",
+      ...readOptions(locale),
+      // depth 1 for the cover; of the service only its id is needed.
+      depth: 1,
+      sort: "order",
+      pagination: false,
+      select: {
+        title: true,
+        slug: true,
+        service: true,
+        objectType: true,
+        year: true,
+        cover: true,
+      },
+      populate: { services: { slug: true } },
+    });
+
+    return docs.map((project) => ({
+      ...toProjectCard(project),
+      serviceId: isPopulated(project.service)
+        ? project.service.id
+        : project.service,
+    }));
+  },
+);
+
+/** A fact of a project, "Objekt: Einfamilienhaus". */
+export type ProjectFacts = {
+  objectType: string;
+  year: number;
+  duration: string;
+  material: string;
+};
+
+export type ProjectDetail = {
+  id: number;
+  title: string;
+  facts: ProjectFacts;
+  /** "Die Aufgabe", in paragraphs. */
+  challenge: string[];
+  /** "Unsere Lösung", in paragraphs. */
+  solution: string[];
+  photo: Photo | null;
+  gallery: Photo[];
+  /** The service the project belongs to, for the link to its page. */
+  service: { title: string; slug: string } | null;
+  /** The projects before and after this one in the admin panel's order. */
+  previous: ProjectCard | null;
+  next: ProjectCard | null;
+  /** The project's slug in every language, for alternates and the language switch. */
+  slugs: Record<Locale, string>;
+  meta: {
+    title: string | null;
+    description: string | null;
+  };
+};
+
+const projectSlugsByLocale = () => slugsByLocale(getProjects);
+
+/** One project by its slug in this language, or null when there is none. */
+export const getProject = cache(
+  async (locale: Locale, slug: string): Promise<ProjectDetail | null> => {
+    const projects = await getProjects(locale);
+    const index = projects.findIndex((project) => project.slug === slug);
+    const match = projects[index];
+    if (!match) return null;
+
+    const payload = await payloadClient();
+    const [project, services, projectSlugs] = await Promise.all([
+      payload.findByID({
+        collection: "projects",
+        id: match.id,
+        ...readOptions(locale),
+        depth: 1,
+        disableErrors: true,
+        select: {
+          title: true,
+          objectType: true,
+          year: true,
+          duration: true,
+          material: true,
+          challenge: true,
+          solution: true,
+          cover: true,
+          gallery: true,
+          meta: true,
+        },
+      }),
+      getServices(locale),
+      projectSlugsByLocale(),
+    ]);
+    if (!project) return null;
+
+    const service = services.find(({ id }) => id === match.serviceId);
+    const neighbour = (at: number): ProjectCard | null => {
+      const item = projects[at];
+      if (!item) return null;
+      const { serviceId: _, ...card } = item;
+      return card;
+    };
+
+    return {
+      id: project.id,
+      title: project.title,
+      facts: {
+        objectType: project.objectType,
+        year: project.year,
+        duration: project.duration,
+        material: project.material,
+      },
+      challenge: paragraphs(project.challenge),
+      solution: paragraphs(project.solution),
+      photo: toPhoto(project.cover),
+      gallery: (project.gallery ?? [])
+        .map(toPhoto)
+        .filter((photo): photo is Photo => photo !== null),
+      service: service ? { title: service.title, slug: service.slug } : null,
+      previous: neighbour(index - 1),
+      next: neighbour(index + 1),
+      slugs: slugsOf(projectSlugs, match.id, slug),
+      meta: {
+        title: project.meta?.title ?? null,
+        description: project.meta?.description ?? null,
+      },
+    };
+  },
+);
+
+/** This language's slug → the slug in each other language. */
+const slugTranslationsFor = (
+  locale: Locale,
+  byLocale: SlugsByLocale,
+): Partial<Record<Locale, Record<string, string>>> =>
+  Object.fromEntries(
+    routing.locales
+      .filter((code) => code !== locale)
+      .map((code) => [
+        code,
+        Object.fromEntries(
+          [...byLocale[locale]].map(([id, slug]) => [
+            slug,
+            byLocale[code].get(id) ?? slug,
+          ]),
+        ),
+      ]),
+  );
+
 /**
  * For the language switch in the header: on pages whose slug is
  * translated, the slug of this language → the slug in each other language.
  */
 export const getSlugTranslations = cache(
   async (locale: Locale): Promise<SlugTranslations> => {
-    const services = await serviceSlugsByLocale();
-    const here = services[locale];
+    const [services, projects] = await Promise.all([
+      serviceSlugsByLocale(),
+      projectSlugsByLocale(),
+    ]);
 
     return {
-      "/leistungen/[slug]": Object.fromEntries(
-        routing.locales
-          .filter((code) => code !== locale)
-          .map((code) => [
-            code,
-            Object.fromEntries(
-              [...here].map(([id, slug]) => [
-                slug,
-                services[code].get(id) ?? slug,
-              ]),
-            ),
-          ]),
-      ),
+      "/leistungen/[slug]": slugTranslationsFor(locale, services),
+      "/referenzen/[slug]": slugTranslationsFor(locale, projects),
     };
   },
 );
@@ -387,14 +551,7 @@ export const getHomePage = cache(
         text: home.hero.text,
         photo: toPhoto(home.hero.image),
       },
-      featuredProjects: populated(home.featuredProjects).map((project) => ({
-        id: project.id,
-        title: project.title,
-        slug: project.slug,
-        objectType: project.objectType,
-        year: project.year,
-        photo: toPhoto(project.cover),
-      })),
+      featuredProjects: populated(home.featuredProjects).map(toProjectCard),
       processSteps: (home.processSteps ?? []).map((step, index) => ({
         id: step.id ?? String(index),
         title: step.title,
