@@ -13,13 +13,13 @@ export const AXE_TAGS = [
 
 /*
  * TEMP(stage-3): the pages the site links to but that do not exist yet
- * (request form, careers, about, projects, contact, legal pages), in German
+ * (request form, careers, about, contact, legal pages), in German
  * and in English. In a production build next/link prefetches them and the
  * browser logs a 404 for each. Only such 404s are ignored; take each page
  * out when it is built and delete this with the last stage-3 page.
  */
 const NOT_BUILT_YET =
-  /^(\/en)?\/(anfrage|request|karriere|careers|ueber-uns|about|referenzen|projects|kontakt|contact|impressum|imprint|datenschutz|privacy)(\/|$)/;
+  /^(\/en)?\/(anfrage|request|karriere|careers|ueber-uns|about|kontakt|contact|impressum|imprint|datenschutz|privacy)(\/|$)/;
 
 const pathOf = (url: string): string => {
   try {
