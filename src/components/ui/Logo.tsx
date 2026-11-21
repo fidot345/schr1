@@ -98,9 +98,12 @@ export function Logo({
         <LogoGlyph width={30} height={34} className="text-tannengruen" />
         <span className="flex flex-col leading-[1.05]">
           {descriptor ? (
-            <span className="text-xs leading-[1.05] text-schiefer">
-              {descriptor}
-            </span>
+            <>
+              <span className="text-xs leading-[1.05] text-schiefer">
+                {descriptor}
+              </span>
+              {/* A space for assistive technology: "Schreinerei Tannrieder", not "SchreinereiTannrieder". */}{" "}
+            </>
           ) : null}
           <span className="font-display text-[1.75rem] leading-[1.05] font-semibold text-tannengruen">
             {name}

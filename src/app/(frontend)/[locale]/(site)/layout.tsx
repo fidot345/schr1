@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
+import { Header } from "@/components/layout/Header";
+import { getDemoSite } from "@/content/demo-site";
 import { routing } from "@/i18n/routing";
 
 type SiteLayoutProps = {
@@ -10,9 +12,10 @@ type SiteLayoutProps = {
 };
 
 /**
- * The shell of every page of the site. The header, the footer and the mobile
- * bar are removed with the old design and come back in redesign session 3.
- * The route group adds no segment to the address.
+ * The shell of every page of the site, docs/REDESIGN.md, session 3:
+ * the header and the page in <main>. The footer, the mobile bar and the
+ * holiday notice follow in the next commit. The route group adds no segment
+ * to the address.
  */
 export default async function SiteLayout({
   children,
@@ -23,6 +26,14 @@ export default async function SiteLayout({
     notFound();
   }
   setRequestLocale(locale);
+  const { company } = getDemoSite(locale);
 
-  return <main id="main">{children}</main>;
+  return (
+    <>
+      <Header companyName={company.name} brandName={company.logoWord} />
+      <main id="main" className="flex-1">
+        {children}
+      </main>
+    </>
+  );
 }

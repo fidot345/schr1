@@ -90,9 +90,11 @@
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
   },
   "Header": {
-    "homeLabel": "{name} – home page",
+    "homeLabel": "{name}, home page",
+    "logoDescriptor": "Schreinerei",
     "menuLabel": "Main menu",
     "menuButton": "Menu",
+    "menuClose": "Close",
     "cta": "Request a project"
   },
   "MobileActionBar": {

@@ -145,6 +145,20 @@
       --text-lead: 1.25rem;
       --text-body: 1.125rem;
     }
+
+    /*
+     * Heights of the two sticky bars, their 1px line included. Not design
+     * tokens: they follow from the mockup (Header and MobileActionBar size
+     * themselves from them) and feed the scroll margins below.
+     * Header: 64px on the phone and tablet, 77px from xl (14 + 48 + 14 + 1).
+     * Action bar: 81px (1 + 12 + 52 + 16), shown below md only.
+     */
+    --header-height: 4rem;
+    --action-bar-height: 5.0625rem;
+
+    @variant xl {
+      --header-height: 4.8125rem;
+    }
   }
 
   body {
@@ -213,6 +227,33 @@
   [data-pin="focus"] {
     outline: 2px solid var(--focus-ring-color, var(--color-tannengruen));
     outline-offset: 2px;
+  }
+
+  /*
+   * Focus and anchor jumps (#id) never end up under the sticky bars
+   * (WCAG 2.4.11): the margin is the bar's height plus 16px, which also
+   * leaves room for the 2px ring with its 2px offset. The action bar covers
+   * the bottom edge below md. A margin on the element, not scroll-padding on
+   * <html>: with that, every Tab through the sticky header scrolled the page.
+   */
+  :focus,
+  :target {
+    scroll-margin-top: calc(var(--header-height) + var(--spacing) * 4);
+  }
+
+  :focus {
+    @variant max-md {
+      scroll-margin-bottom: calc(var(--action-bar-height) + var(--spacing) * 4);
+    }
+  }
+
+  /*
+   * The sticky bars are always on screen, so their own elements need no
+   * margin; with one, focus in the header or in the open phone menu would
+   * scroll the page behind it.
+   */
+  [data-sticky-bar] :focus {
+    scroll-margin: 0;
   }
 }
 

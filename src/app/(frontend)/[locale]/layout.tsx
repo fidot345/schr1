@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
+import { SkipLink } from "@/components/layout/SkipLink";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -60,26 +61,22 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     notFound();
   }
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "SkipLink" });
 
   /*
    * <body> holds the skip link and then the page shell: VacationBanner,
    * Header, <main id="main">, Footer, MobileActionBar, in that order and as
    * direct children (sticky works only inside the parent). The shell comes
-   * from (site)/layout.tsx; /dev/ui brings its own with demo data.
+   * from (site)/layout.tsx; /dev/ui has none of it. The body is a column at
+   * least as tall as the screen, so the mobile bar stays at the bottom of
+   * the screen on a short page too (main grows, see (site)/layout.tsx).
    */
   return (
     <html
       lang={locale}
       className={`${zillaSlab.variable} ${atkinson.variable}`}
     >
-      <body>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-weiss focus:px-6 focus:py-3 focus:font-bold focus:text-tannengruen focus:underline focus:underline-offset-4"
-        >
-          {t("label")}
-        </a>
+      <body className="flex min-h-dvh flex-col">
+        <SkipLink />
         <NextIntlClientProvider>
           <SmoothScroll>{children}</SmoothScroll>
         </NextIntlClientProvider>
