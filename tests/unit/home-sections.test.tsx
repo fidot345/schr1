@@ -1,12 +1,18 @@
 import { existsSync, readFileSync } from "node:fs";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
+import { AboutTeaser } from "@/components/home/AboutTeaser";
+import { Contact } from "@/components/home/Contact";
 import { Hero } from "@/components/home/Hero";
+import { Jobs } from "@/components/home/Jobs";
+import { Process } from "@/components/home/Process";
 import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
+import { Testimonials } from "@/components/home/Testimonials";
 import { WardrobeSection } from "@/components/home/WardrobeSection";
 import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 import { getDemoHome } from "@/content/demo-home";
+import { getDemoSite } from "@/content/demo-site";
 import de from "../../messages/de.json";
 import en from "../../messages/en.json";
 import { classesOf, render, tagWithId } from "./support/render";
@@ -188,6 +194,144 @@ describe("Projects", () => {
   });
 });
 
+describe("Process", () => {
+  const html = render(<Process {...home.process} />);
+
+  it("is a Moos band named by the h2 from messages", () => {
+    expect(html).toMatch(/<section aria-labelledby="ablauf-titel"/);
+    expect(classesOf(html)).toContain("bg-moos");
+    expect(tagWithId(html, "ablauf-titel")).toMatch(/^<h2 /);
+    expect(html).toMatch(/<h2 id="ablauf-titel"[^>]*>So läuft Ihr Auftrag</);
+  });
+
+  it("lists four steps, each a number, an h3 and a text", () => {
+    expect(html.match(/<li /g)).toHaveLength(4);
+    expect(html.match(/<h3 /g)).toHaveLength(4);
+    expect(html.match(/aria-hidden="true"[^>]*>[1-4]</g)).toHaveLength(4);
+    expect(html).toContain("Aufmaß vor Ort");
+    expect(html).toContain("Montage");
+  });
+
+  it("ends with the duration and the request button", () => {
+    expect(html).toContain("vergehen meist 8 bis 10 Wochen");
+    expect(html).toMatch(/href="\/anfrage"[^>]*>Projekt anfragen</);
+  });
+});
+
+describe("Jobs", () => {
+  const html = render(<Jobs {...home.jobs} />);
+
+  it("names itself by the h2 and puts the photo before the text", () => {
+    expect(html).toContain('aria-labelledby="jobs-titel"');
+    expect(html).toMatch(/<h2 id="jobs-titel"[^>]*>Wir suchen Verstärkung</);
+    expect(html.indexOf('role="img"')).toBeLessThan(html.indexOf("<h2"));
+  });
+
+  it("lists the three positions as links to their pages", () => {
+    expect(html.match(/<li /g)).toHaveLength(3);
+    expect(html).toContain('href="/karriere/schreiner"');
+    expect(html).toContain('href="/karriere/monteur"');
+    expect(html).toContain('href="/karriere/ausbildung-schreiner"');
+    expect(html).toContain("Vollzeit, ab sofort, 19–23 € pro Stunde");
+    expect(html.match(/<svg /g)).toHaveLength(3);
+  });
+
+  it("has the two buttons, the main one first", () => {
+    const all = html.indexOf(">Offene Stellen ansehen<");
+    const trial = html.indexOf(">Schnuppertag anfragen<");
+
+    expect(all).toBeGreaterThan(0);
+    expect(trial).toBeGreaterThan(all);
+  });
+});
+
+describe("AboutTeaser", () => {
+  const html = render(<AboutTeaser {...home.about} />);
+
+  it("names itself by the h2 and shows both paragraphs", () => {
+    expect(html).toContain('aria-labelledby="familie-titel"');
+    expect(html).toMatch(
+      /<h2 id="familie-titel"[^>]*>Familienbetrieb seit 1989</,
+    );
+    expect(html.match(/<p /g)).toHaveLength(2);
+    expect(html).toContain("Georg Tannrieder hat die Werkstatt 1989");
+  });
+
+  it("links to the about page and puts the photo after the text", () => {
+    expect(html).toMatch(/href="\/ueber-uns"[^>]*>Mehr über uns</);
+    expect(html.indexOf('role="img"')).toBeGreaterThan(html.indexOf("<h2"));
+  });
+});
+
+describe("Testimonials", () => {
+  const html = render(<Testimonials {...home.testimonials} />);
+
+  it("names itself by the h2 from messages", () => {
+    expect(html).toContain('aria-labelledby="stimmen-titel"');
+    expect(html).toMatch(/<h2 id="stimmen-titel"[^>]*>Was Kunden sagen</);
+  });
+
+  it("shows three quotes with German quotation marks and an author each", () => {
+    expect(html.match(/<figure /g)).toHaveLength(3);
+    expect(html.match(/<blockquote>/g)).toHaveLength(3);
+    expect(html.match(/<figcaption /g)).toHaveLength(3);
+    expect(html).toContain("„Die Küche passt auf den Zentimeter");
+    expect(html).toContain("alles sauber.“");
+    expect(html).toContain("Familie K., Einfamilienhaus");
+  });
+
+  it("uses English quotation marks on /en", () => {
+    const english = render(
+      <Testimonials {...getDemoHome("en").testimonials} />,
+      "en",
+    );
+
+    expect(english).toContain("“The kitchen fits to the centimetre");
+    expect(english).toContain("everything clean.”");
+  });
+});
+
+describe("Contact", () => {
+  const html = render(
+    <Contact {...home.contact} company={getDemoSite("de").company} />,
+  );
+
+  it("is a white band with a line, named by the h2", () => {
+    expect(html).toContain('aria-labelledby="kontakt-titel"');
+    expect(classesOf(html)).toEqual(
+      expect.arrayContaining(["bg-weiss", "border-t", "border-linie"]),
+    );
+    expect(html).toMatch(/<h2 id="kontakt-titel"[^>]*>Sprechen Sie mit uns</);
+  });
+
+  it("shows the phone as a tel: link at the top of the scale", () => {
+    const phone = html.match(/<a [^>]*href="tel:[^"]*"[^>]*>/)?.[0] ?? "";
+
+    expect(phone).toContain('href="tel:+498999998412"');
+    expect(phone).toContain("text-tel-lg");
+    expect(html).toContain(">089 99998 412<");
+  });
+
+  it("shows the e-mail on the .example domain and the address", () => {
+    expect(html).toContain('href="mailto:info@tannrieder.example"');
+    expect(html).toContain("Werkstattweg 4");
+    expect(html).toContain("85999 Wendelfing");
+  });
+
+  it("lists the opening hours, the weekend in Schiefer", () => {
+    expect(html).toMatch(/<h3 [^>]*>Öffnungszeiten</);
+    expect(html.match(/<dt /g)).toHaveLength(3);
+    expect(html).toContain(">Montag bis Donnerstag<");
+    expect(html).toContain(">7:00–16:30 Uhr<");
+    expect(html).toMatch(/<dd class="text-schiefer">geschlossen</);
+  });
+
+  it("ends with the radius of work and the request button", () => {
+    expect(html).toContain("Umkreis von etwa 40 km um Wendelfing");
+    expect(html).toMatch(/href="\/anfrage"[^>]*>Projekt anfragen</);
+  });
+});
+
 describe("demo-home", () => {
   it.each(["de", "en"] as const)("has the full set in %s", (locale) => {
     const data = getDemoHome(locale);
@@ -196,6 +340,26 @@ describe("demo-home", () => {
     expect(data.scene.steps).toHaveLength(6);
     expect(data.projects.more).toHaveLength(2);
     expect(data.hero.facts).toHaveLength(3);
+    expect(data.process.steps).toHaveLength(4);
+    expect(data.jobs.jobs).toHaveLength(3);
+    expect(data.about.paragraphs).toHaveLength(2);
+    expect(data.testimonials.items).toHaveLength(3);
+    expect(data.contact.hours).toHaveLength(3);
+  });
+
+  it("has the same jobs, quotes and hours in both languages", () => {
+    const de = getDemoHome("de");
+    const en = getDemoHome("en");
+
+    expect(en.jobs.jobs.map((job) => job.id)).toEqual(
+      de.jobs.jobs.map((job) => job.id),
+    );
+    expect(en.testimonials.items.map((item) => item.id)).toEqual(
+      de.testimonials.items.map((item) => item.id),
+    );
+    expect(en.contact.hours.map((row) => row.closed)).toEqual(
+      de.contact.hours.map((row) => row.closed),
+    );
   });
 
   it("has the same cards in both languages", () => {
@@ -219,6 +383,8 @@ describe("demo-home", () => {
         ...data.services.items.map((item) => item.photo),
         data.projects.featured.photo,
         ...data.projects.more.map((item) => item.photo),
+        data.jobs.photo,
+        data.about.photo,
       ];
 
       for (const photo of photos) {
@@ -237,6 +403,14 @@ describe("texts and files of the home sections", () => {
       expect(messages.HomePage.servicesTitle).toBeTruthy();
       expect(messages.HomePage.sceneTitle).toBeTruthy();
       expect(messages.HomePage.projectsTitle).toBeTruthy();
+      expect(messages.Process.title).toBeTruthy();
+      expect(messages.HomePage.jobsTitle).toBeTruthy();
+      expect(messages.HomePage.trialDayCta).toBeTruthy();
+      expect(messages.HomePage.aboutTitle).toBeTruthy();
+      expect(messages.HomePage.testimonialsTitle).toBeTruthy();
+      expect(messages.HomePage.quote).toContain("{text}");
+      expect(messages.HomePage.contactTitle).toBeTruthy();
+      expect(messages.HomePage.contactHours).toBeTruthy();
     }
   });
 

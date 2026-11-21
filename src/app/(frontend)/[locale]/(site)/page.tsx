@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { AboutTeaser } from "@/components/home/AboutTeaser";
+import { Contact } from "@/components/home/Contact";
 import { Hero } from "@/components/home/Hero";
+import { Jobs } from "@/components/home/Jobs";
+import { Process } from "@/components/home/Process";
 import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
+import { Testimonials } from "@/components/home/Testimonials";
 import { WardrobeSection } from "@/components/home/WardrobeSection";
 import { getDemoHome } from "@/content/demo-home";
+import { getDemoSite } from "@/content/demo-site";
 import { pageAlternates } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage } from "@/lib/content";
@@ -50,7 +56,18 @@ export default async function HomePage({ params }: PageProps) {
     notFound();
   }
   setRequestLocale(locale);
-  const { hero, services, scene, projects } = getDemoHome(locale);
+  const {
+    hero,
+    services,
+    scene,
+    projects,
+    process,
+    jobs,
+    about,
+    testimonials,
+    contact,
+  } = getDemoHome(locale);
+  const { company } = getDemoSite(locale);
 
   return (
     <>
@@ -59,6 +76,11 @@ export default async function HomePage({ params }: PageProps) {
       {/* TEMP(stage-5): the step is fixed until the 3D scene sets it. */}
       <WardrobeSection {...scene} activeStep={3} />
       <Projects {...projects} />
+      <Process {...process} />
+      <Jobs {...jobs} />
+      <AboutTeaser {...about} />
+      <Testimonials {...testimonials} />
+      <Contact {...contact} company={company} />
     </>
   );
 }

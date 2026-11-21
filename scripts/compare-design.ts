@@ -172,6 +172,68 @@ const PAIRS: readonly Pair[] = [
     mockup: "01e-projekte",
     sameCrop: true,
   },
+  // Session 5: the other five sections and the whole home page.
+  {
+    name: "01f-ablauf",
+    path: "/",
+    selector: 'section[aria-labelledby="ablauf-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01f-ablauf",
+    sameCrop: true,
+    // The step texts (17px, two lines) have a line height of 1.5 in the scale,
+    // 1.6 in the mockup: -1.7px per line, -3px in all.
+    tolerancePx: 4,
+  },
+  {
+    name: "01g-jobs",
+    path: "/",
+    selector: 'section[aria-labelledby="jobs-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01g-jobs",
+    sameCrop: true,
+  },
+  {
+    name: "01h-familie",
+    path: "/",
+    selector: 'section[aria-labelledby="familie-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01h-familie",
+    sameCrop: true,
+  },
+  {
+    name: "01i-kundenstimmen",
+    path: "/",
+    selector: 'section[aria-labelledby="stimmen-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01i-kundenstimmen",
+    sameCrop: true,
+  },
+  {
+    name: "01j-kontakt",
+    path: "/",
+    selector: 'section[aria-labelledby="kontakt-titel"]',
+    width: 1440,
+    scale: 2,
+    mockup: "01j-kontakt",
+    sameCrop: true,
+  },
+  {
+    name: "01-startseite-komplett",
+    path: "/",
+    width: 1440,
+    scale: 1,
+    mockup: "01-startseite-komplett",
+    sameCrop: true,
+    // The sum of the differences of the sections above, all from the line
+    // height of the scale (1.5) against the mockup (1.6): footer -4, hero -2,
+    // services -3, process -3, and +1, -1, +1 from the 3D section, projects
+    // and testimonials. The page is about 10px shorter in all.
+    tolerancePx: 12,
+  },
   {
     name: "04-erster-bildschirm",
     path: "/",

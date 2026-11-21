@@ -1,6 +1,11 @@
+import type { AboutTeaserContent } from "@/components/home/AboutTeaser";
+import type { ContactContent } from "@/components/home/Contact";
 import type { HeroContent } from "@/components/home/Hero";
+import type { JobsContent } from "@/components/home/Jobs";
+import type { ProcessContent } from "@/components/home/Process";
 import type { ProjectsContent } from "@/components/home/Projects";
 import type { ServicesContent } from "@/components/home/Services";
+import type { TestimonialsContent } from "@/components/home/Testimonials";
 import type { WardrobeContent } from "@/components/home/WardrobeSection";
 import type { Locale } from "@/i18n/routing";
 
@@ -10,7 +15,8 @@ import type { Locale } from "@/i18n/routing";
  * in German and English, while the redesign takes no data from Payload
  * (docs/REDESIGN.md, rule 6). The types are those of the section props.
  * Section titles and button labels are not here: they live in messages/*.json.
- * The slugs are the ones of seed/data.ts, per language.
+ * The slugs are the ones of seed/data.ts, per language. The phone, e-mail and
+ * address of the contact block come from demo-site.ts, not from here.
  */
 
 export type DemoHome = {
@@ -18,6 +24,11 @@ export type DemoHome = {
   services: ServicesContent;
   scene: WardrobeContent;
   projects: ProjectsContent;
+  process: ProcessContent;
+  jobs: JobsContent;
+  about: AboutTeaserContent;
+  testimonials: TestimonialsContent;
+  contact: ContactContent;
 };
 
 const DEMO_HOME: Record<Locale, DemoHome> = {
@@ -166,6 +177,111 @@ const DEMO_HOME: Record<Locale, DemoHome> = {
           },
         },
       ],
+    },
+    process: {
+      steps: [
+        {
+          title: "Aufmaß vor Ort",
+          text: "Wir kommen zu Ihnen, messen aus und hören zu, was Sie brauchen.",
+        },
+        {
+          title: "Entwurf und Angebot",
+          text: "Sie bekommen eine Zeichnung und ein schriftliches Angebot.",
+        },
+        {
+          title: "Fertigung in der Werkstatt",
+          text: "Jedes Teil entsteht bei uns in Wendelfing.",
+        },
+        {
+          title: "Montage",
+          text: "Wir bauen ein, räumen auf und nehmen die Verpackung mit.",
+        },
+      ],
+      note: "Vom Aufmaß bis zur Montage vergehen meist 8 bis 10 Wochen.",
+    },
+    jobs: {
+      intro:
+        "Neun Leute, eine Werkstatt, feste Zeiten. Freitags ist um 12 Uhr Schluss.",
+      photo: {
+        tone: "shop",
+        alt: "Platzhalter für ein Foto eines Azubis an der Hobelbank",
+        caption: "Foto: Azubi an der Hobelbank, Hände und Werkstück",
+      },
+      jobs: [
+        {
+          id: "schreiner",
+          title: "Schreiner (m/w/d)",
+          meta: "Vollzeit, ab sofort, 19–23 € pro Stunde",
+          href: { pathname: "/karriere/[slug]", params: { slug: "schreiner" } },
+        },
+        {
+          id: "monteur",
+          title: "Monteur für Möbel und Küchen (m/w/d)",
+          meta: "Vollzeit, ab sofort, 18–21 € pro Stunde",
+          href: { pathname: "/karriere/[slug]", params: { slug: "monteur" } },
+        },
+        {
+          id: "ausbildung",
+          title: "Ausbildung zum Schreiner (m/w/d)",
+          meta: "Start September 2027, 900–1.100 € im Monat",
+          href: {
+            pathname: "/karriere/[slug]",
+            params: { slug: "ausbildung-schreiner" },
+          },
+        },
+      ],
+    },
+    about: {
+      paragraphs: [
+        "Georg Tannrieder hat die Werkstatt 1989 in Wendelfing gegründet. Heute führt sein Sohn Johannes den Betrieb als Schreinermeister.",
+        "Wir sind neun Leute: Schreinerinnen und Schreiner, ein Monteur, zwei Azubis und Anna im Büro. Was wir bauen, montieren wir selbst.",
+      ],
+      photo: {
+        tone: "walnut",
+        alt: "Platzhalter für ein Foto des Maschinenraums",
+        caption: "Foto: Maschinenraum der Werkstatt",
+      },
+    },
+    testimonials: {
+      items: [
+        {
+          id: "kueche",
+          quote:
+            "Die Küche passt auf den Zentimeter, auch an der schiefen Wand. Alle Termine wurden eingehalten.",
+          author: "Familie K., Einfamilienhaus",
+        },
+        {
+          id: "schrank",
+          quote:
+            "Der Schrank unter der Dachschräge nutzt jeden Winkel. Montage an einem Tag, alles sauber.",
+          author: "Frau M., Dachgeschosswohnung",
+        },
+        {
+          id: "tueren",
+          quote:
+            "Zwölf neue Türen für unseren Altbau, und keine sieht aus wie von der Stange.",
+          author: "Familie S., Altbau",
+        },
+      ],
+    },
+    contact: {
+      intro:
+        "Rufen Sie an oder schicken Sie uns eine Anfrage. Wir melden uns innerhalb von zwei Werktagen.",
+      hours: [
+        {
+          id: "weekdays",
+          days: "Montag bis Donnerstag",
+          hours: "7:00–16:30 Uhr",
+        },
+        { id: "friday", days: "Freitag", hours: "7:00–12:00 Uhr" },
+        {
+          id: "weekend",
+          days: "Samstag und Sonntag",
+          hours: "geschlossen",
+          closed: true,
+        },
+      ],
+      note: "Wir arbeiten im Umkreis von etwa 40 km um Wendelfing.",
     },
   },
   en: {
@@ -316,6 +432,111 @@ const DEMO_HOME: Record<Locale, DemoHome> = {
           },
         },
       ],
+    },
+    process: {
+      steps: [
+        {
+          title: "Measuring on site",
+          text: "We come to you, measure up and listen to what you need.",
+        },
+        {
+          title: "Design and quote",
+          text: "You get a drawing and a written quote.",
+        },
+        {
+          title: "Made in the workshop",
+          text: "Every part is made here in Wendelfing.",
+        },
+        {
+          title: "Installation",
+          text: "We fit it, tidy up and take the packaging with us.",
+        },
+      ],
+      note: "From measuring to installation usually takes 8 to 10 weeks.",
+    },
+    jobs: {
+      intro:
+        "Nine people, one workshop, fixed hours. On Fridays we finish at 12.",
+      photo: {
+        tone: "shop",
+        alt: "Placeholder for a photo of an apprentice at the workbench",
+        caption: "Photo: apprentice at the workbench, hands and workpiece",
+      },
+      jobs: [
+        {
+          id: "schreiner",
+          title: "Joiner (m/f/d)",
+          meta: "Full-time, from now, €19–23 per hour",
+          href: { pathname: "/karriere/[slug]", params: { slug: "joiner" } },
+        },
+        {
+          id: "monteur",
+          title: "Furniture and kitchen fitter (m/f/d)",
+          meta: "Full-time, from now, €18–21 per hour",
+          href: { pathname: "/karriere/[slug]", params: { slug: "fitter" } },
+        },
+        {
+          id: "ausbildung",
+          title: "Apprenticeship as a joiner (m/f/d)",
+          meta: "Starts September 2027, €900–1,100 per month",
+          href: {
+            pathname: "/karriere/[slug]",
+            params: { slug: "apprenticeship-joiner" },
+          },
+        },
+      ],
+    },
+    about: {
+      paragraphs: [
+        "Georg Tannrieder founded the workshop in Wendelfing in 1989. Today his son Johannes runs the business as a master joiner.",
+        "There are nine of us: joiners, a fitter, two apprentices and Anna in the office. What we build, we install ourselves.",
+      ],
+      photo: {
+        tone: "walnut",
+        alt: "Placeholder for a photo of the machine room",
+        caption: "Photo: the machine room of the workshop",
+      },
+    },
+    testimonials: {
+      items: [
+        {
+          id: "kueche",
+          quote:
+            "The kitchen fits to the centimetre, even on the crooked wall. All appointments were kept.",
+          author: "The K. family, detached house",
+        },
+        {
+          id: "schrank",
+          quote:
+            "The wardrobe under the sloping roof uses every corner. Installed in one day, everything clean.",
+          author: "Ms M., attic flat",
+        },
+        {
+          id: "tueren",
+          quote:
+            "Twelve new doors for our old building, and not one looks off the peg.",
+          author: "The S. family, period building",
+        },
+      ],
+    },
+    contact: {
+      intro:
+        "Give us a call or send us a request. We get back to you within two working days.",
+      hours: [
+        {
+          id: "weekdays",
+          days: "Monday to Thursday",
+          hours: "7:00–16:30",
+        },
+        { id: "friday", days: "Friday", hours: "7:00–12:00" },
+        {
+          id: "weekend",
+          days: "Saturday and Sunday",
+          hours: "closed",
+          closed: true,
+        },
+      ],
+      note: "We work within about 40 km of Wendelfing.",
     },
   },
 };
