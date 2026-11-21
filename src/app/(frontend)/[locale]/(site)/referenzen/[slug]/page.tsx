@@ -43,7 +43,8 @@ export async function generateMetadata({
   }
   const project = await getProject(locale, slug);
   if (!project) {
-    return {};
+    // The 404 title of not-found.tsx, also once the browser has the page.
+    notFound();
   }
 
   return {

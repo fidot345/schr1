@@ -103,6 +103,28 @@
       "month": "im Monat"
     }
   },
+  "ContactPage": {
+    "title": "Kontakt",
+    "intro": "Am schnellsten erreichen Sie uns telefonisch während der Öffnungszeiten. Schreiben können Sie uns jederzeit.",
+    "description": "Telefon {phone}, E-Mail {email}, Werkstatt in {street}, {postalCode} {city}.",
+    "hoursTitle": "Öffnungszeiten",
+    "hours": "{hours} Uhr",
+    "areaTitle": "Wo wir arbeiten",
+    "requestCta": "Projekt anfragen"
+  },
+  "ImprintPage": {
+    "title": "Impressum"
+  },
+  "PrivacyPage": {
+    "title": "Datenschutzerklärung"
+  },
+  "NotFoundPage": {
+    "title": "Seite nicht gefunden",
+    "text": "Diese Adresse gibt es auf unserer Website nicht. Vielleicht ist der Link veraltet, oder in der Adresse steckt ein Tippfehler.",
+    "home": "Zur Startseite",
+    "services": "Unsere Leistungen",
+    "contact": "Kontakt aufnehmen"
+  },
   "RequestCta": {
     "title": "Erzählen Sie uns von Ihrem Projekt",
     "text": "Beschreiben Sie in ein paar Sätzen, was Sie planen. Wir melden uns bei Ihnen und vereinbaren einen Termin für das Aufmaß vor Ort.",

@@ -42,7 +42,8 @@ export async function generateMetadata({
   }
   const job = await getJob(locale, slug);
   if (!job) {
-    return {};
+    // The 404 title of not-found.tsx, also once the browser has the page.
+    notFound();
   }
 
   return {

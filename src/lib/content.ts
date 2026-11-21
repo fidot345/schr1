@@ -1,10 +1,11 @@
 import { cache } from "react";
 import type { SlugTranslations } from "@/i18n/locale-switch-href";
 import { type Locale, routing } from "@/i18n/routing";
-import type { Job, Project } from "@/payload-types";
+import type { Job, Project, SiteSetting } from "@/payload-types";
 import { type JobPay, toJobPay } from "./job-pay";
 import { isPopulated, type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
+import { firstParagraphText } from "./rich-text";
 import { logoWordOf, paragraphs } from "./text";
 
 /*
@@ -71,6 +72,66 @@ export const getSiteSettings = cache(
         hours: row.hours,
       })),
       vacation: enabled && from && until ? { from, until } : null,
+    };
+  },
+);
+
+export type ContactDetails = SiteContent & {
+  /** "Wo wir arbeiten", in paragraphs. */
+  serviceArea: string[];
+};
+
+/** The contact page: company data, opening hours and the area of work. */
+export const getContactDetails = cache(
+  async (locale: Locale): Promise<ContactDetails> => {
+    const payload = await payloadClient();
+    const [site, settings] = await Promise.all([
+      getSiteSettings(locale),
+      payload.findGlobal({
+        slug: "site-settings",
+        ...readOptions(locale),
+        depth: 0,
+        select: { serviceArea: true },
+      }),
+    ]);
+
+    return { ...site, serviceArea: paragraphs(settings.serviceArea) };
+  },
+);
+
+/** Lexical editor state of a rich text field in the admin panel. */
+export type RichTextState = SiteSetting["imprint"];
+
+export type LegalText = {
+  body: RichTextState;
+  /** The first paragraph as plain text, for the page's description. */
+  summary: string | null;
+};
+
+export type LegalTexts = {
+  imprint: LegalText;
+  privacy: LegalText;
+};
+
+const legalText = (body: RichTextState): LegalText => ({
+  body,
+  summary: firstParagraphText(body),
+});
+
+/** Impressum and Datenschutzerklärung from SiteSettings, "Rechtliches". */
+export const getLegalTexts = cache(
+  async (locale: Locale): Promise<LegalTexts> => {
+    const payload = await payloadClient();
+    const settings = await payload.findGlobal({
+      slug: "site-settings",
+      ...readOptions(locale),
+      depth: 0,
+      select: { imprint: true, privacy: true },
+    });
+
+    return {
+      imprint: legalText(settings.imprint),
+      privacy: legalText(settings.privacy),
     };
   },
 );

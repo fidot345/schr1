@@ -42,7 +42,8 @@ export async function generateMetadata({
   }
   const service = await getService(locale, slug);
   if (!service) {
-    return {};
+    // The 404 title of not-found.tsx, also once the browser has the page.
+    notFound();
   }
 
   return {

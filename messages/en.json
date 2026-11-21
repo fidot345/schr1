@@ -108,6 +108,28 @@
       "month": "per month"
     }
   },
+  "ContactPage": {
+    "title": "Contact",
+    "intro": "The quickest way to reach us is by phone during opening hours. You can write to us at any time.",
+    "description": "Phone {phone}, email {email}, workshop at {street}, {postalCode} {city}.",
+    "hoursTitle": "Opening hours",
+    "hours": "{hours}",
+    "areaTitle": "Where we work",
+    "requestCta": "Request a project"
+  },
+  "ImprintPage": {
+    "title": "Imprint"
+  },
+  "PrivacyPage": {
+    "title": "Privacy policy"
+  },
+  "NotFoundPage": {
+    "title": "Page not found",
+    "text": "This address does not exist on our website. The link may be out of date, or there may be a typo in the address.",
+    "home": "Go to the home page",
+    "services": "Our services",
+    "contact": "Get in touch"
+  },
   "EmploymentType": {
     "full_time": "Full-time",
     "part_time": "Part-time",

@@ -41,6 +41,9 @@ export async function generateMetadata({
   if (!hasLocale(routing.locales, locale)) {
     return {};
   }
+  // For the metadata of (site)/not-found.tsx, which gets no params: it
+  // awaits this metadata and then reads the locale set here.
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Metadata" });
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 

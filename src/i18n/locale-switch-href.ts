@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import type { Link } from "./navigation";
-import type { Locale, routing } from "./routing";
+import { type Locale, routing } from "./routing";
 
 export type Href = ComponentProps<typeof Link>["href"];
 type Pathname = keyof typeof routing.pathnames;
@@ -28,12 +28,19 @@ export const isSlugPathname = (pathname: Pathname): pathname is SlugPathname =>
  * `slugMap` translates the slug for the target language (services,
  * projects, jobs have their own slug per language). A slug it does not
  * know is kept as it is.
+ *
+ * An address that is no route of the site (the 404 of /gibt-es-nicht, where
+ * usePathname returns the address itself) has no counterpart in the other
+ * language, so the switch leads to that language's home page.
  */
 export function localeSwitchHref(
   pathname: Pathname,
   params: Record<string, string | string[] | undefined>,
   slugMap?: SlugMap,
 ): Href {
+  if (!Object.hasOwn(routing.pathnames, pathname)) {
+    return "/";
+  }
   if (!isSlugPathname(pathname)) {
     return pathname;
   }

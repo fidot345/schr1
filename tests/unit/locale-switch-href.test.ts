@@ -72,4 +72,12 @@ describe("localeSwitchHref", () => {
   it("falls back to the home page without a slug", () => {
     expect(localeSwitchHref("/karriere/[slug]", {})).toBe("/");
   });
+
+  it("leads to the home page from an address that is no route (404)", () => {
+    // usePathname on the 404 of /gibt-es-nicht returns the address itself.
+    const unknown = "/gibt-es-nicht" as Parameters<typeof localeSwitchHref>[0];
+    expect(
+      localeSwitchHref(unknown, { locale: "de", rest: ["gibt-es-nicht"] }),
+    ).toBe("/");
+  });
 });
