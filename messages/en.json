@@ -36,6 +36,7 @@
     "intro": "We plan every piece for your room, make it in our own workshop and install it with our own team."
   },
   "ServicePage": {
+    "overviewTitle": "At a glance",
     "requestCta": "Request a project",
     "includedTitle": "What is included",
     "materialsTitle": "Materials",

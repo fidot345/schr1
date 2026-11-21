@@ -10,8 +10,11 @@ export type ProcessStep = { title: string; text: string };
 export type ProcessContent = {
   /** The four steps, from the measuring to the installation. */
   steps: ProcessStep[];
-  /** The sentence next to the button: how long it takes. */
-  note: string;
+  /**
+   * The sentence next to the button: how long it takes. Left out where the
+   * steps come from Payload, which has no field for it (the services page).
+   */
+  note?: string;
 };
 
 /**
@@ -37,7 +40,7 @@ export function Process({ steps, note }: ProcessContent) {
           ))}
         </ol>
         <div className="mt-14 flex flex-wrap items-center gap-6 border-t border-linie pt-8">
-          <p className="text-lead">{note}</p>
+          {note ? <p className="text-lead">{note}</p> : null}
           <ButtonLink href="/anfrage" className="w-full md:w-auto">
             {t("requestCta")}
           </ButtonLink>

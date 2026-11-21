@@ -8,6 +8,7 @@ import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { VacationBanner } from "@/components/layout/VacationBanner";
 import { getDemoSite } from "@/content/demo-site";
 import { routing } from "@/i18n/routing";
+import { getSlugTranslations } from "@/lib/content";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -18,7 +19,9 @@ type SiteLayoutProps = {
  * The shell of every page of the site, docs/REDESIGN.md, session 3:
  * holiday notice (only when switched on), header, the page in <main>,
  * footer and the mobile bar. They are direct children of <body>, in this
- * order. The route group adds no segment to the address.
+ * order. The route group adds no segment to the address. The language
+ * switch in the header gets the translated slugs of the service pages from
+ * Payload, so /leistungen/kuechen switches to /en/services/kitchens.
  */
 export default async function SiteLayout({
   children,
@@ -30,6 +33,7 @@ export default async function SiteLayout({
   }
   setRequestLocale(locale);
   const { company, openingHours, tagline, vacation } = getDemoSite(locale);
+  const translatedSlugs = await getSlugTranslations(locale);
 
   return (
     <>
@@ -38,7 +42,11 @@ export default async function SiteLayout({
         from={vacation?.from}
         to={vacation?.until}
       />
-      <Header companyName={company.name} brandName={company.logoWord} />
+      <Header
+        companyName={company.name}
+        brandName={company.logoWord}
+        translatedSlugs={translatedSlugs}
+      />
       <main id="main" className="flex-1">
         {children}
       </main>

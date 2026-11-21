@@ -52,6 +52,9 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("next-intl/server", () => ({ setRequestLocale: () => {} }));
 
+/* The layout reads the translated slugs from Payload; here there are none. */
+vi.mock("@/lib/content", () => ({ getSlugTranslations: async () => ({}) }));
+
 const css = readFileSync("src/app/(frontend)/globals.css", "utf8");
 
 /** The opening tag of the first element that matches. */
