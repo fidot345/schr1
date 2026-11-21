@@ -15,6 +15,10 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
+/* The showcase links with "#" and "tel:", so Link is never rendered; the
+   mock only keeps next-intl's navigation out of Node. */
+vi.mock("@/i18n/navigation", () => ({ Link: () => null }));
+
 vi.mock("next-intl/server", () => ({
   setRequestLocale: () => {},
   getTranslations: async () => (key: string) => key,
@@ -78,6 +82,52 @@ describe("/dev/ui", () => {
         expect(html).toContain(`text-${step}"`);
       }
       expect(html.split(messages.DevUi.sample)).toHaveLength(13);
+    },
+  );
+
+  it.each([
+    ["de", de],
+    ["en", en],
+  ] as const)(
+    "shows the components, with hover and focus pinned, in %s",
+    async (locale, messages) => {
+      vi.stubEnv("NODE_ENV", "development");
+      const html = render(await DevUiPage(props(locale)), locale);
+
+      for (const group of [
+        "logo",
+        "buttons",
+        "links",
+        "steps",
+        "icons",
+        "sections",
+      ] as const) {
+        expect(html).toContain(`>${messages.DevUi.groups[group]}</h2>`);
+      }
+
+      // Three Logo variants.
+      expect(html).toContain('id="dev-logo-full"');
+      expect(html).toContain('id="dev-logo-compact"');
+      expect(html).toContain('id="dev-logo-light"');
+
+      // Every interactive component in its three states.
+      const hover = html.split('data-pin="hover"').length - 1;
+      const focus = html.split('data-pin="focus"').length - 1;
+      expect(hover).toBeGreaterThanOrEqual(10);
+      expect(focus).toBe(hover);
+
+      // The three Section variants, each named by its heading.
+      for (const id of [
+        "dev-section-default",
+        "dev-section-moos",
+        "dev-section-line",
+      ]) {
+        expect(html).toContain(`aria-labelledby="${id}"`);
+        expect(html).toContain(`<h2 id="${id}"`);
+      }
+
+      // Step numbers: three states in two sizes.
+      expect(html.split("rounded-full").length - 1).toBe(6);
     },
   );
 });

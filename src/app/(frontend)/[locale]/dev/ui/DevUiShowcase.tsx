@@ -1,4 +1,19 @@
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
+import { Button, ButtonLink } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import {
+  ArrowRightIcon,
+  CloseIcon,
+  ErrorIcon,
+  MenuIcon,
+  PhoneIcon,
+} from "@/components/ui/icons";
+import { Logo } from "@/components/ui/Logo";
+import { Section } from "@/components/ui/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { StepNumber } from "@/components/ui/StepNumber";
+import { TextLink } from "@/components/ui/TextLink";
 
 type ColorSwatch = {
   name: string;
@@ -112,45 +127,284 @@ const TEXT_SCALE: readonly TextStep[] = [
   },
 ];
 
+type Pin = "hover" | "focus";
+
+/** normal, hover, focus: the three states every interactive component shows. */
+const STATES: readonly (Pin | undefined)[] = [undefined, "hover", "focus"];
+
 /**
- * The overview of the design tokens: the palette and the type scale.
- * The components come to this page in redesign sessions 2 and 6.
+ * data-pin pins a state on an element (globals.css), so the page shows hover
+ * and focus without a mouse or the keyboard.
+ */
+const pinned = (pin: Pin | undefined) => (pin ? { "data-pin": pin } : {});
+
+type StatesRowProps = {
+  label: string;
+  children: (pin: Pin | undefined) => ReactNode;
+};
+
+/** One component in its three states, side by side. */
+function StatesRow({ label, children }: StatesRowProps) {
+  const t = useTranslations("DevUi.states");
+
+  return (
+    <div className="border-t border-linie py-6">
+      <p className="text-small font-bold">{label}</p>
+      <div className="mt-4 grid gap-6 sm:grid-cols-3">
+        {STATES.map((pin) => (
+          <div key={pin ?? "normal"}>
+            <p className="text-xs text-schiefer">{t(pin ?? "normal")}</p>
+            <div className="mt-2">{children(pin)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const STEP_STATES = ["active", "default", "muted"] as const;
+const STEP_SIZES = [32, 44] as const;
+
+/**
+ * The overview of the design tokens and the components: the palette, the type
+ * scale, the logo, buttons, links, step numbers, icons and the sections.
+ * The form elements come to this page in redesign session 6.
  */
 export function DevUiShowcase() {
   const t = useTranslations("DevUi");
+  const common = useTranslations();
 
   return (
-    <main id="main" className="mx-auto max-w-page px-gutter py-16">
-      <h1>{t("title")}</h1>
+    <main id="main">
+      <Container className="py-16">
+        <h1>{t("title")}</h1>
 
-      <section aria-labelledby="dev-colors" className="mt-16">
-        <h2 id="dev-colors">{t("groups.colors")}</h2>
-        <ul className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-5">
-          {COLORS.map((color) => (
-            <li key={color.name}>
-              <div
-                className={`h-20 rounded border border-linie ${color.swatchClass}`}
-              />
-              <p className="mt-3 text-small font-bold">{color.name}</p>
-              <p className="text-small text-schiefer">{color.hex}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <section aria-labelledby="dev-colors" className="mt-16">
+          <h2 id="dev-colors">{t("groups.colors")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-5">
+            {COLORS.map((color) => (
+              <li key={color.name}>
+                <div
+                  className={`h-20 rounded border border-linie ${color.swatchClass}`}
+                />
+                <p className="mt-3 text-small font-bold">{color.name}</p>
+                <p className="text-small text-schiefer">{color.hex}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <section aria-labelledby="dev-type-scale" className="mt-16">
-        <h2 id="dev-type-scale">{t("groups.typeScale")}</h2>
-        <ul className="mt-8">
-          {TEXT_SCALE.map((step) => (
-            <li key={step.token} className="border-t border-linie py-6">
-              <p className="text-xs text-schiefer">
-                {step.token} · {step.font} · {step.spec}
-              </p>
-              <p className={`mt-2 ${step.className}`}>{t("sample")}</p>
+        <section aria-labelledby="dev-type-scale" className="mt-16">
+          <h2 id="dev-type-scale">{t("groups.typeScale")}</h2>
+          <ul className="mt-8">
+            {TEXT_SCALE.map((step) => (
+              <li key={step.token} className="border-t border-linie py-6">
+                <p className="text-xs text-schiefer">
+                  {step.token} · {step.font} · {step.spec}
+                </p>
+                <p className={`mt-2 ${step.className}`}>{t("sample")}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-logo" className="mt-16">
+          <h2 id="dev-logo">{t("groups.logo")}</h2>
+          <ul className="mt-8 grid gap-8 md:grid-cols-3">
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.full")}</p>
+              <div className="mt-3 rounded border border-linie p-6">
+                <div id="dev-logo-full" className="flex w-fit">
+                  <Logo
+                    variant="full"
+                    name={t("logo.name")}
+                    descriptor={t("logo.descriptor")}
+                  />
+                </div>
+              </div>
             </li>
-          ))}
-        </ul>
-      </section>
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.compact")}</p>
+              <div className="mt-3 rounded border border-linie p-6">
+                <div id="dev-logo-compact" className="flex w-fit">
+                  <Logo variant="compact" name={t("logo.name")} />
+                </div>
+              </div>
+            </li>
+            <li>
+              <p className="text-xs text-schiefer">{t("logo.light")}</p>
+              <div className="mt-3 rounded bg-graphit p-6">
+                <div id="dev-logo-light" className="flex w-fit">
+                  <Logo variant="light" name={t("logo.name")} />
+                </div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-buttons" className="mt-16">
+          <h2 id="dev-buttons">{t("groups.buttons")}</h2>
+          <p className="mt-4 max-w-[36em] text-schiefer">{t("statesNote")}</p>
+          <div className="mt-8">
+            <StatesRow label={t("buttons.primary")}>
+              {(pin) => (
+                <Button {...pinned(pin)}>{common("Header.cta")}</Button>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.secondary")}>
+              {(pin) => (
+                <ButtonLink href="#" variant="secondary" {...pinned(pin)}>
+                  {common("HomePage.jobsCta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.text")}>
+              {(pin) => (
+                <Button variant="text" {...pinned(pin)}>
+                  {t("buttons.textLabel")}
+                </Button>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.header")}>
+              {(pin) => (
+                <ButtonLink href="#" size="header" {...pinned(pin)}>
+                  {common("Header.cta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.menu")}>
+              {(pin) => (
+                <Button
+                  variant="menu"
+                  icon={<MenuIcon />}
+                  aria-expanded="false"
+                  {...pinned(pin)}
+                >
+                  {common("Header.menuButton")}
+                </Button>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.withIcon")}>
+              {(pin) => (
+                <ButtonLink
+                  href="tel:+498999998412"
+                  variant="secondary"
+                  icon={<PhoneIcon />}
+                  {...pinned(pin)}
+                >
+                  {common("MobileActionBar.call")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+            <StatesRow label={t("buttons.fullWidth")}>
+              {(pin) => (
+                <ButtonLink href="#" fullWidth {...pinned(pin)}>
+                  {common("Header.cta")}
+                </ButtonLink>
+              )}
+            </StatesRow>
+          </div>
+        </section>
+
+        <section aria-labelledby="dev-links" className="mt-16">
+          <h2 id="dev-links">{t("groups.links")}</h2>
+          <div className="mt-8">
+            {(["strong", "plain", "muted"] as const).map((tone) => (
+              <StatesRow key={tone} label={t(`links.${tone}`)}>
+                {(pin) => (
+                  <TextLink href="#" tone={tone} {...pinned(pin)}>
+                    {common("HomePage.aboutMore")}
+                  </TextLink>
+                )}
+              </StatesRow>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="dev-steps" className="mt-16">
+          <h2 id="dev-steps">{t("groups.steps")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
+            {STEP_SIZES.flatMap((size) =>
+              STEP_STATES.map((state) => (
+                <li
+                  key={`${size}-${state}`}
+                  className="flex items-center gap-4 border-t border-linie pt-4"
+                >
+                  <StepNumber value={3} size={size} state={state} />
+                  <span className="text-small text-schiefer">
+                    {t(`steps.${state}`)}, {t("steps.size", { size })}
+                  </span>
+                </li>
+              )),
+            )}
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-icons" className="mt-16">
+          <h2 id="dev-icons">{t("groups.icons")}</h2>
+          <ul className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
+            <li className="flex items-center gap-3">
+              <PhoneIcon />
+              <span className="text-small">{t("icons.phone")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <MenuIcon />
+              <span className="text-small">{t("icons.menu")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <CloseIcon />
+              <span className="text-small">{t("icons.close")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ArrowRightIcon size={22} className="text-tannengruen" />
+              <span className="text-small">{t("icons.arrowRight")}</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ErrorIcon className="text-fehler" />
+              <span className="text-small">{t("icons.error")}</span>
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="dev-sections" className="mt-16">
+          <h2 id="dev-sections">{t("groups.sections")}</h2>
+        </section>
+      </Container>
+
+      <Section labelledBy="dev-section-default">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.default")}</p>
+          <SectionHeading
+            id="dev-section-default"
+            className="mt-4"
+            title={common("HomePage.servicesTitle")}
+            intro={t("sections.intro")}
+            link={{ href: "#", label: common("HomePage.allProjects") }}
+          />
+        </Container>
+      </Section>
+
+      <Section variant="moos" labelledBy="dev-section-moos">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.moos")}</p>
+          <SectionHeading
+            id="dev-section-moos"
+            className="mt-4"
+            title={common("Process.title")}
+          />
+        </Container>
+      </Section>
+
+      <Section variant="line" labelledBy="dev-section-line">
+        <Container>
+          <p className="text-xs text-schiefer">{t("sections.line")}</p>
+          <SectionHeading
+            id="dev-section-line"
+            className="mt-4"
+            title={common("HomePage.contactTitle")}
+          />
+        </Container>
+      </Section>
     </main>
   );
 }

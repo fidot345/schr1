@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 /*
+ * hover: as in Tailwind (only where the device can hover), plus an element
+ * marked data-pin="hover". /dev/ui uses the mark to show the hover state of
+ * a component without a mouse; nothing else sets it. The focus state is
+ * pinned the same way with data-pin="focus" in the base styles below.
+ */
+@custom-variant hover {
+  &:where([data-pin="hover"]) {
+    @slot;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
+/*
  * Design tokens from the mockup in design/, docs/REDESIGN.md "Токены".
  * `static` emits every variable even when no utility uses it yet.
  * Sizes are in rem (16px root): the same as the mockup's px, but they follow
@@ -182,7 +200,8 @@
     text-decoration-line: underline;
   }
 
-  a:hover {
+  a:hover,
+  a[data-pin="hover"] {
     color: var(--color-tannengruen-dunkel);
   }
 
@@ -190,7 +209,8 @@
    * Keyboard focus: 2px Tannengrün, 2px offset. On dark surfaces (Graphit)
    * focus-ring-light switches it to Weiß.
    */
-  :focus-visible {
+  :focus-visible,
+  [data-pin="focus"] {
     outline: 2px solid var(--focus-ring-color, var(--color-tannengruen));
     outline-offset: 2px;
   }

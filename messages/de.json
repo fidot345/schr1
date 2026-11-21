@@ -116,8 +116,61 @@
     "title": "UI-Komponenten",
     "groups": {
       "colors": "Farben",
-      "typeScale": "Textgrößen"
+      "typeScale": "Textgrößen",
+      "logo": "Logo",
+      "buttons": "Schaltflächen",
+      "links": "Links",
+      "steps": "Schrittnummern",
+      "icons": "Icons",
+      "sections": "Abschnitte"
     },
-    "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing"
+    "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing",
+    "statesNote": "Hover und Fokus sind hier festgehalten, damit man sie ohne Maus und Tastatur sieht.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Fokus"
+    },
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Voll – Kopfzeile ab 1280 px",
+      "compact": "Kompakt – Kopfzeile auf dem Handy",
+      "light": "Hell – Fußzeile"
+    },
+    "buttons": {
+      "primary": "Primär",
+      "secondary": "Sekundär",
+      "text": "Text",
+      "header": "Primär in der Kopfzeile, 48 px",
+      "menu": "Menü-Schaltfläche, 44 px",
+      "withIcon": "Mit Icon",
+      "fullWidth": "Volle Breite",
+      "textLabel": "Mehr erfahren"
+    },
+    "links": {
+      "strong": "Fett",
+      "plain": "Normal",
+      "muted": "Leise"
+    },
+    "steps": {
+      "active": "Aktiv",
+      "default": "Normal",
+      "muted": "Gedämpft",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Telefon",
+      "menu": "Menü",
+      "close": "Schließen",
+      "arrowRight": "Pfeil nach rechts",
+      "error": "Fehler"
+    },
+    "sections": {
+      "default": "Ohne Hintergrund, mit Einleitung und Link",
+      "moos": "Moos-Band",
+      "line": "Weiß mit Linie oben",
+      "intro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut."
+    }
   }
 }

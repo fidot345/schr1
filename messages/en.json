@@ -116,8 +116,61 @@
     "title": "UI components",
     "groups": {
       "colors": "Colors",
-      "typeScale": "Type scale"
+      "typeScale": "Type scale",
+      "logo": "Logo",
+      "buttons": "Buttons",
+      "links": "Links",
+      "steps": "Step numbers",
+      "icons": "Icons",
+      "sections": "Sections"
     },
-    "sample": "Custom furniture from our workshop in Wendelfing"
+    "sample": "Custom furniture from our workshop in Wendelfing",
+    "statesNote": "Hover and focus are pinned here, so you can see them without a mouse or keyboard.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Focus"
+    },
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Full – header from 1280 px",
+      "compact": "Compact – header on the phone",
+      "light": "Light – footer"
+    },
+    "buttons": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "text": "Text",
+      "header": "Primary in the header, 48 px",
+      "menu": "Menu button, 44 px",
+      "withIcon": "With icon",
+      "fullWidth": "Full width",
+      "textLabel": "Learn more"
+    },
+    "links": {
+      "strong": "Bold",
+      "plain": "Regular",
+      "muted": "Quiet"
+    },
+    "steps": {
+      "active": "Active",
+      "default": "Regular",
+      "muted": "Muted",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Phone",
+      "menu": "Menu",
+      "close": "Close",
+      "arrowRight": "Arrow right",
+      "error": "Error"
+    },
+    "sections": {
+      "default": "No background, with intro and link",
+      "moos": "Moss band",
+      "line": "White with a line on top",
+      "intro": "Everything is made in our own workshop and installed by our own team."
+    }
   }
 }
