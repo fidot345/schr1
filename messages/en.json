@@ -113,6 +113,11 @@
   },
   "DevUi": {
     "metaTitle": "UI components",
-    "title": "UI components"
+    "title": "UI components",
+    "groups": {
+      "colors": "Colors",
+      "typeScale": "Type scale"
+    },
+    "sample": "Custom furniture from our workshop in Wendelfing"
   }
 }

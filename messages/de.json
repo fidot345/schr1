@@ -113,6 +113,11 @@
   },
   "DevUi": {
     "metaTitle": "UI-Komponenten",
-    "title": "UI-Komponenten"
+    "title": "UI-Komponenten",
+    "groups": {
+      "colors": "Farben",
+      "typeScale": "Textgrößen"
+    },
+    "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing"
   }
 }
