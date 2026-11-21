@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D-Szene auf dem Handy</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+body{margin:0}
+a{color:#1F4537}a:hover{color:#15332A}
+</style>
+<style>
+body{background:#D6DBD8;display:flex;justify-content:center;align-items:flex-start;padding:32px 0;box-sizing:border-box;min-height:100vh}
+</style>
+</head>
+<body>
+<!-- Макет Schreinerei Tannrieder: эталон внешнего вида, а не код для копирования. Как пользоваться — README.md в этой папке. -->
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F8F9F7; font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; color: #24282A; font-size: 17px; line-height: 1.6">
+<header style="height: 64px; padding: 0 16px 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #D6DBD8; box-sizing: border-box">
+<a href="#" aria-label="Schreinerei Tannrieder, zur Startseite" style="display: flex; align-items: center; gap: 10px; text-decoration: none">
+<svg width="24" height="27" viewBox="0 0 30 34" aria-hidden="true" fill="#1F4537"><rect x="10" y="2" width="10" height="5" rx="1"></rect><rect x="5" y="10" width="20" height="5" rx="1"></rect><rect x="0" y="18" width="30" height="5" rx="1"></rect><rect x="12.5" y="25" width="5" height="9" rx="1"></rect></svg>
+<span style="font-family: 'Zilla Slab', Georgia, serif; font-weight: 600; font-size: 24px; color: #1F4537">Tannrieder</span>
+</a>
+<button type="button" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid #7C8482; background: #FFFFFF; border-radius: 4px; font-family: inherit; font-size: 16px; font-weight: 700; color: #24282A">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#24282A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+Menü
+</button>
+</header>
+
+<section aria-labelledby="szene-titel">
+<div style="padding: 20px 20px 0">
+<h2 id="szene-titel" style="font-family: 'Zilla Slab', Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.15; margin: 0">Vom Brett zum Schrank</h2>
+</div>
+<div style="height: 380px; display: flex; align-items: center; justify-content: center">
+<svg viewBox="-180 -290 330 350" width="100%" height="100%" aria-hidden="true"><defs><radialGradient id="schatten-handy"><stop offset="0" stop-color="#24282A" stop-opacity="0.2"></stop><stop offset="1" stop-color="#24282A" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="-20" cy="16" rx="150" ry="34" fill="url(#schatten-handy)"></ellipse><g stroke="#4A3826" stroke-width="0.6" stroke-linejoin="round"><polygon points="79.3,2.7 78.8,3.0 78.8,-212.5 79.3,-212.9" fill="#C8B189"></polygon><polygon points="-41.3,-27.5 78.8,3.0 78.8,-212.5 -41.3,-243.1" fill="#E2CDA4"></polygon><polygon points="-40.8,-243.4 79.3,-212.9 78.8,-212.5 -41.3,-243.1" fill="#EDDDBB"></polygon><polygon points="-39.4,-27.0 -76.9,-2.6 -76.9,-218.2 -39.4,-242.6" fill="#A57B51"></polygon><polygon points="-78.8,-3.0 -76.9,-2.6 -76.9,-218.2 -78.8,-218.6" fill="#C79D6F"></polygon><polygon points="-41.3,-243.1 -39.4,-242.6 -76.9,-218.2 -78.8,-218.6" fill="#DDB88C"></polygon><polygon points="76.9,2.6 39.4,27.0 39.4,24.9 76.9,0.5" fill="#A57B51"></polygon><polygon points="-76.9,-2.6 39.4,27.0 39.4,24.9 -76.9,-4.6" fill="#C79D6F"></polygon><polygon points="-39.4,-29.0 76.9,0.5 39.4,24.9 -76.9,-4.6" fill="#DDB88C"></polygon><polygon points="15.3,-55.1 -19.7,-32.3 -19.7,-34.3 15.3,-57.1" fill="#A57B51"></polygon><polygon points="-76.9,-46.8 -19.7,-32.3 -19.7,-34.3 -76.9,-48.9" fill="#C79D6F"></polygon><polygon points="-41.9,-71.7 15.3,-57.1 -19.7,-34.3 -76.9,-48.9" fill="#DDB88C"></polygon><polygon points="15.3,-98.2 -19.7,-75.4 -19.7,-77.4 15.3,-100.2" fill="#A57B51"></polygon><polygon points="-76.9,-89.9 -19.7,-75.4 -19.7,-77.4 -76.9,-92.0" fill="#C79D6F"></polygon><polygon points="-41.9,-114.8 15.3,-100.2 -19.7,-77.4 -76.9,-92.0" fill="#DDB88C"></polygon><polygon points="15.3,-141.3 -19.7,-118.5 -19.7,-120.6 15.3,-143.4" fill="#A57B51"></polygon><polygon points="-76.9,-133.1 -19.7,-118.5 -19.7,-120.6 -76.9,-135.1" fill="#C79D6F"></polygon><polygon points="-41.9,-157.9 15.3,-143.4 -19.7,-120.6 -76.9,-135.1" fill="#DDB88C"></polygon><polygon points="15.3,-184.4 -19.7,-161.6 -19.7,-163.7 15.3,-186.5" fill="#A57B51"></polygon><polygon points="-76.9,-176.2 -19.7,-161.6 -19.7,-163.7 -76.9,-178.2" fill="#C79D6F"></polygon><polygon points="-41.9,-201.0 15.3,-186.5 -19.7,-163.7 -76.9,-178.2" fill="#DDB88C"></polygon><polygon points="17.2,-12.4 -17.8,10.4 -17.8,-201.1 17.2,-223.9" fill="#A57B51"></polygon><polygon points="-19.7,9.9 -17.8,10.4 -17.8,-201.1 -19.7,-201.6" fill="#C79D6F"></polygon><polygon points="15.3,-224.4 17.2,-223.9 -17.8,-201.1 -19.7,-201.6" fill="#DDB88C"></polygon><polygon points="74.4,-184.5 39.4,-161.7 39.4,-163.8 74.4,-186.6" fill="#A57B51"></polygon><polygon points="-17.8,-176.2 39.4,-161.7 39.4,-163.8 -17.8,-178.3" fill="#C79D6F"></polygon><polygon points="17.2,-201.1 74.4,-186.6 39.4,-163.8 -17.8,-178.3" fill="#DDB88C"></polygon><polygon points="57.2,-164.8 55.6,-163.8 55.6,-166.5 57.2,-167.5" fill="#2E3437"></polygon><polygon points="-0.6,-178.1 55.6,-163.8 55.6,-166.5 -0.6,-180.8" fill="#41484C"></polygon><polygon points="1.0,-181.8 57.2,-167.5 55.6,-166.5 -0.6,-180.8" fill="#5A6266"></polygon><polygon points="76.9,-211.0 39.4,-186.6 39.4,-188.6 76.9,-213.0" fill="#A57B51"></polygon><polygon points="-76.9,-216.1 39.4,-186.6 39.4,-188.6 -76.9,-218.2" fill="#C79D6F"></polygon><polygon points="-39.4,-242.6 76.9,-213.0 39.4,-188.6 -76.9,-218.2" fill="#DDB88C"></polygon><polygon points="78.8,3.0 41.3,27.5 41.3,-188.1 78.8,-212.5" fill="#A57B51"></polygon><polygon points="39.4,27.0 41.3,27.5 41.3,-188.1 39.4,-188.6" fill="#C79D6F"></polygon><polygon points="76.9,-213.0 78.8,-212.5 41.3,-188.1 39.4,-188.6" fill="#DDB88C"></polygon><polygon points="21.1,35.9 19.9,36.7 19.9,-178.5 21.1,-179.2" fill="#A57B51"></polygon><polygon points="-39.9,21.5 19.9,36.7 19.9,-178.5 -39.9,-193.7" fill="#C79D6F"></polygon><polygon points="-38.7,-194.4 21.1,-179.2 19.9,-178.5 -39.9,-193.7" fill="#DDB88C"></polygon><polygon points="-71.1,22.9 -72.3,23.7 -72.3,-191.5 -71.1,-192.3" fill="#A57B51"></polygon><polygon points="-132.1,8.5 -72.3,23.7 -72.3,-191.5 -132.1,-206.7" fill="#C79D6F"></polygon><polygon points="-130.9,-207.5 -71.1,-192.3 -72.3,-191.5 -132.1,-206.7" fill="#DDB88C"></polygon></g></svg>
+</div>
+<div style="padding: 0 20px">
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px">
+<span style="height: 4px; border-radius: 2px; background: #1F4537"></span>
+<span style="height: 4px; border-radius: 2px; background: #1F4537"></span>
+<span style="height: 4px; border-radius: 2px; background: #1F4537"></span>
+<span style="height: 4px; border-radius: 2px; background: #1F4537"></span>
+<span style="height: 4px; border-radius: 2px; background: #D6DBD8"></span>
+<span style="height: 4px; border-radius: 2px; background: #D6DBD8"></span>
+</div>
+<p style="margin: 14px 0 0; font-size: 15px; font-weight: 700; color: #1F4537">Schritt 4 von 6</p>
+<h3 style="font-family: 'Zilla Slab', Georgia, serif; font-weight: 600; font-size: 26px; line-height: 1.2; margin: 2px 0 0">Fronten</h3>
+<p style="margin: 6px 0 0; font-size: 18px; line-height: 1.5">Die Türen werden eingepasst und ausgerichtet.</p>
+</div>
+</section>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-top: 1px solid #D6DBD8; padding: 12px 16px 16px; display: flex; gap: 12px">
+<a href="tel:+498999998412" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 2px solid #1F4537; color: #1F4537; border-radius: 4px; font-weight: 700; font-size: 17px; text-decoration: none; box-sizing: border-box">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4537" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+Anrufen
+</a>
+<a href="#" style="flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 52px; background: #1F4537; color: #FFFFFF; border-radius: 4px; font-weight: 700; font-size: 17px; text-decoration: none">Anfrage</a>
+</div>
+</div>
+</body>
+</html>
