@@ -7,7 +7,10 @@ import type {
 } from "payload";
 import { describe, expect, it } from "vitest";
 import { HomePage } from "../../src/globals/HomePage";
-import { SiteSettings } from "../../src/globals/SiteSettings";
+import {
+  LEGAL_TEXT_FEATURES,
+  SiteSettings,
+} from "../../src/globals/SiteSettings";
 import { countRows } from "../../src/globals/validators";
 
 type FlatField = { path: string; field: Field; inLocalizedParent: boolean };
@@ -98,6 +101,7 @@ const requiredFields: Record<string, string[]> = {
     "company.city",
     "company.phone",
     "company.email",
+    "tagline",
     "openingHours",
     "openingHours.days",
     "openingHours.hours",
@@ -112,14 +116,23 @@ const requiredFields: Record<string, string[]> = {
     "hero.title",
     "hero.text",
     "hero.image",
+    "hero.facts.highlight",
+    "hero.facts.text",
     "featuredProjects",
     "processSteps.title",
     "processSteps.text",
     "sceneCaptions.text",
     "about.title",
     "about.text",
+    "about.image",
+    "about.principles.title",
+    "about.principles.text",
     "careers.title",
     "careers.text",
+    "careers.image",
+    "careers.benefits.text",
+    "careers.faq.question",
+    "careers.faq.answer",
     "meta.title",
     "meta.description",
   ],
@@ -185,7 +198,38 @@ describe("site settings", () => {
       const field = find(SiteSettings, path);
       expect(field.type, path).toBe("richText");
       expect(prop(field, "localized"), path).toBe(true);
+      expect(prop(field, "editor"), path).toBeDefined();
     }
+  });
+
+  it("limits the legal texts to headings, paragraphs, lists and web links", () => {
+    expect(LEGAL_TEXT_FEATURES.map((feature) => feature.key).sort()).toEqual(
+      [
+        "heading",
+        "link",
+        "orderedList",
+        "paragraph",
+        "toolbarFixed",
+        "toolbarInline",
+        "unorderedList",
+      ].sort(),
+    );
+    const props = (key: string) =>
+      LEGAL_TEXT_FEATURES.find((feature) => feature.key === key)
+        ?.serverFeatureProps;
+    // The page has the h1; the text starts at h2.
+    expect(props("heading")).toEqual({ enabledHeadingSizes: ["h2", "h3"] });
+    // No links to documents of the admin panel: they have no address.
+    expect(props("link")).toEqual({ enabledCollections: [] });
+  });
+
+  it("has a translated, optional line for the footer", () => {
+    const tagline = find(SiteSettings, "tagline");
+    expect(tagline.type).toBe("text");
+    expect(prop(tagline, "localized")).toBe(true);
+    // A NOT NULL column could not be added to the saved settings rows.
+    expect(prop(tagline, "required")).not.toBe(true);
+    expect(prop(tagline, "maxLength")).toBe(120);
   });
 
   it("has no field for the vacation banner text", () => {
@@ -303,6 +347,30 @@ describe("home page", () => {
     expect(validate(field, rows(count + 1))).not.toBe(true);
     expect(validate(field, undefined)).not.toBe(true);
   });
+
+  it.each([
+    ["hero.facts", 3],
+    ["about.principles", 3],
+    ["careers.benefits", 4],
+    ["careers.faq", 4],
+  ])("keeps %s optional, with at most %i rows", (path, max) => {
+    const field = find(HomePage, path);
+    expect(field.type).toBe("array");
+    expect(prop(field, "maxRows")).toBe(max);
+    expect(prop(field, "minRows")).toBeUndefined();
+    expect(prop(field, "required")).not.toBe(true);
+  });
+
+  it.each(["about.image", "careers.image"])(
+    "has an optional photo from the media library at %s",
+    (path) => {
+      const image = find(HomePage, path);
+      expect(image.type).toBe("upload");
+      expect(prop(image, "relationTo")).toBe("media");
+      // A NOT NULL column could not be added to the saved home page row.
+      expect(prop(image, "required")).not.toBe(true);
+    },
+  );
 
   it("counts rows the way the admin form and the server pass them", () => {
     expect(countRows([{}, {}])).toBe(2);

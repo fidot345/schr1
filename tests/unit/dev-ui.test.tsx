@@ -19,6 +19,17 @@ vi.mock("next/navigation", () => ({
    mock only keeps next-intl's navigation out of Node. */
 vi.mock("@/i18n/navigation", () => ({ Link: () => null }));
 
+/* Phone and opening hours come from SiteSettings; here a fixture. */
+vi.mock("@/lib/content", () => ({
+  getSiteSettings: async () => ({
+    company: { phone: "089 99998 412" },
+    openingHours: [
+      { id: "a", days: "Mo–Do", hours: "7:00–16:30" },
+      { id: "b", days: "Fr", hours: "7:00–12:00" },
+    ],
+  }),
+}));
+
 vi.mock("next-intl/server", () => ({
   setRequestLocale: () => {},
   getTranslations: async () => (key: string) => key,

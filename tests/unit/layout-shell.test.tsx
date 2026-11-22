@@ -12,8 +12,44 @@ import {
 } from "@/components/layout/navigation";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { VacationBanner } from "@/components/layout/VacationBanner";
-import { getDemoSite } from "@/content/demo-site";
 import { classesOf, render, tagWithId } from "./support/render";
+
+/*
+ * SiteSettings as the seed writes them (seed/data.ts), the way
+ * getSiteSettings returns them, in both languages.
+ */
+const SITE = vi.hoisted(() => {
+  const company = {
+    name: "Schreinerei Tannrieder",
+    logoWord: "Tannrieder",
+    owner: "Johannes Tannrieder",
+    street: "Werkstattweg 4",
+    postalCode: "85999",
+    city: "Wendelfing",
+    phone: "089 99998 412",
+    email: "info@tannrieder.example",
+  };
+  return {
+    de: {
+      company,
+      tagline: "Schreinerei mit eigener Werkstatt in Wendelfing, seit 1989.",
+      openingHours: [
+        { id: "a", days: "Mo–Do", hours: "7:00–16:30" },
+        { id: "b", days: "Fr", hours: "7:00–12:00" },
+      ],
+      vacation: null,
+    },
+    en: {
+      company,
+      tagline: "Joinery with its own workshop in Wendelfing, since 1989.",
+      openingHours: [
+        { id: "a", days: "Mon–Thu", hours: "7:00–16:30" },
+        { id: "b", days: "Fri", hours: "7:00–12:00" },
+      ],
+      vacation: null,
+    },
+  };
+});
 
 const route = vi.hoisted(() => ({
   pathname: "/" as string,
@@ -52,8 +88,14 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("next-intl/server", () => ({ setRequestLocale: () => {} }));
 
-/* The layout reads the translated slugs from Payload; here there are none. */
-vi.mock("@/lib/content", () => ({ getSlugTranslations: async () => ({}) }));
+/*
+ * The layout reads SiteSettings and the translated slugs from Payload; here
+ * the settings are the fixture above and there are no slugs.
+ */
+vi.mock("@/lib/content", () => ({
+  getSiteSettings: async (locale: "de" | "en") => SITE[locale],
+  getSlugTranslations: async () => ({}),
+}));
 
 const css = readFileSync("src/app/(frontend)/globals.css", "utf8");
 
@@ -61,7 +103,7 @@ const css = readFileSync("src/app/(frontend)/globals.css", "utf8");
 const openingTag = (html: string, pattern: RegExp): string =>
   html.match(pattern)?.[0] ?? "";
 
-const site = getDemoSite("de");
+const site = SITE.de;
 
 describe("Header", () => {
   route.pathname = "/";
@@ -350,6 +392,18 @@ describe("Footer", () => {
     );
   });
 
+  it("leaves the tagline out when SiteSettings has none", () => {
+    const bare = render(
+      <Footer
+        company={site.company}
+        openingHours={site.openingHours}
+        tagline={null}
+      />,
+    );
+    expect(bare).not.toContain("max-w-[22em]");
+    expect(bare).toContain(">Tannrieder</span>");
+  });
+
   it("has the light logo and the tagline", () => {
     expect(html).toMatch(/<svg[^>]*width="26"[^>]*height="30"/);
     expect(html).toContain(">Tannrieder</span>");
@@ -374,7 +428,7 @@ describe("Footer", () => {
     expect(html).toContain("Mo–Do 7:00–16:30 Uhr");
     expect(html).toContain("Fr 7:00–12:00 Uhr");
 
-    const english = getDemoSite("en");
+    const english = SITE.en;
     const htmlEn = render(
       <Footer
         company={english.company}
@@ -480,19 +534,6 @@ describe("SiteLayout", () => {
       }),
     ).rejects.toThrow("404");
   });
-});
-
-describe("demo site data", () => {
-  it.each(["de", "en"] as const)(
-    "keeps to the rules of the demo in %s",
-    (locale) => {
-      const { company, vacation, openingHours } = getDemoSite(locale);
-      expect(company.phone).toBe("089 99998 412");
-      expect(company.email).toMatch(/@[a-z.]+\.example$/);
-      expect(vacation).toBeNull();
-      expect(openingHours).toHaveLength(2);
-    },
-  );
 });
 
 describe("scroll margins under the sticky bars (WCAG 2.4.11)", () => {

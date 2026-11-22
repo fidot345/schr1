@@ -45,6 +45,7 @@ const CONTACT: ContactData = {
     { id: "b", days: "Fr", hours: "7:00–12:00" },
   ],
   serviceArea: ["Im Umkreis von etwa 40 km.", "Mit eigenem Team."],
+  tagline: null,
   vacation: null,
 };
 

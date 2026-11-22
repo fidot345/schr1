@@ -146,7 +146,7 @@ test.describe("metadata", () => {
 });
 
 test.describe("the about page", () => {
-  test("has the story, the mark and the team without photos", async ({
+  test("has the story with the workshop photo, the mark and the team without photos", async ({
     page,
   }) => {
     await page.goto("/ueber-uns");
@@ -166,7 +166,16 @@ test.describe("the about page", () => {
       team.getByText("Schreinermeister, Inhaber", { exact: true }),
     ).toBeVisible();
     await expect(team.getByText("seit 2003", { exact: true })).toBeVisible();
-    await expect(page.locator("main img")).toHaveCount(0);
+    await expect(team.locator("img")).toHaveCount(0);
+
+    // One photo: the workshop from the "Über uns" block, loaded first.
+    const photo = page.locator("main img");
+    await expect(photo).toHaveCount(1);
+    await expect(photo).toHaveAttribute("alt", /^Werkbank vor einem Fenster/);
+    await expect(photo).toHaveAttribute("loading", "eager");
+    expect(
+      await photo.evaluate((image) => (image as HTMLImageElement).naturalWidth),
+    ).toBeGreaterThan(0);
   });
 
   test("is in English on /en/about", async ({ page }) => {
@@ -210,6 +219,24 @@ test.describe("the careers page", () => {
         "Ausbildung, September 2027, 1. Jahr 900 €, 2. Jahr 1.000 €, 3. Jahr 1.100 € im Monat",
       ),
     ).toBeVisible();
+  });
+
+  test("has the photo and why it is good to work here", async ({ page }) => {
+    await page.goto("/karriere");
+
+    const photo = page.locator("main img");
+    await expect(photo).toHaveCount(1);
+    await expect(photo).toHaveAttribute("alt", /^Nahaufnahme: Ein Schreiner/);
+    const benefits = page.getByRole("region", { name: "Was wir bieten" });
+    await expect(benefits.getByRole("listitem")).toHaveCount(4);
+    await expect(
+      benefits.getByText("Feste Arbeitszeiten, freitags ist um 12 Uhr Schluss"),
+    ).toBeVisible();
+
+    await page.goto("/en/careers");
+    await expect(
+      page.getByRole("region", { name: "What we offer" }).getByRole("listitem"),
+    ).toHaveCount(4);
   });
 
   test("has the trial day with a call button and no form yet", async ({

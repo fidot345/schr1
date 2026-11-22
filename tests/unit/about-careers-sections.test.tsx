@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { AboutIntro } from "@/components/about/AboutIntro";
+import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { TeamList } from "@/components/about/TeamList";
 import { ApplyCta } from "@/components/careers/ApplyCta";
+import { CareersBenefits } from "@/components/careers/CareersBenefits";
+import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
 import { JobDetails } from "@/components/careers/JobDetails";
 import { JobIntro } from "@/components/careers/JobIntro";
@@ -10,6 +13,7 @@ import { OpenJobs } from "@/components/careers/OpenJobs";
 import { TrialDay } from "@/components/careers/TrialDay";
 import type { JobListItem, TeamMember } from "@/lib/content";
 import type { JobPay } from "@/lib/job-pay";
+import type { Photo } from "@/lib/media";
 import { render, tagWithId } from "./support/render";
 
 type MockHref = string | { pathname: string; params?: Record<string, string> };
@@ -75,10 +79,21 @@ const items = (...texts: string[]) =>
 
 const PHONE = "089 99998 412";
 
+const photo = (name: string): Photo => ({
+  src: `/api/media/file/${name}.jpg`,
+  alt: `Foto ${name}`,
+  width: 2400,
+  height: 1600,
+  position: "50% 50%",
+});
+
 describe("CareersIntro", () => {
   it("is the page's h1 and the lead text from Payload", () => {
     const html = render(
-      <CareersIntro intro={["Wir suchen Verstärkung.", "Feste Zeiten."]} />,
+      <CareersIntro
+        intro={["Wir suchen Verstärkung.", "Feste Zeiten."]}
+        photo={null}
+      />,
     );
 
     expect(tagWithId(html, "karriere-titel")).toMatch(/^<h1 /);
@@ -87,12 +102,81 @@ describe("CareersIntro", () => {
     expect(html).toContain("Wir suchen Verstärkung.");
     expect(html).toContain("Feste Zeiten.");
     expect(count(html, /text-lead/g)).toBe(2);
+    expect(count(html, /<img/g)).toBe(0);
+  });
+
+  it("shows the photo of the careers block next to the text, loaded first", () => {
+    const html = render(
+      <CareersIntro intro={["Feste Zeiten."]} photo={photo("karriere")} />,
+    );
+
+    expect(html).toContain('alt="Foto karriere"');
+    expect(html).toContain('loading="eager"');
+    expect(html.indexOf("<img")).toBeGreaterThan(html.indexOf("<h1"));
   });
 
   it("is in English on /en", () => {
-    expect(render(<CareersIntro intro={["We are hiring."]} />, "en")).toContain(
-      ">Careers</h1>",
+    expect(
+      render(<CareersIntro intro={["We are hiring."]} photo={null} />, "en"),
+    ).toContain(">Careers</h1>");
+  });
+});
+
+describe("CareersBenefits", () => {
+  const html = render(
+    <CareersBenefits
+      benefits={items(
+        "Feste Arbeitszeiten, freitags ist um 12 Uhr Schluss",
+        "Moderne Maschinen in der Werkstatt",
+        "Eigenes Fahrzeug für die Montage",
+        "Unterstützung, wenn du deinen Meister machen willst",
+      )}
+    />,
+  );
+
+  it("is named by its h2 and lists every point", () => {
+    expect(tagWithId(html, "vorteile-titel")).toMatch(/^<h2 /);
+    expect(html).toContain('aria-labelledby="vorteile-titel"');
+    expect(html).toContain(">Was wir bieten</h2>");
+    expect(count(html, /<li /g)).toBe(4);
+    expect(html).toContain("freitags ist um 12 Uhr Schluss");
+  });
+
+  it("is in English on /en and left out without points", () => {
+    expect(
+      render(<CareersBenefits benefits={items("Fixed hours")} />, "en"),
+    ).toContain(">What we offer</h2>");
+    expect(render(<CareersBenefits benefits={[]} />)).toBe("");
+  });
+});
+
+describe("CareersFaq", () => {
+  const faq = [
+    { id: "1", title: "Brauche ich einen Lebenslauf?", text: "Nein." },
+    { id: "2", title: "Wann fange ich an?", text: "Wenn es dir passt." },
+  ];
+  const html = render(<CareersFaq faq={faq} />);
+
+  it("is named by its h2 and has every question with its answer", () => {
+    expect(tagWithId(html, "fragen-titel")).toMatch(/^<h2 /);
+    expect(html).toContain(">Häufige Fragen</h2>");
+    expect(count(html, /<dt /g)).toBe(2);
+    expect(count(html, /<dd /g)).toBe(2);
+    expect(html).toMatch(
+      /Brauche ich einen Lebenslauf\?<\/dt><dd [^>]*>Nein\.</,
     );
+  });
+
+  it("shows the answers open, without a button or details element", () => {
+    expect(html).not.toContain("<button");
+    expect(html).not.toContain("<details");
+  });
+
+  it("is in English on /en and left out without questions", () => {
+    expect(render(<CareersFaq faq={faq} />, "en")).toContain(
+      ">Frequently asked questions</h2>",
+    );
+    expect(render(<CareersFaq faq={[]} />)).toBe("");
   });
 });
 
@@ -299,6 +383,7 @@ describe("AboutIntro", () => {
           "Georg Tannrieder hat die Werkstatt 1989 gegründet.",
           "Wir arbeiten im Umkreis von 40 km.",
         ]}
+        photo={null}
       />,
     );
 
@@ -318,11 +403,56 @@ describe("AboutIntro", () => {
       <AboutIntro
         title="Family business since 1989"
         story={["Founded in 1989."]}
+        photo={null}
       />,
       "en",
     );
 
     expect(html).toContain("Master craftsman&#x27;s workshop");
+  });
+
+  it("shows the photo of the workshop next to the story, loaded first", () => {
+    const html = render(
+      <AboutIntro
+        title="Familienbetrieb seit 1989"
+        story={["Gegründet 1989."]}
+        photo={photo("about-werkstatt")}
+      />,
+    );
+
+    expect(count(html, /<img/g)).toBe(1);
+    expect(html).toContain('alt="Foto about-werkstatt"');
+    expect(html).toContain('loading="eager"');
+    expect(html).toContain("md:aspect-3/2");
+  });
+});
+
+describe("AboutPrinciples", () => {
+  const principles = [
+    { id: "1", title: "Aus einer Werkstatt", text: "Alles entsteht bei uns." },
+    { id: "2", title: "Ein Team", text: "Wer baut, montiert auch." },
+    { id: "3", title: "Feste Termine", text: "Was wir zusagen, halten wir." },
+  ];
+  const html = render(<AboutPrinciples principles={principles} />);
+
+  it("is a Moos band named by its h2, a heading and text per principle", () => {
+    expect(tagWithId(html, "grundsaetze-titel")).toMatch(/^<h2 /);
+    expect(html).toContain(">So arbeiten wir</h2>");
+    expect(html).toContain("bg-moos");
+    expect(count(html, /<h3 /g)).toBe(3);
+    expect(html).toContain("Was wir zusagen, halten wir.");
+  });
+
+  it("has no numbers: the principles have no order", () => {
+    expect(html).not.toContain("<ol");
+    expect(html).not.toMatch(/>[1-3]</);
+  });
+
+  it("is in English on /en and left out without principles", () => {
+    expect(render(<AboutPrinciples principles={principles} />, "en")).toContain(
+      ">How we work</h2>",
+    );
+    expect(render(<AboutPrinciples principles={[]} />)).toBe("");
   });
 });
 

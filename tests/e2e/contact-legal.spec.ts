@@ -327,7 +327,10 @@ test.describe("the privacy policy", () => {
   }) => {
     await page.goto("/datenschutz");
 
-    await expect(page.locator("h1")).toHaveText("Datenschutzerklärung");
+    // The soft hyphen (see the next test) is invisible on one line.
+    expect((await page.locator("h1").textContent())?.replace("­", "")).toBe(
+      "Datenschutzerklärung",
+    );
     await expect(page.locator("main h2")).toHaveText([
       "Kurz gesagt",
       "Hosting",
@@ -338,6 +341,39 @@ test.describe("the privacy policy", () => {
     await expect(page.getByText(/Vercel Inc\./)).toBeVisible();
     await expect(page.getByText(/über den E-Mail-Dienst Resend/)).toBeVisible();
   });
+
+  for (const width of [360, 390]) {
+    test(`breaks its heading as Datenschutz-/erklärung at ${width} px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/datenschutz");
+      await page.evaluate(() => document.fonts.ready);
+
+      // The lines of the heading's text, a soft hyphen shown as "-".
+      const lines = await page.locator("h1").evaluate((heading) => {
+        const node = heading.firstChild as Text;
+        const text = node.data;
+        const rows: { top: number; text: string }[] = [];
+        for (let index = 0; index < text.length; index += 1) {
+          const range = document.createRange();
+          range.setStart(node, index);
+          range.setEnd(node, index + 1);
+          const rects = range.getClientRects();
+          const rect = rects[rects.length - 1];
+          if (!rect || rect.width === 0) continue;
+          const top = Math.round(rect.top);
+          const char = text[index] === "­" ? "-" : (text[index] ?? "");
+          const row = rows.find((line) => Math.abs(line.top - top) < 4);
+          if (row) row.text += char;
+          else rows.push({ top, text: char });
+        }
+        return rows.map((row) => row.text);
+      });
+
+      expect(lines).toEqual(["Datenschutz-", "erklärung"]);
+    });
+  }
 
   test("is in English on /en/privacy", async ({ page }) => {
     await page.goto("/en/privacy");

@@ -112,11 +112,21 @@ describe("findMediaFields", () => {
     }
   });
 
-  it("finds the hero photo of the home page with its group label", () => {
+  it("finds the photos of the home page with their group labels", () => {
     expect(findMediaFields(HomePage.fields)).toEqual([
       {
         path: "hero.image",
         label: "Erster Bildschirm › Foto",
+        localized: false,
+      },
+      {
+        path: "about.image",
+        label: "Block „Über uns“ › Foto",
+        localized: false,
+      },
+      {
+        path: "careers.image",
+        label: "Block „Karriere“ › Foto",
         localized: false,
       },
     ]);
