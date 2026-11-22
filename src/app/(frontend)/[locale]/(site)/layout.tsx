@@ -6,9 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { VacationBanner } from "@/components/layout/VacationBanner";
-import { getDemoSite } from "@/content/demo-site";
 import { routing } from "@/i18n/routing";
-import { getSlugTranslations } from "@/lib/content";
+import { getSiteSettings, getSlugTranslations } from "@/lib/content";
 
 type SiteLayoutProps = {
   children: ReactNode;
@@ -19,7 +18,9 @@ type SiteLayoutProps = {
  * The shell of every page of the site, docs/REDESIGN.md, session 3:
  * holiday notice (only when switched on), header, the page in <main>,
  * footer and the mobile bar. They are direct children of <body>, in this
- * order. The route group adds no segment to the address. The language
+ * order. The route group adds no segment to the address. Company data,
+ * opening hours, the footer line and the holiday come from SiteSettings in
+ * Payload. The language
  * switch in the header gets the translated slugs of the service pages from
  * Payload, so /leistungen/kuechen switches to /en/services/kitchens.
  */
@@ -32,8 +33,8 @@ export default async function SiteLayout({
     notFound();
   }
   setRequestLocale(locale);
-  const { company, openingHours, tagline, vacation } = getDemoSite(locale);
-  const translatedSlugs = await getSlugTranslations(locale);
+  const [{ company, openingHours, tagline, vacation }, translatedSlugs] =
+    await Promise.all([getSiteSettings(locale), getSlugTranslations(locale)]);
 
   return (
     <>

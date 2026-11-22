@@ -10,20 +10,24 @@
     "requestCta": "Request a project",
     "jobsCta": "Jobs with us",
     "servicesTitle": "What we build",
+    "servicesIntro": "Everything is made in our workshop and installed by our own team.",
     "sceneTitle": "From board to wardrobe",
+    "sceneIntro": "This is how a built-in wardrobe is made here – step by step.",
     "skipAnimation": "Skip animation",
     "sceneImageAlt": "Drawing of a built-in wardrobe being put together step by step",
     "projectsTitle": "Selected projects",
     "allProjects": "See all projects",
-    "jobsTitle": "We are looking for reinforcements",
+    "projectMeta": "{objectType}, {year}, {duration}",
+    "processNote": "From measuring to installation usually takes 8 to 10 weeks.",
     "openJobsCta": "See open positions",
     "trialDayCta": "Request a trial day",
-    "aboutTitle": "A family business since 1989",
     "aboutMore": "More about us",
     "testimonialsTitle": "What our customers say",
     "quote": "“{text}”",
     "contactTitle": "Talk to us",
-    "contactHours": "Opening hours"
+    "contactIntro": "Give us a call or send us a request. We get back to you within two working days.",
+    "contactHours": "Opening hours",
+    "hours": "{hours}"
   },
   "Process": {
     "title": "How your project works"
@@ -74,15 +78,18 @@
   "AboutPage": {
     "title": "About us",
     "master": "Master craftsman's workshop",
+    "principlesTitle": "How we work",
     "teamTitle": "The team",
     "since": "since {year}"
   },
   "CareersPage": {
     "title": "Careers",
+    "benefitsTitle": "What we offer",
     "openTitle": "Open positions",
     "noJobs": "We have no open position right now. Feel free to call us if you would still like to work with us: {phone}.",
     "trialTitle": "Taster day for pupils",
-    "trialText": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Call us and arrange a date: {phone}."
+    "trialText": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Call us and arrange a date: {phone}.",
+    "faqTitle": "Frequently asked questions"
   },
   "JobPage": {
     "employmentType": "Type of job",
@@ -121,7 +128,8 @@
     "title": "Imprint"
   },
   "PrivacyPage": {
-    "title": "Privacy policy"
+    "title": "Privacy policy",
+    "heading": "Privacy policy"
   },
   "NotFoundPage": {
     "title": "Page not found",

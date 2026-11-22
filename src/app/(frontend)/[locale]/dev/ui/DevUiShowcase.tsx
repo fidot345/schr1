@@ -1,4 +1,4 @@
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { CallBox } from "@/components/form/CallBox";
 import { ConceptNote } from "@/components/form/ConceptNote";
@@ -24,7 +24,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StepNumber } from "@/components/ui/StepNumber";
 import { TextLink } from "@/components/ui/TextLink";
-import { getDemoSite } from "@/content/demo-site";
+import type { SiteContent } from "@/lib/content";
 
 type ColorSwatch = {
   name: string;
@@ -181,10 +181,11 @@ const STEP_SIZES = [32, 44] as const;
  * scale, the logo, buttons, links, step numbers, icons, the sections and the
  * form, put together as in mockup 03 with its error shown.
  */
-export function DevUiShowcase() {
+type DevUiShowcaseProps = Pick<SiteContent, "company" | "openingHours">;
+
+export function DevUiShowcase({ company, openingHours }: DevUiShowcaseProps) {
   const t = useTranslations("DevUi");
   const common = useTranslations();
-  const { company, openingHours } = getDemoSite(useLocale());
 
   return (
     <main id="main">

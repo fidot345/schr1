@@ -6,7 +6,7 @@ import { type JobPay, toJobPay } from "./job-pay";
 import { isPopulated, type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
 import { firstParagraphText } from "./rich-text";
-import { logoWordOf, paragraphs } from "./text";
+import { logoWordOf, paragraphs, type SceneStep, sceneStep } from "./text";
 
 /*
  * Reading the site's content from Payload, BRIEF.md section 5.
@@ -47,6 +47,8 @@ export type Vacation = {
 
 export type SiteContent = {
   company: CompanyData;
+  /** The line under the logo in the footer; null when the field is empty. */
+  tagline: string | null;
   openingHours: OpeningHoursRow[];
   /** Only when the holiday notice is switched on and both dates are set. */
   vacation: Vacation | null;
@@ -59,13 +61,19 @@ export const getSiteSettings = cache(
       slug: "site-settings",
       ...readOptions(locale),
       depth: 0,
-      select: { company: true, openingHours: true, vacation: true },
+      select: {
+        company: true,
+        tagline: true,
+        openingHours: true,
+        vacation: true,
+      },
     });
 
     const { enabled, from, until } = settings.vacation ?? {};
 
     return {
       company: { ...settings.company, logoWord: logoWordOf(settings.company) },
+      tagline: settings.tagline?.trim() || null,
       openingHours: (settings.openingHours ?? []).map((row, index) => ({
         id: row.id ?? String(index),
         days: row.days,
@@ -682,14 +690,45 @@ export type ProcessStep = {
   text: string;
 };
 
-export type SceneCaption = {
+/** A step of the 3D scene, from its caption in the admin panel. */
+export type SceneStepItem = SceneStep & { id: string };
+
+/** A line under the first screen: "<strong>Meisterbetrieb</strong> seit 1989". */
+export type HeroFact = {
   id: string;
+  highlight: string;
   text: string;
 };
 
-export type TextBlock = {
+/** A project of "Ausgewählte Projekte", with how long it took. */
+export type FeaturedProject = ProjectCard & {
+  /** "9 Wochen" */
+  duration: string;
+};
+
+/** A principle of "Über uns" or a question of "Karriere": a heading and its text. */
+export type TitledText = {
+  id: string;
+  title: string;
+  text: string;
+};
+
+export type AboutBlock = {
   title: string;
   paragraphs: string[];
+  photo: Photo | null;
+  /** "So arbeiten wir": up to three, none when the admin panel has none. */
+  principles: TitledText[];
+};
+
+export type CareersBlock = {
+  title: string;
+  paragraphs: string[];
+  photo: Photo | null;
+  /** Why it is good to work here: up to four lines. */
+  benefits: ListItem[];
+  /** Questions (title) and answers (text). */
+  faq: TitledText[];
 };
 
 export type HomeContent = {
@@ -697,19 +736,26 @@ export type HomeContent = {
     title: string;
     text: string;
     photo: Photo | null;
+    facts: HeroFact[];
   };
-  featuredProjects: ProjectCard[];
+  featuredProjects: FeaturedProject[];
   processSteps: ProcessStep[];
-  sceneCaptions: SceneCaption[];
-  about: TextBlock;
-  careers: TextBlock;
+  sceneSteps: SceneStepItem[];
+  about: AboutBlock;
+  careers: CareersBlock;
   meta: {
     title: string | null;
     description: string | null;
   };
 };
 
-/** The HomePage global with its photo and the three chosen projects. */
+const rowId = (id: string | null | undefined, index: number): string =>
+  id ?? String(index);
+
+/**
+ * The HomePage global with its photos and the three chosen projects. Its
+ * "Über uns" and "Karriere" blocks also fill the about and careers pages.
+ */
 export const getHomePage = cache(
   async (locale: Locale): Promise<HomeContent> => {
     const payload = await payloadClient();
@@ -724,6 +770,7 @@ export const getHomePage = cache(
           slug: true,
           objectType: true,
           year: true,
+          duration: true,
           cover: true,
         },
       },
@@ -734,24 +781,45 @@ export const getHomePage = cache(
         title: home.hero.title,
         text: home.hero.text,
         photo: toPhoto(home.hero.image),
+        facts: (home.hero.facts ?? []).map((fact, index) => ({
+          id: rowId(fact.id, index),
+          highlight: fact.highlight,
+          text: fact.text,
+        })),
       },
-      featuredProjects: populated(home.featuredProjects).map(toProjectCard),
+      featuredProjects: populated(home.featuredProjects).map((project) => ({
+        ...toProjectCard(project),
+        duration: project.duration,
+      })),
       processSteps: (home.processSteps ?? []).map((step, index) => ({
-        id: step.id ?? String(index),
+        id: rowId(step.id, index),
         title: step.title,
         text: step.text,
       })),
-      sceneCaptions: (home.sceneCaptions ?? []).map((caption, index) => ({
-        id: caption.id ?? String(index),
-        text: caption.text,
+      sceneSteps: (home.sceneCaptions ?? []).map((caption, index) => ({
+        id: rowId(caption.id, index),
+        ...sceneStep(caption.text),
       })),
       about: {
         title: home.about.title,
         paragraphs: paragraphs(home.about.text),
+        photo: toPhoto(home.about.image),
+        principles: (home.about.principles ?? []).map((principle, index) => ({
+          id: rowId(principle.id, index),
+          title: principle.title,
+          text: principle.text,
+        })),
       },
       careers: {
         title: home.careers.title,
         paragraphs: paragraphs(home.careers.text),
+        photo: toPhoto(home.careers.image),
+        benefits: listItems(home.careers.benefits),
+        faq: (home.careers.faq ?? []).map((entry, index) => ({
+          id: rowId(entry.id, index),
+          title: entry.question,
+          text: entry.answer,
+        })),
       },
       meta: {
         title: home.meta?.title ?? null,

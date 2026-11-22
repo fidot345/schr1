@@ -10,20 +10,24 @@
     "requestCta": "Projekt anfragen",
     "jobsCta": "Jobs bei uns",
     "servicesTitle": "Was wir bauen",
+    "servicesIntro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut.",
     "sceneTitle": "Vom Brett zum Schrank",
+    "sceneIntro": "So entsteht ein Einbauschrank bei uns – Schritt für Schritt.",
     "skipAnimation": "Animation überspringen",
     "sceneImageAlt": "Zeichnung eines Einbauschranks, der Schritt für Schritt zusammengebaut wird",
     "projectsTitle": "Ausgewählte Projekte",
     "allProjects": "Alle Referenzen ansehen",
-    "jobsTitle": "Wir suchen Verstärkung",
+    "projectMeta": "{objectType}, {year}, {duration}",
+    "processNote": "Vom Aufmaß bis zur Montage vergehen meist 8 bis 10 Wochen.",
     "openJobsCta": "Offene Stellen ansehen",
     "trialDayCta": "Schnuppertag anfragen",
-    "aboutTitle": "Familienbetrieb seit 1989",
     "aboutMore": "Mehr über uns",
     "testimonialsTitle": "Was Kunden sagen",
     "quote": "„{text}“",
     "contactTitle": "Sprechen Sie mit uns",
-    "contactHours": "Öffnungszeiten"
+    "contactIntro": "Rufen Sie an oder schicken Sie uns eine Anfrage. Wir melden uns innerhalb von zwei Werktagen.",
+    "contactHours": "Öffnungszeiten",
+    "hours": "{hours} Uhr"
   },
   "Process": {
     "title": "So läuft Ihr Auftrag"
@@ -69,15 +73,18 @@
   "AboutPage": {
     "title": "Über uns",
     "master": "Meisterbetrieb",
+    "principlesTitle": "So arbeiten wir",
     "teamTitle": "Das Team",
     "since": "seit {year}"
   },
   "CareersPage": {
     "title": "Karriere",
+    "benefitsTitle": "Was wir bieten",
     "openTitle": "Offene Stellen",
     "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
     "trialTitle": "Schnuppertag für Schüler:innen",
-    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}."
+    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}.",
+    "faqTitle": "Häufige Fragen"
   },
   "JobPage": {
     "employmentType": "Art der Stelle",
@@ -116,7 +123,8 @@
     "title": "Impressum"
   },
   "PrivacyPage": {
-    "title": "Datenschutzerklärung"
+    "title": "Datenschutzerklärung",
+    "heading": "Datenschutz\u00aderklärung"
   },
   "NotFoundPage": {
     "title": "Seite nicht gefunden",

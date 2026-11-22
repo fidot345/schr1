@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AboutIntro } from "@/components/about/AboutIntro";
+import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { TeamList } from "@/components/about/TeamList";
 import { RequestCta } from "@/components/sections/RequestCta";
 import { pageAlternates } from "@/i18n/metadata";
@@ -39,8 +40,9 @@ export async function generateMetadata({
 }
 
 /**
- * About us, BRIEF.md section 2: the story and the mark "Meisterbetrieb",
- * then the team. The story is the "Über uns" block of the home page in
+ * About us, BRIEF.md section 2: the story with the mark "Meisterbetrieb"
+ * and a photo of the workshop, the principles of the work, then the team.
+ * Story, photo and principles are the "Über uns" block of the home page in
  * Payload, the team is the Team collection.
  */
 export default async function AboutPage({ params }: PageProps) {
@@ -58,7 +60,12 @@ export default async function AboutPage({ params }: PageProps) {
 
   return (
     <>
-      <AboutIntro title={home.about.title} story={home.about.paragraphs} />
+      <AboutIntro
+        title={home.about.title}
+        story={home.about.paragraphs}
+        photo={home.about.photo}
+      />
+      <AboutPrinciples principles={home.about.principles} />
       <TeamList team={team} />
       <RequestCta link={{ href: "/karriere", label: t("openJobsCta") }} />
     </>

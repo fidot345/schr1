@@ -5,7 +5,7 @@ import { ArrowRightIcon } from "@/components/ui/icons";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { JobListItem } from "@/lib/content";
-import { useJobPay } from "./useJobPay";
+import { useJobMeta } from "./useJobMeta";
 
 type OpenJobsProps = {
   jobs: JobListItem[];
@@ -14,12 +14,8 @@ type OpenJobsProps = {
 };
 
 function JobRow({ job }: { job: JobListItem }) {
-  const tType = useTranslations("EmploymentType");
-  const payLabel = useJobPay();
   // "Vollzeit, ab sofort, 19–23 € pro Stunde", as on the home page.
-  const meta = [tType(job.employmentType), job.start, payLabel(job.pay)]
-    .filter(Boolean)
-    .join(", ");
+  const meta = useJobMeta()(job);
 
   return (
     <li className="border-t border-linie">

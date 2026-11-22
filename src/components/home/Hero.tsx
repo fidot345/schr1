@@ -1,30 +1,21 @@
 import { useTranslations } from "next-intl";
 import { ButtonLink } from "@/components/ui/Button";
+import { CmsImage } from "@/components/ui/CmsImage";
 import { Container } from "@/components/ui/Container";
-import {
-  PhotoPlaceholder,
-  type PlaceholderPhoto,
-} from "@/components/ui/PhotoPlaceholder";
 import { Section } from "@/components/ui/Section";
+import type { HomeContent } from "@/lib/content";
 
-/** One line under the buttons: "<strong>Meisterbetrieb</strong> seit 1989". */
-export type HeroFact = { strong: string; rest: string };
-
-export type HeroContent = {
-  /** The h1 of the page. */
-  title: string;
-  text: string;
-  photo: PlaceholderPhoto;
-  facts: HeroFact[];
-};
+type HeroProps = HomeContent["hero"];
 
 /**
  * The first screen, mockup 01b and 04. From lg the text is on the left and
  * the photo on the right, bottom edges level. Below lg everything is one
  * column with the photo first; on the phone it runs edge to edge without
- * rounding, right under the header.
+ * rounding, right under the header. The photo is the page's largest image
+ * (LCP), so it loads first. Without facts in the admin panel the line of
+ * facts under it falls away.
  */
-export function Hero({ title, text, photo, facts }: HeroContent) {
+export function Hero({ title, text, photo, facts }: HeroProps) {
   const t = useTranslations("HomePage");
 
   return (
@@ -48,22 +39,28 @@ export function Hero({ title, text, photo, facts }: HeroContent) {
             </ButtonLink>
           </div>
         </div>
-        <PhotoPlaceholder
+        <CmsImage
           photo={photo}
-          className="-mx-gutter order-first h-67.5 min-w-0 rounded-none md:mx-0 md:rounded lg:order-none lg:h-140 lg:flex-[1.4_1_520px]"
+          frameClassName="-mx-gutter order-first h-67.5 min-w-0 max-md:rounded-none md:mx-0 lg:order-none lg:h-140 lg:flex-[1.4_1_520px]"
+          sizes="(min-width: 80rem) 700px, (min-width: 64rem) 58vw, 100vw"
+          priority
         />
       </Container>
 
-      <Container className="mt-10">
-        <ul className="flex flex-wrap gap-x-14 gap-y-4 border-t border-linie pt-6 text-ui text-schiefer">
-          {facts.map((fact) => (
-            <li key={fact.strong}>
-              <strong className="font-bold text-graphit">{fact.strong}</strong>{" "}
-              {fact.rest}
-            </li>
-          ))}
-        </ul>
-      </Container>
+      {facts.length > 0 ? (
+        <Container className="mt-10">
+          <ul className="flex flex-wrap gap-x-14 gap-y-4 border-t border-linie pt-6 text-ui text-schiefer">
+            {facts.map((fact) => (
+              <li key={fact.id}>
+                <strong className="font-bold text-graphit">
+                  {fact.highlight}
+                </strong>{" "}
+                {fact.text}
+              </li>
+            ))}
+          </ul>
+        </Container>
+      ) : null}
     </Section>
   );
 }

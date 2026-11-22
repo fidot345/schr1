@@ -9,8 +9,8 @@ import { LEGAL_NAVIGATION, MAIN_NAVIGATION } from "./navigation";
 type FooterProps = {
   company: CompanyData;
   openingHours: OpeningHoursRow[];
-  /** The line under the logo. */
-  tagline: string;
+  /** The line under the logo, from SiteSettings; none when it is empty. */
+  tagline: string | null;
 };
 
 const HEADING_CLASS = "font-sans text-small font-bold text-weiss";
@@ -45,7 +45,7 @@ export function Footer({ company, openingHours, tagline }: FooterProps) {
         <div className="flex flex-wrap gap-x-16 gap-y-10">
           <div className="min-w-0 flex-[2_1_240px]">
             <Logo variant="light" name={company.logoWord} />
-            <p className="mt-4 max-w-[22em]">{tagline}</p>
+            {tagline ? <p className="mt-4 max-w-[22em]">{tagline}</p> : null}
           </div>
 
           <div className="flex-[1_1_180px]">

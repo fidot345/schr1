@@ -6,17 +6,11 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StepNumber } from "@/components/ui/StepNumber";
 import { TextLink } from "@/components/ui/TextLink";
 import { cn } from "@/lib/cn";
+import type { SceneStepItem } from "@/lib/content";
 
-export type WardrobeStep = { title: string; text: string };
-
-export type WardrobeContent = {
-  /** The sentence under the heading. */
-  intro: string;
-  /** The six steps, from "Zuschnitt" to "Fertig". */
-  steps: WardrobeStep[];
-};
-
-export type WardrobeSectionProps = WardrobeContent & {
+export type WardrobeSectionProps = {
+  /** The six steps, from "Zuschnitt" to "Fertig", from the captions in the admin panel. */
+  steps: SceneStepItem[];
   /** The current step, counted from 1. It gets the filled number. */
   activeStep: number;
 };
@@ -25,13 +19,10 @@ export type WardrobeSectionProps = WardrobeContent & {
  * TEMP(stage-5): "Vom Brett zum Schrank" as a still picture, mockup 01d. The
  * flat wardrobe from public/images/3d stands in for the 3D scene, and
  * activeStep is fixed by the page. Stage 5 replaces the picture with the
- * scene and drives activeStep from the scroll position.
+ * scene and drives activeStep from the scroll position. A caption without a
+ * step name in front shows only its text.
  */
-export function WardrobeSection({
-  intro,
-  steps,
-  activeStep,
-}: WardrobeSectionProps) {
+export function WardrobeSection({ steps, activeStep }: WardrobeSectionProps) {
   const t = useTranslations("HomePage");
 
   return (
@@ -54,7 +45,7 @@ export function WardrobeSection({
             <SectionHeading
               id="szene-titel"
               title={t("sceneTitle")}
-              intro={intro}
+              intro={t("sceneIntro")}
             />
             <ol className="mt-8 flex flex-col gap-5">
               {steps.map((step, index) => {
@@ -62,7 +53,7 @@ export function WardrobeSection({
 
                 return (
                   <li
-                    key={step.title}
+                    key={step.id}
                     aria-current={active ? "step" : undefined}
                     className={cn(
                       "flex items-start gap-4",
@@ -74,15 +65,17 @@ export function WardrobeSection({
                       state={active ? "active" : "muted"}
                     />
                     <div>
-                      <p
-                        className={cn(
-                          "font-display text-h4",
-                          active && "text-tannengruen",
-                        )}
-                      >
-                        {step.title}
-                      </p>
-                      <p className="mt-0.5 text-small">{step.text}</p>
+                      {step.title ? (
+                        <p
+                          className={cn(
+                            "mb-0.5 font-display text-h4",
+                            active && "text-tannengruen",
+                          )}
+                        >
+                          {step.title}
+                        </p>
+                      ) : null}
+                      <p className="text-small">{step.text}</p>
                     </div>
                   </li>
                 );

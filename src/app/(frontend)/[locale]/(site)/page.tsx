@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AboutTeaser } from "@/components/home/AboutTeaser";
 import { Contact } from "@/components/home/Contact";
 import { Hero } from "@/components/home/Hero";
@@ -11,11 +11,15 @@ import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
 import { WardrobeSection } from "@/components/home/WardrobeSection";
-import { getDemoHome } from "@/content/demo-home";
-import { getDemoSite } from "@/content/demo-site";
 import { pageAlternates } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
-import { getHomePage } from "@/lib/content";
+import {
+  getContactDetails,
+  getHomePage,
+  getOpenJobs,
+  getServices,
+  getTestimonials,
+} from "@/lib/content";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -45,10 +49,14 @@ export async function generateMetadata({
   };
 }
 
+/** "Was Kunden sagen" shows three, BRIEF.md section 2. */
+const TESTIMONIALS = 3;
+
 /**
- * The home page, from the mockup in design/ (redesign sessions 4 and 5):
- * the sections in the order of design/README.md. The data comes from
- * src/content/demo-home.ts until the pages read from Payload again.
+ * The home page, from the mockup in design/: the sections in the order of
+ * design/README.md. Texts and photos come from Payload (the HomePage global,
+ * services, open jobs, testimonials and SiteSettings); headings, buttons
+ * and the short intros of the sections from messages.
  */
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
@@ -56,31 +64,41 @@ export default async function HomePage({ params }: PageProps) {
     notFound();
   }
   setRequestLocale(locale);
-  const {
-    hero,
-    services,
-    scene,
-    projects,
-    process,
-    jobs,
-    about,
-    testimonials,
-    contact,
-  } = getDemoHome(locale);
-  const { company } = getDemoSite(locale);
+  const [home, services, jobs, testimonials, contact, t] = await Promise.all([
+    getHomePage(locale),
+    getServices(locale),
+    getOpenJobs(locale),
+    getTestimonials(locale, TESTIMONIALS),
+    getContactDetails(locale),
+    getTranslations({ locale, namespace: "HomePage" }),
+  ]);
+  const { about, careers } = home;
 
   return (
     <>
-      <Hero {...hero} />
-      <Services {...services} />
+      <Hero {...home.hero} />
+      <Services services={services} />
       {/* TEMP(stage-5): the step is fixed until the 3D scene sets it. */}
-      <WardrobeSection {...scene} activeStep={3} />
-      <Projects {...projects} />
-      <Process {...process} />
-      <Jobs {...jobs} />
-      <AboutTeaser {...about} />
-      <Testimonials {...testimonials} />
-      <Contact {...contact} company={company} />
+      <WardrobeSection steps={home.sceneSteps} activeStep={3} />
+      <Projects projects={home.featuredProjects} />
+      <Process steps={home.processSteps} note={t("processNote")} />
+      <Jobs
+        title={careers.title}
+        paragraphs={careers.paragraphs}
+        photo={careers.photo}
+        jobs={jobs}
+      />
+      <AboutTeaser
+        title={about.title}
+        paragraphs={about.paragraphs}
+        photo={about.photo}
+      />
+      <Testimonials testimonials={testimonials} />
+      <Contact
+        company={contact.company}
+        openingHours={contact.openingHours}
+        serviceArea={contact.serviceArea}
+      />
     </>
   );
 }

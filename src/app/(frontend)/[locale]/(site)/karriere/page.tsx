@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CareersBenefits } from "@/components/careers/CareersBenefits";
+import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
 import { OpenJobs } from "@/components/careers/OpenJobs";
 import { TrialDay } from "@/components/careers/TrialDay";
@@ -39,9 +41,11 @@ export async function generateMetadata({
 }
 
 /**
- * Careers, BRIEF.md section 2: the text about working here, the open
- * positions and the trial day for pupils. The text is the "Karriere" block
- * of the home page in Payload, the positions are the active jobs. The
+ * Careers, BRIEF.md section 2: the text about working here with a photo,
+ * why it is good to work here, the open positions, the trial day for pupils
+ * and frequent questions. Text, photo, reasons and questions are the
+ * "Karriere" block of the home page in Payload, the positions are the
+ * active jobs. The
  * application form comes in stage 4; until then the way to apply is a call.
  */
 export default async function CareersPage({ params }: PageProps) {
@@ -59,9 +63,14 @@ export default async function CareersPage({ params }: PageProps) {
 
   return (
     <>
-      <CareersIntro intro={home.careers.paragraphs} />
+      <CareersIntro
+        intro={home.careers.paragraphs}
+        photo={home.careers.photo}
+      />
+      <CareersBenefits benefits={home.careers.benefits} />
       <OpenJobs jobs={jobs} phone={company.phone} />
       <TrialDay phone={company.phone} />
+      <CareersFaq faq={home.careers.faq} />
     </>
   );
 }
