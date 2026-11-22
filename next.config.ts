@@ -12,6 +12,8 @@ const dirname = path.dirname(__filename);
 const nextConfig: NextConfig = {
   agentRules: false,
   images: {
+    // BRIEF.md section 3: AVIF first (smaller), WebP for browsers without it.
+    formats: ["image/avif", "image/webp"],
     localPatterns: [
       {
         pathname: "/api/media/file/**",
