@@ -326,8 +326,18 @@ const savedHome = await payload.updateGlobal({
     ),
     processSteps: home.de.processSteps,
     sceneCaptions: home.de.sceneCaptions.map((text) => ({ text })),
-    about: home.de.about,
-    careers: home.de.careers,
+    // No principles and no questions: neither the brief nor the mockup has texts for them yet.
+    about: {
+      ...home.de.about,
+      image: photo(homePage.aboutImage),
+      principles: [],
+    },
+    careers: {
+      ...home.de.careers,
+      image: photo(homePage.careersImage),
+      benefits: list(home.de.careers.benefits),
+      faq: [],
+    },
     meta: home.de.meta,
   },
 });
@@ -343,13 +353,22 @@ const rowIds = (rows: { id?: string | null }[]): string[] =>
 
 const stepIds = rowIds(savedHome.processSteps);
 const captionIds = rowIds(savedHome.sceneCaptions);
+const factIds = rowIds(savedHome.hero.facts ?? []);
+const benefitIds = rowIds(savedHome.careers.benefits ?? []);
 await payload.updateGlobal({
   slug: "home-page",
   locale: "en",
   depth: 0,
   context,
   data: {
-    hero: { ...home.en.hero, image: photo(homePage.heroImage) },
+    hero: {
+      ...home.en.hero,
+      image: photo(homePage.heroImage),
+      facts: home.en.hero.facts.map((fact, index) => ({
+        ...fact,
+        id: factIds[index],
+      })),
+    },
     processSteps: home.en.processSteps.map((step, index) => ({
       ...step,
       id: stepIds[index],
@@ -359,7 +378,13 @@ await payload.updateGlobal({
       id: captionIds[index],
     })),
     about: home.en.about,
-    careers: home.en.careers,
+    careers: {
+      ...home.en.careers,
+      benefits: home.en.careers.benefits.map((text, index) => ({
+        text,
+        id: benefitIds[index],
+      })),
+    },
     meta: home.en.meta,
   },
 });
@@ -373,6 +398,7 @@ const savedSettings = await payload.updateGlobal({
   context,
   data: {
     company: siteSettings.company,
+    tagline: siteSettings.tagline.de,
     openingHours: siteSettings.openingHours.map((row) => ({
       hours: row.hours,
       days: row.days.de,
@@ -397,6 +423,7 @@ await payload.updateGlobal({
       days: row.days.en,
     })),
     serviceArea: siteSettings.serviceArea.en,
+    tagline: siteSettings.tagline.en,
     imprint: siteSettings.imprint.en,
     privacy: siteSettings.privacy.en,
   },

@@ -1,3 +1,13 @@
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  InlineToolbarFeature,
+  LinkFeature,
+  lexicalEditor,
+  OrderedListFeature,
+  ParagraphFeature,
+  UnorderedListFeature,
+} from "@payloadcms/richtext-lexical";
 import type { GlobalConfig } from "payload";
 import { anyone, authenticated } from "../collections/shared/access";
 import { revalidateSite } from "../hooks/revalidate-site";
@@ -8,6 +18,25 @@ import {
   validateVacationFrom,
   validateVacationUntil,
 } from "./validators";
+
+/**
+ * The editor of the legal texts: subheadings, paragraphs, lists and web
+ * links, nothing else. No photos or uploads (they would not go through
+ * next/image, AGENTS.md rule 5), no links to documents of the admin panel
+ * (they have no address on the site). The page has the h1, so headings
+ * start at h2. src/components/legal/LegalText.tsx renders exactly these.
+ */
+export const LEGAL_TEXT_FEATURES = [
+  ParagraphFeature(),
+  HeadingFeature({ enabledHeadingSizes: ["h2", "h3"] }),
+  UnorderedListFeature(),
+  OrderedListFeature(),
+  LinkFeature({ enabledCollections: [] }),
+  FixedToolbarFeature(),
+  InlineToolbarFeature(),
+];
+
+const legalTextEditor = lexicalEditor({ features: LEGAL_TEXT_FEATURES });
 
 const dayOnly = {
   pickerAppearance: "dayOnly",
@@ -119,6 +148,17 @@ export const SiteSettings: GlobalConfig = {
                   ],
                 },
               ],
+            },
+            {
+              name: "tagline",
+              type: "text",
+              label: "Zeile unter dem Logo im Fußbereich",
+              localized: true,
+              maxLength: 120,
+              admin: {
+                description:
+                  "Ein kurzer Satz, zum Beispiel „Schreinerei mit eigener Werkstatt in Wendelfing, seit 1989.“ Bleibt das Feld leer, steht dort nichts.",
+              },
             },
           ],
         },
@@ -238,6 +278,7 @@ export const SiteSettings: GlobalConfig = {
               label: "Impressum",
               required: true,
               localized: true,
+              editor: legalTextEditor,
             },
             {
               name: "privacy",
@@ -245,6 +286,7 @@ export const SiteSettings: GlobalConfig = {
               label: "Datenschutzerklärung",
               required: true,
               localized: true,
+              editor: legalTextEditor,
             },
           ],
         },
