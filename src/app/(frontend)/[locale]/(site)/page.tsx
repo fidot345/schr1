@@ -11,7 +11,7 @@ import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
 import { WardrobeSection } from "@/components/home/WardrobeSection";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import {
   getContactDetails,
@@ -45,7 +45,7 @@ export async function generateMetadata({
     // title goes through the template.
     title: meta.title ? { absolute: meta.title } : hero.title,
     description: meta.description ?? hero.text,
-    alternates: pageAlternates(locale, () => "/"),
+    ...(await pageMetadata(locale, () => "/")),
   };
 }
 

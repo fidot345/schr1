@@ -6,7 +6,7 @@ import { AboutIntro } from "@/components/about/AboutIntro";
 import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { TeamList } from "@/components/about/TeamList";
 import { RequestCta } from "@/components/sections/RequestCta";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getTeam } from "@/lib/content";
 
@@ -35,7 +35,7 @@ export async function generateMetadata({
     title: t("title"),
     // The first paragraph of the story.
     description: home.about.paragraphs[0],
-    alternates: pageAlternates(locale, () => "/ueber-uns"),
+    ...(await pageMetadata(locale, () => "/ueber-uns")),
   };
 }
 

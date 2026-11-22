@@ -4,7 +4,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProjectList } from "@/components/projects/ProjectList";
 import { RequestCta } from "@/components/sections/RequestCta";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getProjects, getServices } from "@/lib/content";
 import { PROJECT_FILTER_PARAM, selectedService } from "@/lib/project-filter";
@@ -32,7 +32,7 @@ export async function generateMetadata({
     title: t("title"),
     description: t("intro"),
     // Every filtered list points to the unfiltered one.
-    alternates: pageAlternates(locale, () => "/referenzen"),
+    ...(await pageMetadata(locale, () => "/referenzen")),
   };
 }
 

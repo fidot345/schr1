@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactDetails } from "@/components/contact/ContactDetails";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getContactDetails } from "@/lib/content";
 
@@ -37,7 +37,7 @@ export async function generateMetadata({
       postalCode: company.postalCode,
       city: company.city,
     }),
-    alternates: pageAlternates(locale, () => "/kontakt"),
+    ...(await pageMetadata(locale, () => "/kontakt")),
   };
 }
 

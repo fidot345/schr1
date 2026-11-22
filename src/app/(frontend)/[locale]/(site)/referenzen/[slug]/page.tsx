@@ -7,7 +7,7 @@ import { ProjectNeighbors } from "@/components/projects/ProjectNeighbors";
 import { ProjectStory } from "@/components/projects/ProjectStory";
 import { RequestCta } from "@/components/sections/RequestCta";
 import { ServiceGallery } from "@/components/services/ServiceGallery";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getProject, getProjects } from "@/lib/content";
 
@@ -55,10 +55,10 @@ export async function generateMetadata({
       : project.title,
     // Without one from the admin panel, the first paragraph of the task.
     description: project.meta.description ?? project.challenge[0],
-    alternates: pageAlternates(locale, (code) => ({
+    ...(await pageMetadata(locale, (code) => ({
       pathname: "/referenzen/[slug]",
       params: { slug: project.slugs[code] },
-    })),
+    }))),
   };
 }
 

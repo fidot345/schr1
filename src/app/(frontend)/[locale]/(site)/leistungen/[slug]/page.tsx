@@ -7,7 +7,7 @@ import { ServiceGallery } from "@/components/services/ServiceGallery";
 import { ServiceIntro } from "@/components/services/ServiceIntro";
 import { ServiceOverview } from "@/components/services/ServiceOverview";
 import { ServiceProjects } from "@/components/services/ServiceProjects";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getService, getServices } from "@/lib/content";
 
@@ -53,10 +53,10 @@ export async function generateMetadata({
       ? { absolute: service.meta.title }
       : service.title,
     description: service.meta.description ?? service.summary,
-    alternates: pageAlternates(locale, (code) => ({
+    ...(await pageMetadata(locale, (code) => ({
       pathname: "/leistungen/[slug]",
       params: { slug: service.slugs[code] },
-    })),
+    }))),
   };
 }
 

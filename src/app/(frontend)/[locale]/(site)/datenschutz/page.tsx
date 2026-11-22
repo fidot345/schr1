@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalPage } from "@/components/legal/LegalPage";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getLegalTexts } from "@/lib/content";
 
@@ -31,7 +31,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: privacy.summary ?? undefined,
-    alternates: pageAlternates(locale, () => "/datenschutz"),
+    ...(await pageMetadata(locale, () => "/datenschutz")),
   };
 }
 

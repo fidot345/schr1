@@ -1,7 +1,8 @@
 {
   "Metadata": {
     "title": "Schreinerei Tannrieder",
-    "template": "%s | Schreinerei Tannrieder"
+    "template": "%s | Schreinerei Tannrieder",
+    "siteName": "Schreinerei Tannrieder"
   },
   "SkipLink": {
     "label": "Zum Inhalt springen"

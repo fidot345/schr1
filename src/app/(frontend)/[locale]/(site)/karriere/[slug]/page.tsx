@@ -6,7 +6,7 @@ import { ApplyCta } from "@/components/careers/ApplyCta";
 import { JobDetails } from "@/components/careers/JobDetails";
 import { JobIntro } from "@/components/careers/JobIntro";
 import { JsonLd } from "@/components/ui/JsonLd";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getJob, getOpenJobs, getSiteSettings } from "@/lib/content";
 import { buildJobPosting } from "@/lib/job-posting";
@@ -52,10 +52,10 @@ export async function generateMetadata({
     title: job.meta.title ? { absolute: job.meta.title } : job.title,
     // Without one from the admin panel, the first paragraph of the introduction.
     description: job.meta.description ?? job.intro[0],
-    alternates: pageAlternates(locale, (code) => ({
+    ...(await pageMetadata(locale, (code) => ({
       pathname: "/karriere/[slug]",
       params: { slug: job.slugs[code] },
-    })),
+    }))),
   };
 }
 

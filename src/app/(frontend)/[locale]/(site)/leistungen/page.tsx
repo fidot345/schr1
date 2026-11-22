@@ -4,7 +4,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Process } from "@/components/home/Process";
 import { ServiceList } from "@/components/services/ServiceList";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getServices } from "@/lib/content";
 
@@ -29,7 +29,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("intro"),
-    alternates: pageAlternates(locale, () => "/leistungen"),
+    ...(await pageMetadata(locale, () => "/leistungen")),
   };
 }
 

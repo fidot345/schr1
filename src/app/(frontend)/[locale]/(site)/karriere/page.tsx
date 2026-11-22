@@ -7,7 +7,7 @@ import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
 import { OpenJobs } from "@/components/careers/OpenJobs";
 import { TrialDay } from "@/components/careers/TrialDay";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getOpenJobs, getSiteSettings } from "@/lib/content";
 
@@ -36,7 +36,7 @@ export async function generateMetadata({
     title: t("title"),
     // The first paragraph of the text about working here.
     description: home.careers.paragraphs[0],
-    alternates: pageAlternates(locale, () => "/karriere"),
+    ...(await pageMetadata(locale, () => "/karriere")),
   };
 }
 

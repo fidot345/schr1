@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { pageAlternates } from "@/i18n/metadata";
+import { pageAlternates, pageMetadata } from "@/i18n/metadata";
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: async () => (key: string) =>
+    key === "siteName" ? "Schreinerei Tannrieder" : key,
+}));
 
 /*
  * next-intl's navigation needs the Next.js runtime. The stand-in builds
@@ -66,5 +71,35 @@ describe("pageAlternates", () => {
       en: "/en",
       "x-default": "/",
     });
+  });
+});
+
+describe("pageMetadata", () => {
+  it("gives Open Graph the canonical URL and both languages", async () => {
+    const slugs = { de: "kuechen", en: "kitchens" } as const;
+    const metadata = await pageMetadata("en", (code) => ({
+      pathname: "/leistungen/[slug]",
+      params: { slug: slugs[code] },
+    }));
+    expect(metadata.alternates).toEqual(
+      pageAlternates("en", (code) => ({
+        pathname: "/leistungen/[slug]",
+        params: { slug: slugs[code] },
+      })),
+    );
+    expect(metadata.openGraph).toEqual({
+      type: "website",
+      siteName: "Schreinerei Tannrieder",
+      locale: "en_GB",
+      alternateLocale: ["de_DE"],
+      url: "/en/services/kitchens",
+    });
+  });
+
+  it("leaves the title and description to the page", async () => {
+    const { openGraph } = await pageMetadata("de", () => "/");
+    expect(openGraph).toMatchObject({ locale: "de_DE", url: "/" });
+    expect(openGraph).not.toHaveProperty("title");
+    expect(openGraph).not.toHaveProperty("description");
   });
 });
