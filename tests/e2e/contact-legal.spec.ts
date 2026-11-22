@@ -406,6 +406,15 @@ test.describe("the 404", () => {
     }
   });
 
+  test("answers a file name at the top level with 404, not 500", async ({
+    request,
+  }) => {
+    // The proxy skips such paths, so [locale] gets "wp-login.php".
+    for (const path of ["/wp-login.php", "/gibt-es-nicht.txt"]) {
+      expect((await request.get(path)).status(), path).toBe(404);
+    }
+  });
+
   test("is in German, with the ways on", async ({ page }) => {
     await page.goto("/gibt-es-nicht");
 

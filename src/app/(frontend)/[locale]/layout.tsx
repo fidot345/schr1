@@ -38,11 +38,15 @@ export async function generateMetadata({
   params,
 }: Omit<LayoutProps, "children">): Promise<Metadata> {
   const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    return {};
-  }
   // For the metadata of (site)/not-found.tsx, which gets no params: it
   // awaits this metadata and then reads the locale set here.
+  if (!hasLocale(routing.locales, locale)) {
+    // A path that is no language, such as /robots.txt (the proxy skips
+    // file names), is a 404 too. Without a locale here, next-intl would
+    // read the request headers, and the page built ahead fails with 500.
+    setRequestLocale(routing.defaultLocale);
+    return {};
+  }
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Metadata" });
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
