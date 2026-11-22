@@ -55,7 +55,7 @@ export default async function PrivacyPage({ params }: PageProps) {
   return (
     <LegalPage
       titleId="datenschutz-titel"
-      title={t("title")}
+      title={t("heading")}
       body={privacy.body}
     />
   );

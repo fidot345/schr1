@@ -36,8 +36,10 @@ export function LegalPage({
     >
       <Container>
         {/*
-         * "Datenschutzerklärung" is wider than a 360px screen: hyphenated in
-         * the page's language, and broken anyway where a browser cannot.
+         * "Datenschutzerklärung" is wider than a 360px screen. Chrome on
+         * Windows has no German hyphenation for hyphens-auto, so the heading
+         * in messages carries a soft hyphen (Datenschutz-erklärung). The
+         * classes stay as a safety net for other long words.
          */}
         <h1
           id={titleId}
