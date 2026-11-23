@@ -3,7 +3,11 @@
  * section 2) in German and English, with photos from seed/images/.
  *
  * Safe to run again: every document is found by a stable key and updated
- * instead of created twice. Demo documents are reset to the values below,
+ * instead of created twice. An existing photo keeps its stored file: a run
+ * does not upload it again.
+ *
+ * With NODE_ENV=production the seed needs BLOB_READ_WRITE_TOKEN of the
+ * target environment (see seed/media-storage.ts). Demo documents are reset to the values below,
  * edits made in the admin panel to these documents are overwritten.
  *
  * Keys: photos by their source link, services, projects and jobs by the
@@ -33,6 +37,9 @@ import {
   testimonials,
 } from "./data";
 import { parseManifest } from "./manifest";
+import { assertMediaStorage } from "./media-storage";
+
+assertMediaStorage(process.env);
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const imagesDir = path.join(dirname, "images");
