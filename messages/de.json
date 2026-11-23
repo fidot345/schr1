@@ -85,8 +85,8 @@
     "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
     "noJobsNoPhone": "Zurzeit ist keine Stelle offen. Melde dich gern, wenn du trotzdem bei uns arbeiten möchtest.",
     "trialTitle": "Schnuppertag für Schüler:innen",
-    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}.",
-    "trialTextNoPhone": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich bei uns und vereinbare einen Termin.",
+    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich einfach mit dem Formular weiter unten an.",
+    "trialCta": "Schnuppertag anfragen",
     "faqTitle": "Häufige Fragen"
   },
   "JobPage": {
@@ -98,10 +98,6 @@
     "tasksTitle": "Deine Aufgaben",
     "requirementsTitle": "Was du mitbringst",
     "benefitsTitle": "Was wir bieten",
-    "applyTitle": "Bewirb dich",
-    "applyText": "Ruf uns an und sag, für welche Stelle du dich interessierst: {phone}.",
-    "applyTextNoPhone": "Melde dich bei uns und sag, für welche Stelle du dich interessierst.",
-    "call": "Jetzt anrufen",
     "allJobs": "Alle offenen Stellen ansehen"
   },
   "JobPay": {
@@ -186,6 +182,13 @@
     "callBox": {
       "title": "Lieber telefonieren?",
       "hours": "{days} {hours} Uhr"
+    },
+    "trapLabel": "Dieses Feld bitte leer lassen",
+    "sendFailed": {
+      "formal": "Das hat leider nicht geklappt. Bitte rufen Sie uns an: <link>{phone}</link>.",
+      "informal": "Das hat leider nicht geklappt. Bitte ruf uns an: <link>{phone}</link>.",
+      "noPhoneFormal": "Das hat leider nicht geklappt. Bitte versuchen Sie es später noch einmal.",
+      "noPhoneInformal": "Das hat leider nicht geklappt. Bitte versuch es später noch einmal."
     }
   },
   "RequestPage": {
@@ -256,9 +259,6 @@
     "submit": "Anfrage senden",
     "sending": "Wird gesendet …",
     "privacy": "Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
-    "failed": "Das hat leider nicht geklappt. Bitte rufen Sie uns an: <link>{phone}</link>.",
-    "failedNoPhone": "Das hat leider nicht geklappt. Bitte versuchen Sie es später noch einmal.",
-    "trapLabel": "Dieses Feld bitte leer lassen",
     "errors": {
       "projectTypeMissing": "Bitte wählen Sie aus, was wir für Sie bauen sollen.",
       "descriptionShort": "Bitte beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen.",
@@ -305,6 +305,86 @@
     "email": "E-Mail",
     "contactPreference": "Kontakt am liebsten",
     "notGiven": "nicht angegeben"
+  },
+  "ApplicationForm": {
+    "title": "In 60 Sekunden bewerben – ohne Lebenslauf",
+    "lead": "Kein Anschreiben, kein Lebenslauf: Ein paar Angaben genügen, dann rufen wir dich an.",
+    "jobLegend": "Wofür bewirbst du dich?",
+    "trialDay": "Schnuppertag / Praktikum",
+    "name": "Dein Name",
+    "phone": "Telefon",
+    "phoneHint": "Wir melden uns per Telefon – zu der Zeit, die du unten wählst.",
+    "email": "E-Mail",
+    "experienceLegend": "Was bringst du mit?",
+    "experiences": {
+      "experienced": "Ausgelernt mit Berufserfahrung",
+      "newly-qualified": "Gerade ausgelernt",
+      "career-changer": "Quereinstieg",
+      "pupil": "Schüler:in"
+    },
+    "start": {
+      "label": "Ab wann kannst du anfangen?",
+      "hint": "Zum Beispiel: ab sofort, ab 1. März oder nach der Kündigungsfrist."
+    },
+    "callTimeLegend": "Wann können wir dich am besten anrufen?",
+    "callTimes": {
+      "morning": "Vormittags",
+      "afternoon": "Nachmittags",
+      "evening": "Abends"
+    },
+    "message": {
+      "label": "Möchtest du uns noch etwas sagen?",
+      "hint": "Höchstens 500 Zeichen."
+    },
+    "submit": "Bewerbung abschicken",
+    "sending": "Wird gesendet …",
+    "privacy": "Wir verwenden deine Angaben nur, um deine Bewerbung zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+    "noscript": "Das Formular braucht JavaScript. Ruf uns einfach an: <link>{phone}</link>",
+    "noscriptNoPhone": "Das Formular braucht JavaScript. Wie du uns sonst erreichst, steht auf der <link>Kontaktseite</link>.",
+    "nextSteps": {
+      "first": "Wir rufen dich innerhalb von zwei Werktagen an – zu der Zeit, die du gewählt hast.",
+      "second": "Du kommst vorbei, siehst dir die Werkstatt an und lernst das Team kennen.",
+      "third": "Passt es für beide Seiten, besprechen wir, wann du anfängst."
+    },
+    "errors": {
+      "jobMissing": "Bitte wähl aus, wofür du dich bewirbst.",
+      "jobClosed": "Diese Stelle ist leider nicht mehr offen. Bitte wähl eine andere aus.",
+      "nameMissing": "Bitte gib deinen Namen ein.",
+      "nameLong": "Bitte gib deinen Namen in höchstens 100 Zeichen an.",
+      "phoneMissing": "Bitte gib deine Telefonnummer ein, damit wir dich anrufen können.",
+      "phoneInvalid": "Bitte gib eine Telefonnummer mit Vorwahl ein, nur mit Ziffern, Leerzeichen und + / ( ) -.",
+      "emailInvalid": "Bitte gib eine vollständige E-Mail-Adresse mit @ ein.",
+      "experienceMissing": "Bitte wähl aus, was du mitbringst.",
+      "startMissing": "Bitte gib an, ab wann du anfangen kannst.",
+      "startLong": "Bitte gib in höchstens 100 Zeichen an, ab wann du anfangen kannst.",
+      "callTimeMissing": "Bitte wähl aus, wann wir dich am besten anrufen.",
+      "messageLong": "Bitte fass dich in höchstens 500 Zeichen."
+    }
+  },
+  "ApplicationMail": {
+    "subject": "Neue Bewerbung: {job} – {name}",
+    "intro": "Neue Bewerbung über das Formular auf der Website. Sprache: {language}.",
+    "languages": {
+      "de": "Deutsch",
+      "en": "Englisch"
+    },
+    "job": "Stelle",
+    "name": "Name",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "experience": "Erfahrung",
+    "start": "Anfangen ab",
+    "callTime": "Anruf am liebsten",
+    "message": "Nachricht",
+    "notGiven": "nicht angegeben"
+  },
+  "CareersThanksPage": {
+    "metaTitle": "Danke für deine Bewerbung",
+    "title": "Danke für deine Bewerbung",
+    "text": "Deine Bewerbung ist bei uns angekommen. Wir rufen dich innerhalb von zwei Werktagen an – zu der Zeit, die du gewählt hast.",
+    "call": "Du hast etwas vergessen oder eine Frage? Ruf uns an: <link>{phone}</link>",
+    "home": "Zur Startseite",
+    "team": "Das Team kennenlernen"
   },
   "VacationBanner": {
     "label": "Betriebsurlaub",

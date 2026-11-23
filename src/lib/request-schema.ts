@@ -1,4 +1,14 @@
 import { z } from "zod";
+import {
+  emailAddress,
+  errorsOf,
+  type FormState,
+  firstErrorOf,
+  formInput,
+  optionalText,
+  phoneNumber,
+  requiredText,
+} from "./form-schema";
 
 /*
  * The request form of /anfrage, BRIEF.md section 5 "Formen": one schema for
@@ -62,18 +72,6 @@ export const DESCRIPTION_MAX = 1000;
 
 const error = (key: RequestErrorKey) => ({ error: key });
 
-/** A text the visitor must give: trimmed, at least one character. */
-const requiredText = (missing: RequestErrorKey, tooLong: RequestErrorKey) =>
-  z
-    .string(error(missing))
-    .trim()
-    .min(1, error(missing))
-    .max(100, error(tooLong));
-
-/** Phone numbers as people write them: "089 99998 412", "+49 (89) 99998-412". */
-const PHONE = /^\+?[0-9 ()/-]{6,30}$/;
-const PHONE_MIN_DIGITS = 6;
-
 const whatSchema = z.object({
   projectType: z.enum(PROJECT_TYPES, error("projectTypeMissing")),
   description: z
@@ -81,7 +79,7 @@ const whatSchema = z.object({
     .trim()
     .min(DESCRIPTION_MIN, error("descriptionShort"))
     .max(DESCRIPTION_MAX, error("descriptionLong")),
-  dimensions: z.string().trim().max(200, error("dimensionsLong")).optional(),
+  dimensions: optionalText<RequestErrorKey>("dimensionsLong", 200),
 });
 
 const whereSchema = z.object({
@@ -89,7 +87,7 @@ const whereSchema = z.object({
     .string(error("postalCodeInvalid"))
     .trim()
     .regex(/^\d{5}$/, error("postalCodeInvalid")),
-  city: requiredText("cityMissing", "cityLong"),
+  city: requiredText<RequestErrorKey>("cityMissing", "cityLong"),
   timeframe: z.enum(TIMEFRAMES, error("timeframeMissing")),
   budget: z.enum(BUDGETS, error("budgetMissing")),
 });
@@ -106,20 +104,9 @@ const contactRule = (
 
 const contactSchema = z
   .object({
-    name: requiredText("nameMissing", "nameLong"),
-    phone: z
-      .string()
-      .trim()
-      .regex(PHONE, error("phoneInvalid"))
-      .refine(
-        (phone) => phone.replace(/\D/g, "").length >= PHONE_MIN_DIGITS,
-        error("phoneInvalid"),
-      )
-      .optional(),
-    email: z
-      .email(error("emailInvalid"))
-      .max(254, error("emailInvalid"))
-      .optional(),
+    name: requiredText<RequestErrorKey>("nameMissing", "nameLong"),
+    phone: phoneNumber<RequestErrorKey>("phoneInvalid").optional(),
+    email: emailAddress<RequestErrorKey>("emailInvalid").optional(),
     contactPreference: z.enum(
       CONTACT_PREFERENCES,
       error("contactPreferenceMissing"),
@@ -183,35 +170,8 @@ export type ValidationResult =
 export type RequestInput = Partial<Record<RequestField, string>>;
 
 /** The request's fields from a form, as strings; files and empty fields are left out. */
-export function requestInput(formData: FormData): RequestInput {
-  const input: RequestInput = {};
-  for (const field of REQUEST_FIELDS) {
-    const value = formData.get(field);
-    if (typeof value === "string" && value.trim() !== "") {
-      input[field] = value.trim();
-    }
-  }
-  return input;
-}
-
-const isErrorKey = (message: string): message is RequestErrorKey =>
-  (REQUEST_ERROR_KEYS as readonly string[]).includes(message);
-
-const isField = (name: PropertyKey | undefined): name is RequestField =>
-  typeof name === "string" &&
-  (REQUEST_FIELDS as readonly string[]).includes(name);
-
-/** The first error of every field. */
-function errorsOf(issues: z.ZodError["issues"]): RequestErrors {
-  const errors: RequestErrors = {};
-  for (const { path, message } of issues) {
-    const [field] = path;
-    if (isField(field) && errors[field] === undefined && isErrorKey(message)) {
-      errors[field] = message;
-    }
-  }
-  return errors;
-}
+export const requestInput = (formData: FormData): RequestInput =>
+  formInput(formData, REQUEST_FIELDS);
 
 /** Checks the fields of one step only: the "Weiter" button and hints while typing. */
 export function validateStep(
@@ -219,7 +179,9 @@ export function validateStep(
   input: RequestInput,
 ): RequestErrors {
   const result = REQUEST_STEPS[step - 1].safeParse(input);
-  return result.success ? {} : errorsOf(result.error.issues);
+  return result.success
+    ? {}
+    : errorsOf(result.error.issues, REQUEST_FIELDS, REQUEST_ERROR_KEYS);
 }
 
 /** Checks the whole request, as the server does before it sends the mail. */
@@ -245,7 +207,7 @@ export const stepOf = (field: RequestField): RequestStep =>
 
 /** The first field with an error, in the order of the page. */
 export const firstErrorField = (errors: RequestErrors): RequestField | null =>
-  REQUEST_FIELDS.find((field) => errors[field] !== undefined) ?? null;
+  firstErrorOf(errors, REQUEST_FIELDS);
 
 export const isProjectType = (value: unknown): value is ProjectType =>
   typeof value === "string" &&
@@ -266,18 +228,5 @@ const PROJECT_TYPE_BY_SERVICE: Record<string, ProjectType> = {
 export const projectTypeOfService = (germanSlug: string): ProjectType | null =>
   PROJECT_TYPE_BY_SERVICE[germanSlug] ?? null;
 
-/*
- * Spam protection without a third-party captcha, BRIEF.md section 5: a trap
- * field that people never see (a bot fills it in) and the time from opening
- * the form to sending it. The browser measures that time itself, so a
- * visitor's wrong clock does not matter.
- */
-export const TRAP_FIELD = "website";
-export const FILL_TIME_FIELD = "fillTime";
-export const MIN_FILL_TIME_MS = 3000;
-
 /** What the request action answers; on success it redirects instead. */
-export type RequestState =
-  | { status: "idle" }
-  | { status: "invalid"; errors: RequestErrors }
-  | { status: "failed" };
+export type RequestState = FormState<RequestErrors>;

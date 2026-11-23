@@ -1,6 +1,9 @@
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
+/** "Sie" on most pages, "du" on the careers pages (BRIEF.md section 2). */
+export type FormTone = "formal" | "informal";
+
 export type FormError = {
   /** The id of the field the error belongs to: the link jumps there. */
   fieldId: string;
@@ -14,6 +17,8 @@ type ErrorSummaryProps = {
    * id only scrolls, so a form moves the focus into the field itself.
    */
   onLinkClick?: (fieldId: string) => void;
+  /** How the title speaks to the visitor; "formal" by default. */
+  tone?: FormTone;
   className?: string;
 };
 
@@ -26,6 +31,7 @@ type ErrorSummaryProps = {
 export function ErrorSummary({
   errors,
   onLinkClick,
+  tone = "formal",
   className,
 }: ErrorSummaryProps) {
   const t = useTranslations("Form.errorSummary");
@@ -42,7 +48,9 @@ export function ErrorSummary({
         className,
       )}
     >
-      <h2 className="font-sans text-body font-bold">{t("titleFormal")}</h2>
+      <h2 className="font-sans text-body font-bold">
+        {t(tone === "formal" ? "titleFormal" : "titleInformal")}
+      </h2>
       <ul className="mt-2 list-disc pl-5 text-ui">
         {errors.map(({ fieldId, message }) => (
           <li key={fieldId}>

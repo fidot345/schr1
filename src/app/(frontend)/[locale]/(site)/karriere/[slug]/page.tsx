@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ApplyCta } from "@/components/careers/ApplyCta";
+import { ApplySection } from "@/components/careers/ApplySection";
 import { JobDetails } from "@/components/careers/JobDetails";
 import { JobIntro } from "@/components/careers/JobIntro";
 import { JsonLd } from "@/components/ui/JsonLd";
@@ -61,8 +61,8 @@ export async function generateMetadata({
 
 /**
  * A job, BRIEF.md section 2: the title with the facts, what the job
- * involves, and the way to apply, with the JobPosting markup for Google.
- * Until the application form (stage 4) the way to apply is a call.
+ * involves, and the application form with this job chosen, with the
+ * JobPosting markup for Google.
  */
 export default async function JobPage({ params }: PageProps) {
   const { locale, slug } = await params;
@@ -75,8 +75,9 @@ export default async function JobPage({ params }: PageProps) {
   if (!job) {
     notFound();
   }
-  const [{ company }, t] = await Promise.all([
+  const [{ company, openingHours }, jobs, t] = await Promise.all([
     getSiteSettings(locale),
+    getOpenJobs(locale),
     getTranslations({ locale, namespace: "JobPage" }),
   ]);
 
@@ -102,7 +103,13 @@ export default async function JobPage({ params }: PageProps) {
         requirements={job.requirements}
         benefits={job.benefits}
       />
-      <ApplyCta phone={company.phone} />
+      <ApplySection
+        jobs={jobs.map(({ id, title }) => ({ id, title }))}
+        defaultJob={String(job.id)}
+        phone={company.phone}
+        openingHours={openingHours}
+        allJobsLink
+      />
     </>
   );
 }

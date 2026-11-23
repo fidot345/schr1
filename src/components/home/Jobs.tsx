@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { TRIAL_DAY_HREF } from "@/components/careers/trial-day-href";
 import { useJobMeta } from "@/components/careers/useJobMeta";
 import { AppLink } from "@/components/ui/AppLink";
 import { ButtonLink } from "@/components/ui/Button";
@@ -74,7 +75,7 @@ export function Jobs({ title, paragraphs, photo, jobs }: JobsProps) {
               {t("openJobsCta")}
             </ButtonLink>
             <ButtonLink
-              href="/karriere"
+              href={TRIAL_DAY_HREF}
               variant="secondary"
               className="w-full md:w-auto"
             >

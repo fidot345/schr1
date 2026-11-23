@@ -18,18 +18,19 @@ import {
 import { ErrorSummary, type FormError } from "@/components/form/ErrorSummary";
 import { Field } from "@/components/form/Field";
 import { FormCard } from "@/components/form/FormCard";
+import { useFillTime, useFocusAfterRender } from "@/components/form/form-hooks";
 import { RadioCards } from "@/components/form/RadioCards";
+import { SendFailed } from "@/components/form/SendFailed";
 import { Stepper } from "@/components/form/Stepper";
 import { Textarea } from "@/components/form/Textarea";
 import { TextInput } from "@/components/form/TextInput";
+import { TrapField } from "@/components/form/TrapField";
 import { Button } from "@/components/ui/Button";
 import { TextLink } from "@/components/ui/TextLink";
-import { telHref } from "@/lib/phone";
 import { submitRequest } from "@/lib/request-action";
 import {
   BUDGETS,
   CONTACT_PREFERENCES,
-  FILL_TIME_FIELD,
   firstErrorField,
   isProjectType,
   PROJECT_TYPES,
@@ -42,7 +43,6 @@ import {
   STEP_FIELDS,
   stepOf,
   TIMEFRAMES,
-  TRAP_FIELD,
   validateStep,
 } from "@/lib/request-schema";
 
@@ -86,30 +86,21 @@ export function RequestForm({ phone }: RequestFormProps) {
   );
 
   const formRef = useRef<HTMLFormElement>(null);
-  const openedAt = useRef(0);
+  const stampFillTime = useFillTime();
+  const setFocusTarget = useFocusAfterRender();
   const [step, setStep] = useState<RequestStep>(1);
   const [errors, setErrors] = useState<RequestErrors>({});
   const [checked, setChecked] = useState<CheckedSteps>({});
   const [showSummary, setShowSummary] = useState(false);
-  const [focusTarget, setFocusTarget] = useState<string | null>(null);
   const [chosenType, setChosenType] = useState<ProjectType | null>(null);
 
   useEffect(() => {
-    openedAt.current = performance.now();
     // Read here, not with useSearchParams: the page stays static.
     const type = new URLSearchParams(window.location.search).get("typ");
     if (isProjectType(type)) {
       setChosenType(type);
     }
   }, []);
-
-  // Focus after the render that shows the target, then forget it.
-  useEffect(() => {
-    if (focusTarget) {
-      document.getElementById(focusTarget)?.focus();
-      setFocusTarget(null);
-    }
-  }, [focusTarget]);
 
   // The server's answer: its errors as if the browser had found them.
   useEffect(() => {
@@ -125,7 +116,7 @@ export function RequestForm({ phone }: RequestFormProps) {
     } else if (state.status === "failed") {
       setFocusTarget(FAILED_ID);
     }
-  }, [state]);
+  }, [state, setFocusTarget]);
 
   /** This step's errors in the form as it is now, shown in place of the old ones. */
   const updateErrors = (): RequestErrors => {
@@ -187,10 +178,7 @@ export function RequestForm({ phone }: RequestFormProps) {
       return;
     }
     const formData = new FormData(event.currentTarget);
-    formData.set(
-      FILL_TIME_FIELD,
-      String(Math.round(performance.now() - openedAt.current)),
-    );
+    stampFillTime(formData);
     startTransition(() => formAction(formData));
   };
 
@@ -208,7 +196,6 @@ export function RequestForm({ phone }: RequestFormProps) {
     return key ? t(`errors.${key}`) : undefined;
   };
 
-  const tel = telHref(phone);
   const stepTitles = [t("steps.what"), t("steps.where"), t("steps.contact")];
 
   const stepHeading = (current: RequestStep) => (
@@ -233,19 +220,7 @@ export function RequestForm({ phone }: RequestFormProps) {
         onChange={onChange}
       >
         {state.status === "failed" ? (
-          <p
-            id={FAILED_ID}
-            role="alert"
-            tabIndex={-1}
-            className="mb-8 rounded border-2 border-fehler bg-weiss px-6 py-5 font-bold"
-          >
-            {tel && phone
-              ? t.rich("failed", {
-                  phone,
-                  link: (chunks) => <TextLink href={tel}>{chunks}</TextLink>,
-                })
-              : t("failedNoPhone")}
-          </p>
+          <SendFailed id={FAILED_ID} phone={phone} tone="formal" />
         ) : null}
         <ErrorSummary
           errors={summary}
@@ -406,17 +381,7 @@ export function RequestForm({ phone }: RequestFormProps) {
           />
         </div>
 
-        {/* The trap: out of sight, out of the tab order, silent for screen readers. */}
-        <div aria-hidden="true" className="sr-only">
-          <label htmlFor="request-trap">{t("trapLabel")}</label>
-          <input
-            id="request-trap"
-            name={TRAP_FIELD}
-            type="text"
-            tabIndex={-1}
-            autoComplete="off"
-          />
-        </div>
+        <TrapField id="request-trap" />
 
         <div className="mt-9 flex flex-col items-stretch gap-4 md:flex-row md:items-center">
           <Button type="submit" aria-disabled={pending || undefined}>

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { ApplyCta } from "@/components/careers/ApplyCta";
 import { OpenJobs } from "@/components/careers/OpenJobs";
 import { TrialDay } from "@/components/careers/TrialDay";
 import { ContactDetails } from "@/components/contact/ContactDetails";
@@ -198,21 +197,17 @@ describe("pages without saved settings", () => {
     expect(render(<CallBox phone={null} openingHours={[]} />)).toBe("");
   });
 
-  it("careers: the texts without a number and no call button", () => {
+  it("careers: the texts without a number and no call link", () => {
     const html = [
       render(<OpenJobs jobs={[]} phone={null} />),
-      render(<TrialDay phone={null} />),
-      render(<ApplyCta phone={null} />),
+      render(<TrialDay />),
     ].join("");
 
     expect(html).toContain(
       "Melde dich gern, wenn du trotzdem bei uns arbeiten möchtest.",
     );
-    expect(html).toContain("Melde dich bei uns und vereinbare einen Termin.");
-    expect(html).toContain(
-      "Melde dich bei uns und sag, für welche Stelle du dich interessierst.",
-    );
-    expect(html).not.toContain("Jetzt anrufen");
+    expect(html).toContain("Schnuppertag anfragen");
+    expect(html).not.toContain("tel:");
     expect(html).not.toMatch(BROKEN);
   });
 
