@@ -9,6 +9,11 @@ export type FormError = {
 
 type ErrorSummaryProps = {
   errors: readonly FormError[];
+  /**
+   * Called instead of following a link, with the field's id: a link to an
+   * id only scrolls, so a form moves the focus into the field itself.
+   */
+  onLinkClick?: (fieldId: string) => void;
   className?: string;
 };
 
@@ -18,7 +23,11 @@ type ErrorSummaryProps = {
  * makes a screen reader read it as soon as it appears. Nothing is rendered
  * without errors.
  */
-export function ErrorSummary({ errors, className }: ErrorSummaryProps) {
+export function ErrorSummary({
+  errors,
+  onLinkClick,
+  className,
+}: ErrorSummaryProps) {
   const t = useTranslations("Form.errorSummary");
 
   if (errors.length === 0) {
@@ -37,7 +46,18 @@ export function ErrorSummary({ errors, className }: ErrorSummaryProps) {
       <ul className="mt-2 list-disc pl-5 text-ui">
         {errors.map(({ fieldId, message }) => (
           <li key={fieldId}>
-            <a href={`#${fieldId}`} className="text-fehler">
+            <a
+              href={`#${fieldId}`}
+              className="text-fehler"
+              onClick={
+                onLinkClick
+                  ? (event) => {
+                      event.preventDefault();
+                      onLinkClick(fieldId);
+                    }
+                  : undefined
+              }
+            >
               {message}
             </a>
           </li>

@@ -4,12 +4,15 @@ import { CmsImage } from "@/components/ui/CmsImage";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import type { Photo } from "@/lib/media";
+import type { ProjectType } from "@/lib/request-schema";
 
 type ServiceIntroProps = {
   title: string;
   /** The paragraphs of the introduction. */
   intro: string[];
   photo: Photo | null;
+  /** The kind of work the request form starts with (?typ=); null for none. */
+  requestType: ProjectType | null;
 };
 
 /**
@@ -17,9 +20,15 @@ type ServiceIntroProps = {
  * page's first screen (01b): from lg the text on the left and the cover on
  * the right, bottom edges level; below lg one column with the text first.
  * The cover is 4:5 on the phone and 3:2 from md (BRIEF.md section 3) and
- * the largest element on screen, so it loads first.
+ * the largest element on screen, so it loads first. The request button
+ * opens the form with this service's kind of work chosen.
  */
-export function ServiceIntro({ title, intro, photo }: ServiceIntroProps) {
+export function ServiceIntro({
+  title,
+  intro,
+  photo,
+  requestType,
+}: ServiceIntroProps) {
   const t = useTranslations("ServicePage");
 
   return (
@@ -41,7 +50,14 @@ export function ServiceIntro({ title, intro, photo }: ServiceIntroProps) {
               {paragraph}
             </p>
           ))}
-          <ButtonLink href="/anfrage" className="mt-9 w-full md:w-auto">
+          <ButtonLink
+            href={
+              requestType
+                ? { pathname: "/anfrage", query: { typ: requestType } }
+                : "/anfrage"
+            }
+            className="mt-9 w-full md:w-auto"
+          >
             {t("requestCta")}
           </ButtonLink>
         </div>

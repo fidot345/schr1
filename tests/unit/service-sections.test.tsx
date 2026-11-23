@@ -18,7 +18,13 @@ vi.mock("@/i18n/navigation", () => ({
     className,
     children,
   }: {
-    href: string | { pathname: string; params?: Record<string, string> };
+    href:
+      | string
+      | {
+          pathname: string;
+          params?: Record<string, string>;
+          query?: Record<string, string>;
+        };
     className?: string;
     children: ReactNode;
   }) => (
@@ -29,7 +35,7 @@ vi.mock("@/i18n/navigation", () => ({
           : href.pathname.replace(
               /\[(\w+)\]/g,
               (_, key: string) => href.params?.[key] ?? "",
-            )
+            ) + (href.query ? `?${new URLSearchParams(href.query)}` : "")
       }
       className={className}
     >
@@ -102,6 +108,7 @@ describe("ServiceIntro", () => {
       title="Küchen"
       intro={["Erster Absatz.", "Zweiter Absatz."]}
       photo={photo("kueche")}
+      requestType={null}
     />,
   );
 
@@ -111,6 +118,19 @@ describe("ServiceIntro", () => {
     expect(html).toContain("Erster Absatz.");
     expect(html).toContain("Zweiter Absatz.");
     expect(html).toMatch(/href="\/anfrage"[^>]*>Projekt anfragen</);
+  });
+
+  it("opens the form with the service's kind of work chosen", () => {
+    const kitchens = render(
+      <ServiceIntro
+        title="Küchen"
+        intro={["Erster Absatz."]}
+        photo={photo("kueche")}
+        requestType="kueche"
+      />,
+    );
+
+    expect(kitchens).toMatch(/href="\/anfrage\?typ=kueche"[^>]*>Projekt/);
   });
 
   it("loads the cover first, 4:5 on the phone and 3:2 from md", () => {

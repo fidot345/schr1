@@ -290,6 +290,35 @@ describe("RadioCards", () => {
     );
     expect(html).toContain("grid-cols-[repeat(auto-fill,minmax(200px,1fr))]");
   });
+
+  it("gives the first radio the id and ties an error to the group", () => {
+    const html = render(
+      <RadioCards
+        id="typ"
+        name="typ"
+        legend="Typ"
+        options={options}
+        error="Bitte wählen Sie aus, was wir für Sie bauen sollen."
+      />,
+    );
+
+    expect(html.match(/ id="typ"/g)).toHaveLength(1);
+    expect(html).toMatch(/<input id="typ" type="radio"[^>]*value="kueche"/);
+    expect(html).toMatch(/^<fieldset aria-describedby="typ-error"/);
+    expect(tagWithId(html, "typ-error")).toMatch(/^<p /);
+    expect(html).toContain(
+      `${de.Form.errorPrefix} </span>Bitte wählen Sie aus, was wir für Sie bauen sollen.`,
+    );
+  });
+
+  it("has no error markup without an error", () => {
+    const html = render(
+      <RadioCards id="typ" name="typ" legend="Typ" options={options} />,
+    );
+
+    expect(html).not.toContain("aria-describedby");
+    expect(html).not.toContain("typ-error");
+  });
 });
 
 describe("NextSteps", () => {

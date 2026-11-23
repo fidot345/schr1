@@ -10,6 +10,7 @@ import { ServiceProjects } from "@/components/services/ServiceProjects";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getService, getServices } from "@/lib/content";
+import { projectTypeOfService } from "@/lib/request-schema";
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -63,7 +64,8 @@ export async function generateMetadata({
 /**
  * A service, BRIEF.md section 2: title and introduction with the cover,
  * what is included, the materials and how long it takes, the photos,
- * projects of this type and the request button.
+ * projects of this type and the request button, which opens the form
+ * with the kind of work of this service chosen.
  */
 export default async function ServicePage({ params }: PageProps) {
   const { locale, slug } = await params;
@@ -86,6 +88,7 @@ export default async function ServicePage({ params }: PageProps) {
         title={service.title}
         intro={service.intro}
         photo={service.photo}
+        requestType={projectTypeOfService(service.slugs.de)}
       />
       <ServiceOverview
         included={service.included}
