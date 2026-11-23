@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ApplySection } from "@/components/careers/ApplySection";
 import { CareersBenefits } from "@/components/careers/CareersBenefits";
 import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
@@ -42,11 +43,11 @@ export async function generateMetadata({
 
 /**
  * Careers, BRIEF.md section 2: the text about working here with a photo,
- * why it is good to work here, the open positions, the trial day for pupils
- * and frequent questions. Text, photo, reasons and questions are the
- * "Karriere" block of the home page in Payload, the positions are the
- * active jobs. The
- * application form comes in stage 4; until then the way to apply is a call.
+ * why it is good to work here, the open positions, the trial day for pupils,
+ * the short application form and frequent questions. Text, photo, reasons
+ * and questions are the "Karriere" block of the home page in Payload, the
+ * positions are the active jobs. The page stays static: ?stelle= is read in
+ * the browser.
  */
 export default async function CareersPage({ params }: PageProps) {
   const { locale } = await params;
@@ -55,7 +56,7 @@ export default async function CareersPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [jobs, home, { company }] = await Promise.all([
+  const [jobs, home, { company, openingHours }] = await Promise.all([
     getOpenJobs(locale),
     getHomePage(locale),
     getSiteSettings(locale),
@@ -69,7 +70,12 @@ export default async function CareersPage({ params }: PageProps) {
       />
       <CareersBenefits benefits={home.careers.benefits} />
       <OpenJobs jobs={jobs} phone={company.phone} />
-      <TrialDay phone={company.phone} />
+      <TrialDay />
+      <ApplySection
+        jobs={jobs.map(({ id, title }) => ({ id, title }))}
+        phone={company.phone}
+        openingHours={openingHours}
+      />
       <CareersFaq faq={home.careers.faq} />
     </>
   );

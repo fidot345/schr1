@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import { ErrorIcon } from "@/components/ui/icons";
+import { FieldError } from "./FieldError";
 
 /** What a control needs from its Field: the id and the links to hint and error. */
 export type FieldControlProps = {
@@ -66,18 +66,9 @@ export function Field({
           "aria-invalid": error ? true : undefined,
         })}
       </div>
-      {error && (
-        <p
-          id={errorId}
-          className="mt-2 flex items-start gap-2 text-small font-bold text-fehler"
-        >
-          <ErrorIcon className="mt-px shrink-0" />
-          <span>
-            <span className="sr-only">{t("errorPrefix")} </span>
-            {error}
-          </span>
-        </p>
-      )}
+      {error && errorId ? (
+        <FieldError id={errorId} message={error} className="mt-2" />
+      ) : null}
     </div>
   );
 }

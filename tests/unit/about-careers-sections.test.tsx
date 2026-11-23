@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 import { AboutIntro } from "@/components/about/AboutIntro";
 import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { TeamList } from "@/components/about/TeamList";
-import { ApplyCta } from "@/components/careers/ApplyCta";
 import { CareersBenefits } from "@/components/careers/CareersBenefits";
 import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
@@ -16,7 +15,27 @@ import type { JobPay } from "@/lib/job-pay";
 import type { Photo } from "@/lib/media";
 import { render, tagWithId } from "./support/render";
 
-type MockHref = string | { pathname: string; params?: Record<string, string> };
+type MockHref =
+  | string
+  | {
+      pathname: string;
+      params?: Record<string, string>;
+      query?: Record<string, string>;
+      hash?: string;
+    };
+
+/** The href of a plain <a>: the params filled in, then the query and the hash. */
+const hrefOf = (href: MockHref): string => {
+  if (typeof href === "string") {
+    return href;
+  }
+  const path = href.pathname.replace(
+    /\[(\w+)\]/g,
+    (_, key: string) => href.params?.[key] ?? "",
+  );
+  const query = href.query ? `?${new URLSearchParams(href.query)}` : "";
+  return `${path}${query}${href.hash ? `#${href.hash}` : ""}`;
+};
 
 /* next-intl's Link needs a Next.js request: here it is a plain <a>. */
 vi.mock("@/i18n/navigation", () => ({
@@ -29,17 +48,7 @@ vi.mock("@/i18n/navigation", () => ({
     className?: string;
     children: ReactNode;
   }) => (
-    <a
-      href={
-        typeof href === "string"
-          ? href
-          : href.pathname.replace(
-              /\[(\w+)\]/g,
-              (_, key: string) => href.params?.[key] ?? "",
-            )
-      }
-      className={className}
-    >
+    <a href={hrefOf(href)} className={className}>
       {children}
     </a>
   ),
@@ -248,15 +257,19 @@ describe("OpenJobs", () => {
 });
 
 describe("TrialDay", () => {
-  it("is a Moos band with its heading and a call button", () => {
-    const html = render(<TrialDay phone={PHONE} />);
+  it("is a Moos band with its heading and a button to the form", () => {
+    const html = render(<TrialDay />);
 
     expect(tagWithId(html, "schnuppertag-titel")).toMatch(/^<h2 /);
     expect(html).toContain('aria-labelledby="schnuppertag-titel"');
     expect(html).toContain("bg-moos");
     expect(html).toContain(">Schnuppertag für Schüler:innen</h2>");
-    expect(html).toMatch(/href="tel:\+498999998412"[^>]*>[\s\S]*Jetzt anrufen/);
-    expect(html).toContain(PHONE);
+    // The form further down, with "Schnuppertag / Praktikum" chosen.
+    expect(html).toMatch(
+      /href="\/karriere\?stelle=schnuppertag#bewerben"[^>]*>[\s\S]*Schnuppertag anfragen/,
+    );
+    expect(html).toContain("Formular weiter unten");
+    expect(html).not.toContain("tel:");
   });
 });
 
@@ -354,23 +367,6 @@ describe("JobDetails", () => {
     expect(
       render(<JobDetails tasks={[]} requirements={[]} benefits={[]} />),
     ).toBe("");
-  });
-});
-
-describe("ApplyCta", () => {
-  it("has a heading, the phone, a call button and the link to all jobs", () => {
-    const html = render(<ApplyCta phone={PHONE} />);
-
-    expect(tagWithId(html, "bewerben-titel")).toMatch(/^<h2 /);
-    expect(html).toContain('aria-labelledby="bewerben-titel"');
-    expect(html).toContain(">Bewirb dich</h2>");
-    expect(html).toContain(PHONE);
-    expect(html).toMatch(/href="tel:\+498999998412"/);
-    expect(html).toMatch(
-      /href="\/karriere"[^>]*>Alle offenen Stellen ansehen</,
-    );
-    // The application form is not there yet.
-    expect(html).not.toContain("<form");
   });
 });
 

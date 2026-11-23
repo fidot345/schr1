@@ -85,8 +85,8 @@
     "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
     "noJobsNoPhone": "Zurzeit ist keine Stelle offen. Melde dich gern, wenn du trotzdem bei uns arbeiten möchtest.",
     "trialTitle": "Schnuppertag für Schüler:innen",
-    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}.",
-    "trialTextNoPhone": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich bei uns und vereinbare einen Termin.",
+    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich einfach mit dem Formular weiter unten an.",
+    "trialCta": "Schnuppertag anfragen",
     "faqTitle": "Häufige Fragen"
   },
   "JobPage": {
@@ -98,10 +98,6 @@
     "tasksTitle": "Deine Aufgaben",
     "requirementsTitle": "Was du mitbringst",
     "benefitsTitle": "Was wir bieten",
-    "applyTitle": "Bewirb dich",
-    "applyText": "Ruf uns an und sag, für welche Stelle du dich interessierst: {phone}.",
-    "applyTextNoPhone": "Melde dich bei uns und sag, für welche Stelle du dich interessierst.",
-    "call": "Jetzt anrufen",
     "allJobs": "Alle offenen Stellen ansehen"
   },
   "JobPay": {
@@ -186,7 +182,209 @@
     "callBox": {
       "title": "Lieber telefonieren?",
       "hours": "{days} {hours} Uhr"
+    },
+    "trapLabel": "Dieses Feld bitte leer lassen",
+    "sendFailed": {
+      "formal": "Das hat leider nicht geklappt. Bitte rufen Sie uns an: <link>{phone}</link>.",
+      "informal": "Das hat leider nicht geklappt. Bitte ruf uns an: <link>{phone}</link>.",
+      "noPhoneFormal": "Das hat leider nicht geklappt. Bitte versuchen Sie es später noch einmal.",
+      "noPhoneInformal": "Das hat leider nicht geklappt. Bitte versuch es später noch einmal."
     }
+  },
+  "RequestPage": {
+    "metaTitle": "Projekt anfragen",
+    "metaDescription": "Küche, Schrank, Innentüren oder Innenausbau anfragen: drei kurze Schritte, dann melden wir uns innerhalb von zwei Werktagen.",
+    "title": "Projekt anfragen",
+    "lead": "Drei kurze Fragen, dann melden wir uns bei Ihnen. Das dauert etwa zwei Minuten.",
+    "noscript": "Das Formular braucht JavaScript. Rufen Sie uns einfach an: <link>{phone}</link>",
+    "noscriptNoPhone": "Das Formular braucht JavaScript. Wie Sie uns sonst erreichen, steht auf der <link>Kontaktseite</link>.",
+    "nextSteps": {
+      "first": "Wir melden uns innerhalb von zwei Werktagen.",
+      "second": "Wir kommen zum Aufmaß zu Ihnen.",
+      "third": "Sie bekommen eine Zeichnung und ein schriftliches Angebot."
+    }
+  },
+  "RequestForm": {
+    "steps": {
+      "what": "Was planen Sie?",
+      "where": "Wo und wann?",
+      "contact": "Wie erreichen wir Sie?"
+    },
+    "stepHeading": "Schritt {current} von {total}: {title}",
+    "typeLegend": "Was möchten Sie bauen lassen?",
+    "types": {
+      "kueche": "Küche",
+      "schrank": "Schrank oder Möbel nach Maß",
+      "tueren": "Innentüren",
+      "ausbau": "Innenausbau",
+      "anderes": "Etwas anderes"
+    },
+    "description": {
+      "label": "Beschreiben Sie kurz Ihr Vorhaben",
+      "hint": "Zum Beispiel: Einbauschrank fürs Schlafzimmer, Wand 3,20 m breit, bis unter die Decke."
+    },
+    "dimensions": {
+      "label": "Ungefähre Maße",
+      "hint": "Breite × Höhe × Tiefe, wenn Sie es schon wissen."
+    },
+    "postalCode": "Postleitzahl",
+    "city": "Ort",
+    "timeframeLegend": "Wann soll es losgehen?",
+    "timeframes": {
+      "asap": "So bald wie möglich",
+      "1-3-months": "In 1–3 Monaten",
+      "3-6-months": "In 3–6 Monaten",
+      "later": "Später"
+    },
+    "budgetLegend": "Welches Budget haben Sie ungefähr?",
+    "budgets": {
+      "up-to-5000": "Bis 5.000 €",
+      "5000-10000": "5.000–10.000 €",
+      "10000-20000": "10.000–20.000 €",
+      "over-20000": "Über 20.000 €",
+      "unknown": "Weiß ich noch nicht"
+    },
+    "name": "Ihr Name",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "contactHint": "Telefon oder E-Mail – eins von beiden genügt.",
+    "preferenceLegend": "Wie erreichen wir Sie am liebsten?",
+    "preferences": {
+      "phone": "Per Telefon",
+      "email": "Per E-Mail",
+      "any": "Egal"
+    },
+    "next": "Weiter zu Schritt {step}",
+    "back": "Zurück",
+    "submit": "Anfrage senden",
+    "sending": "Wird gesendet …",
+    "privacy": "Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+    "errors": {
+      "projectTypeMissing": "Bitte wählen Sie aus, was wir für Sie bauen sollen.",
+      "descriptionShort": "Bitte beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen.",
+      "descriptionLong": "Bitte fassen Sie Ihr Vorhaben in höchstens 1.000 Zeichen zusammen.",
+      "dimensionsLong": "Bitte geben Sie die Maße in höchstens 200 Zeichen an.",
+      "postalCodeInvalid": "Bitte geben Sie eine fünfstellige Postleitzahl ein.",
+      "cityMissing": "Bitte geben Sie Ihren Ort ein.",
+      "cityLong": "Bitte geben Sie den Ort in höchstens 100 Zeichen an.",
+      "timeframeMissing": "Bitte wählen Sie, wann es ungefähr losgehen soll.",
+      "budgetMissing": "Bitte wählen Sie Ihr ungefähres Budget. Wenn Sie es noch nicht wissen, wählen Sie „Weiß ich noch nicht“.",
+      "nameMissing": "Bitte geben Sie Ihren Namen ein.",
+      "nameLong": "Bitte geben Sie Ihren Namen in höchstens 100 Zeichen an.",
+      "phoneInvalid": "Bitte geben Sie eine Telefonnummer mit Vorwahl ein, nur mit Ziffern, Leerzeichen und + / ( ) -.",
+      "emailInvalid": "Bitte geben Sie eine vollständige E-Mail-Adresse mit @ ein.",
+      "contactMissing": "Bitte geben Sie eine Telefonnummer oder eine E-Mail-Adresse an, damit wir Sie erreichen.",
+      "phoneForCall": "Sie möchten einen Anruf: Bitte geben Sie Ihre Telefonnummer an.",
+      "emailForMail": "Sie möchten eine E-Mail: Bitte geben Sie Ihre E-Mail-Adresse an.",
+      "contactPreferenceMissing": "Bitte wählen Sie, wie wir Sie am liebsten erreichen."
+    }
+  },
+  "RequestThanksPage": {
+    "metaTitle": "Danke für Ihre Anfrage",
+    "title": "Danke für Ihre Anfrage",
+    "text": "Ihre Anfrage ist bei uns angekommen. Wir melden uns innerhalb von zwei Werktagen, so wie Sie es angegeben haben: per Telefon oder per E-Mail.",
+    "call": "Sie haben etwas vergessen oder eine Frage? Rufen Sie uns an: <link>{phone}</link>",
+    "home": "Zur Startseite",
+    "projects": "Referenzen ansehen"
+  },
+  "RequestMail": {
+    "subject": "Neue Anfrage: {type} – {postalCode} {city}",
+    "intro": "Neue Anfrage über das Formular auf der Website. Sprache: {language}.",
+    "languages": {
+      "de": "Deutsch",
+      "en": "Englisch"
+    },
+    "projectType": "Art der Arbeit",
+    "description": "Vorhaben",
+    "dimensions": "Ungefähre Maße",
+    "place": "PLZ und Ort",
+    "timeframe": "Beginn",
+    "budget": "Budget",
+    "name": "Name",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "contactPreference": "Kontakt am liebsten",
+    "notGiven": "nicht angegeben"
+  },
+  "ApplicationForm": {
+    "title": "In 60 Sekunden bewerben – ohne Lebenslauf",
+    "lead": "Kein Anschreiben, kein Lebenslauf: Ein paar Angaben genügen, dann rufen wir dich an.",
+    "jobLegend": "Wofür bewirbst du dich?",
+    "trialDay": "Schnuppertag / Praktikum",
+    "name": "Dein Name",
+    "phone": "Telefon",
+    "phoneHint": "Wir melden uns per Telefon – zu der Zeit, die du unten wählst.",
+    "email": "E-Mail",
+    "experienceLegend": "Was bringst du mit?",
+    "experiences": {
+      "experienced": "Ausgelernt mit Berufserfahrung",
+      "newly-qualified": "Gerade ausgelernt",
+      "career-changer": "Quereinstieg",
+      "pupil": "Schüler:in"
+    },
+    "start": {
+      "label": "Ab wann kannst du anfangen?",
+      "hint": "Zum Beispiel: ab sofort, ab 1. März oder nach der Kündigungsfrist."
+    },
+    "callTimeLegend": "Wann können wir dich am besten anrufen?",
+    "callTimes": {
+      "morning": "Vormittags",
+      "afternoon": "Nachmittags",
+      "evening": "Abends"
+    },
+    "message": {
+      "label": "Möchtest du uns noch etwas sagen?",
+      "hint": "Höchstens 500 Zeichen."
+    },
+    "submit": "Bewerbung abschicken",
+    "sending": "Wird gesendet …",
+    "privacy": "Wir verwenden deine Angaben nur, um deine Bewerbung zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+    "noscript": "Das Formular braucht JavaScript. Ruf uns einfach an: <link>{phone}</link>",
+    "noscriptNoPhone": "Das Formular braucht JavaScript. Wie du uns sonst erreichst, steht auf der <link>Kontaktseite</link>.",
+    "nextSteps": {
+      "first": "Wir rufen dich innerhalb von zwei Werktagen an – zu der Zeit, die du gewählt hast.",
+      "second": "Du kommst vorbei, siehst dir die Werkstatt an und lernst das Team kennen.",
+      "third": "Passt es für beide Seiten, besprechen wir, wann du anfängst."
+    },
+    "errors": {
+      "jobMissing": "Bitte wähl aus, wofür du dich bewirbst.",
+      "jobClosed": "Diese Stelle ist leider nicht mehr offen. Bitte wähl eine andere aus.",
+      "nameMissing": "Bitte gib deinen Namen ein.",
+      "nameLong": "Bitte gib deinen Namen in höchstens 100 Zeichen an.",
+      "phoneMissing": "Bitte gib deine Telefonnummer ein, damit wir dich anrufen können.",
+      "phoneInvalid": "Bitte gib eine Telefonnummer mit Vorwahl ein, nur mit Ziffern, Leerzeichen und + / ( ) -.",
+      "emailInvalid": "Bitte gib eine vollständige E-Mail-Adresse mit @ ein.",
+      "experienceMissing": "Bitte wähl aus, was du mitbringst.",
+      "startMissing": "Bitte gib an, ab wann du anfangen kannst.",
+      "startLong": "Bitte gib in höchstens 100 Zeichen an, ab wann du anfangen kannst.",
+      "callTimeMissing": "Bitte wähl aus, wann wir dich am besten anrufen.",
+      "messageLong": "Bitte fass dich in höchstens 500 Zeichen."
+    }
+  },
+  "ApplicationMail": {
+    "subject": "Neue Bewerbung: {job} – {name}",
+    "intro": "Neue Bewerbung über das Formular auf der Website. Sprache: {language}.",
+    "languages": {
+      "de": "Deutsch",
+      "en": "Englisch"
+    },
+    "job": "Stelle",
+    "name": "Name",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "experience": "Erfahrung",
+    "start": "Anfangen ab",
+    "callTime": "Anruf am liebsten",
+    "message": "Nachricht",
+    "notGiven": "nicht angegeben"
+  },
+  "CareersThanksPage": {
+    "metaTitle": "Danke für deine Bewerbung",
+    "title": "Danke für deine Bewerbung",
+    "text": "Deine Bewerbung ist bei uns angekommen. Wir rufen dich innerhalb von zwei Werktagen an – zu der Zeit, die du gewählt hast.",
+    "call": "Du hast etwas vergessen oder eine Frage? Ruf uns an: <link>{phone}</link>",
+    "home": "Zur Startseite",
+    "team": "Das Team kennenlernen"
   },
   "VacationBanner": {
     "label": "Betriebsurlaub",

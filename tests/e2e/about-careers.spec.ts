@@ -239,7 +239,7 @@ test.describe("the careers page", () => {
     ).toHaveCount(4);
   });
 
-  test("has the trial day with a call button and no form yet", async ({
+  test("has the trial day and right after it the application form", async ({
     page,
   }) => {
     await page.goto("/karriere");
@@ -248,9 +248,19 @@ test.describe("the careers page", () => {
       name: "Schnuppertag für Schüler:innen",
     });
     await expect(
-      trial.getByRole("link", { name: "Jetzt anrufen" }),
-    ).toHaveAttribute("href", "tel:+498999998412");
-    await expect(page.locator("main form")).toHaveCount(0);
+      trial.getByRole("link", { name: "Schnuppertag anfragen" }),
+    ).toHaveAttribute("href", "/karriere?stelle=schnuppertag#bewerben");
+    await expect(page.locator("main form")).toHaveCount(1);
+
+    // The order of BRIEF.md section 2; the questions, when there are any
+    // in Payload, come after the form.
+    const headings = await page
+      .getByRole("main")
+      .getByRole("heading", { level: 2 })
+      .allTextContents();
+    const form = headings.indexOf("In 60 Sekunden bewerben – ohne Lebenslauf");
+    expect(form).toBeGreaterThan(0);
+    expect(headings[form - 1]).toBe("Schnuppertag für Schüler:innen");
   });
 
   test("is in English on /en/careers", async ({ page }) => {
@@ -302,14 +312,19 @@ test.describe("a job page", () => {
     }
     await expect(details.getByRole("listitem")).toHaveCount(12);
 
-    const apply = page.getByRole("region", { name: "Bewirb dich" });
+    const apply = page.getByRole("region", {
+      name: "In 60 Sekunden bewerben – ohne Lebenslauf",
+    });
+    await expect(apply.locator("form")).toHaveCount(1);
     await expect(
-      apply.getByRole("link", { name: "Jetzt anrufen" }),
-    ).toHaveAttribute("href", "tel:+498999998412");
+      apply.getByRole("radio", { name: "Schreiner (m/w/d)", exact: true }),
+    ).toBeChecked();
     await expect(
       apply.getByRole("link", { name: "Alle offenen Stellen ansehen" }),
     ).toHaveAttribute("href", "/karriere");
-    await expect(page.locator("main form")).toHaveCount(0);
+    await expect(
+      apply.getByRole("link", { name: "089 99998 412" }),
+    ).toHaveAttribute("href", "tel:+498999998412");
   });
 
   test("shows the text of an apprenticeship as its pay", async ({ page }) => {
@@ -344,9 +359,9 @@ test.describe("a job page", () => {
     ).toBeVisible();
     await expect(
       page
-        .getByRole("region", { name: "Apply" })
-        .getByRole("link", { name: "Call now" }),
-    ).toHaveAttribute("href", "tel:+498999998412");
+        .getByRole("region", { name: "Apply in 60 seconds – no CV needed" })
+        .getByRole("radio", { name: "Joiner (m/f/d)", exact: true }),
+    ).toBeChecked();
   });
 });
 
