@@ -28,15 +28,16 @@ export async function generateMetadata({
     getContactDetails(locale),
   ]);
 
+  const { phone, email, street, postalCode, city } = company;
+
   return {
     title: t("title"),
-    description: t("description", {
-      phone: company.phone,
-      email: company.email,
-      street: company.street,
-      postalCode: company.postalCode,
-      city: company.city,
-    }),
+    // The sentence names all five; with a gap in SiteSettings it would
+    // read "Telefon , E-Mail …", so the page's lead text stands in.
+    description:
+      phone && email && street && postalCode && city
+        ? t("description", { phone, email, street, postalCode, city })
+        : t("intro"),
     ...(await pageMetadata(locale, () => "/kontakt")),
   };
 }

@@ -13,8 +13,11 @@ import { telHref } from "@/lib/phone";
 import { showsActionBar } from "./navigation";
 
 type MobileActionBarProps = {
-  /** As people write it, from SiteSettings: "089 99998 412". */
-  phone: string;
+  /**
+   * As people write it, from SiteSettings: "089 99998 412". Without one,
+   * the bar has only "Anfrage".
+   */
+  phone: string | null;
 };
 
 /**
@@ -30,6 +33,7 @@ type MobileActionBarProps = {
 export function MobileActionBar({ phone }: MobileActionBarProps) {
   const t = useTranslations("MobileActionBar");
   const pathname = useRoutePathname();
+  const tel = telHref(phone);
 
   if (!showsActionBar(pathname)) {
     return null;
@@ -42,16 +46,18 @@ export function MobileActionBar({ phone }: MobileActionBarProps) {
       className="sticky bottom-0 z-30 border-t border-linie bg-weiss px-4 pt-3 pb-4 md:hidden"
     >
       <ul className="flex gap-3">
-        <li className="flex-1">
-          <ButtonLink
-            href={telHref(phone)}
-            variant="secondary"
-            icon={<PhoneIcon />}
-            fullWidth
-          >
-            {t("call")}
-          </ButtonLink>
-        </li>
+        {tel ? (
+          <li className="flex-1">
+            <ButtonLink
+              href={tel}
+              variant="secondary"
+              icon={<PhoneIcon />}
+              fullWidth
+            >
+              {t("call")}
+            </ButtonLink>
+          </li>
+        ) : null}
         <li className="flex-1">
           <ButtonLink href="/anfrage" fullWidth>
             {t("request")}

@@ -5,7 +5,7 @@ import { ApplyCall } from "./ApplyCall";
 
 type TrialDayProps = {
   /** As people write it, from SiteSettings: "089 99998 412". */
-  phone: string;
+  phone: string | null;
 };
 
 /**
@@ -22,10 +22,14 @@ export function TrialDay({ phone }: TrialDayProps) {
         <h2 id="schnuppertag-titel" className="font-display text-h2">
           {t("trialTitle")}
         </h2>
-        <p className="mt-4 max-w-[34em]">{t("trialText", { phone })}</p>
-        <div className="mt-7">
-          <ApplyCall phone={phone} />
-        </div>
+        <p className="mt-4 max-w-[34em]">
+          {phone ? t("trialText", { phone }) : t("trialTextNoPhone")}
+        </p>
+        {phone ? (
+          <div className="mt-7">
+            <ApplyCall phone={phone} />
+          </div>
+        ) : null}
       </Container>
     </Section>
   );

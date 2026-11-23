@@ -6,7 +6,7 @@ import { ApplyCall } from "./ApplyCall";
 
 type ApplyCtaProps = {
   /** As people write it, from SiteSettings: "089 99998 412". */
-  phone: string;
+  phone: string | null;
 };
 
 /**
@@ -23,7 +23,9 @@ export function ApplyCta({ phone }: ApplyCtaProps) {
         <h2 id="bewerben-titel" className="font-display text-h2">
           {t("applyTitle")}
         </h2>
-        <p className="mt-4 max-w-[34em]">{t("applyText", { phone })}</p>
+        <p className="mt-4 max-w-[34em]">
+          {phone ? t("applyText", { phone }) : t("applyTextNoPhone")}
+        </p>
         <div className="mt-7 flex flex-col items-start gap-6 md:flex-row md:items-center">
           <ApplyCall phone={phone} />
           <TextLink href="/karriere">{t("allJobs")}</TextLink>

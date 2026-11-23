@@ -89,15 +89,16 @@ export function buildJobPosting(
     employmentType: EMPLOYMENT_TYPE[job.employmentType],
     hiringOrganization: {
       "@type": "Organization",
-      name: company.name,
+      ...(company.name ? { name: company.name } : {}),
     },
+    // Only the parts SiteSettings has, never a null.
     jobLocation: {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        streetAddress: company.street,
-        postalCode: company.postalCode,
-        addressLocality: company.city,
+        ...(company.street ? { streetAddress: company.street } : {}),
+        ...(company.postalCode ? { postalCode: company.postalCode } : {}),
+        ...(company.city ? { addressLocality: company.city } : {}),
         addressCountry: "DE",
       },
     },

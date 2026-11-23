@@ -83,8 +83,10 @@
     "benefitsTitle": "Was wir bieten",
     "openTitle": "Offene Stellen",
     "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
+    "noJobsNoPhone": "Zurzeit ist keine Stelle offen. Melde dich gern, wenn du trotzdem bei uns arbeiten möchtest.",
     "trialTitle": "Schnuppertag für Schüler:innen",
     "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}.",
+    "trialTextNoPhone": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich bei uns und vereinbare einen Termin.",
     "faqTitle": "Häufige Fragen"
   },
   "JobPage": {
@@ -98,6 +100,7 @@
     "benefitsTitle": "Was wir bieten",
     "applyTitle": "Bewirb dich",
     "applyText": "Ruf uns an und sag, für welche Stelle du dich interessierst: {phone}.",
+    "applyTextNoPhone": "Melde dich bei uns und sag, für welche Stelle du dich interessierst.",
     "call": "Jetzt anrufen",
     "allJobs": "Alle offenen Stellen ansehen"
   },

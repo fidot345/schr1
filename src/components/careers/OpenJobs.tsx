@@ -10,7 +10,7 @@ import { useJobMeta } from "./useJobMeta";
 type OpenJobsProps = {
   jobs: JobListItem[];
   /** As people write it, for the line under an empty list. */
-  phone: string;
+  phone: string | null;
 };
 
 function JobRow({ job }: { job: JobListItem }) {
@@ -54,7 +54,9 @@ export function OpenJobs({ jobs, phone }: OpenJobsProps) {
             ))}
           </ul>
         ) : (
-          <p className="mt-6 max-w-[34em]">{t("noJobs", { phone })}</p>
+          <p className="mt-6 max-w-[34em]">
+            {phone ? t("noJobs", { phone }) : t("noJobsNoPhone")}
+          </p>
         )}
       </Container>
     </Section>

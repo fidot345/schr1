@@ -6,7 +6,13 @@ import { type JobPay, toJobPay } from "./job-pay";
 import { isPopulated, type Photo, populated, toPhoto } from "./media";
 import { payloadClient, readOptions } from "./payload";
 import { firstParagraphText } from "./rich-text";
-import { logoWordOf, paragraphs, type SceneStep, sceneStep } from "./text";
+import {
+  filled,
+  logoWordOf,
+  paragraphs,
+  type SceneStep,
+  sceneStep,
+} from "./text";
 
 /*
  * Reading the site's content from Payload, BRIEF.md section 5.
@@ -20,17 +26,25 @@ import { logoWordOf, paragraphs, type SceneStep, sceneStep } from "./text";
  * panel the revalidate hook rebuilds them, see src/hooks/revalidate-site.ts.
  */
 
+/**
+ * The company from SiteSettings. Payload requires the fields, but a database
+ * whose settings were never saved (a fresh preview branch) has none, so the
+ * contact fields are null when empty and the pages leave out what is
+ * missing instead of breaking.
+ */
 export type CompanyData = {
+  /** "" when empty. */
   name: string;
   /** Next to the mark in the header: "Tannrieder". */
   logoWord: string;
+  /** "" when empty. */
   owner: string;
-  street: string;
-  postalCode: string;
-  city: string;
+  street: string | null;
+  postalCode: string | null;
+  city: string | null;
   /** As people write it: "089 99998 412". */
-  phone: string;
-  email: string;
+  phone: string | null;
+  email: string | null;
 };
 
 export type OpeningHoursRow = {
@@ -70,15 +84,30 @@ export const getSiteSettings = cache(
     });
 
     const { enabled, from, until } = settings.vacation ?? {};
+    // Partial: a database without saved settings has no group at all, or
+    // one with null fields.
+    const company: Partial<SiteSetting["company"]> = settings.company ?? {};
 
     return {
-      company: { ...settings.company, logoWord: logoWordOf(settings.company) },
-      tagline: settings.tagline?.trim() || null,
-      openingHours: (settings.openingHours ?? []).map((row, index) => ({
-        id: row.id ?? String(index),
-        days: row.days,
-        hours: row.hours,
-      })),
+      company: {
+        name: filled(company.name) ?? "",
+        logoWord: logoWordOf(company),
+        owner: filled(company.owner) ?? "",
+        street: filled(company.street),
+        postalCode: filled(company.postalCode),
+        city: filled(company.city),
+        phone: filled(company.phone),
+        email: filled(company.email),
+      },
+      tagline: filled(settings.tagline),
+      // A row without days or hours would read "Mo–Do Uhr"; it is left out.
+      openingHours: (settings.openingHours ?? []).flatMap((row, index) => {
+        const days = filled(row.days);
+        const hours = filled(row.hours);
+        return days && hours
+          ? [{ id: row.id ?? String(index), days, hours }]
+          : [];
+      }),
       vacation: enabled && from && until ? { from, until } : null,
     };
   },

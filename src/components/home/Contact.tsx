@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { TextLink } from "@/components/ui/TextLink";
 import type { CompanyData, OpeningHoursRow } from "@/lib/content";
 import { telHref } from "@/lib/phone";
+import { addressLines } from "@/lib/text";
 
 type ContactProps = {
   /** Phone, e-mail and address of the firm, from SiteSettings. */
@@ -23,6 +24,9 @@ type ContactProps = {
  */
 export function Contact({ company, openingHours, serviceArea }: ContactProps) {
   const t = useTranslations("HomePage");
+  const tel = telHref(company.phone);
+  // Missing parts are left out; with none, there is no address at all.
+  const address = addressLines(company);
 
   return (
     <Section variant="line" labelledBy="kontakt-titel">
@@ -32,35 +36,48 @@ export function Contact({ company, openingHours, serviceArea }: ContactProps) {
             {t("contactTitle")}
           </h2>
           <p className="mt-4 max-w-[32em]">{t("contactIntro")}</p>
-          <TextLink
-            href={telHref(company.phone)}
-            tone="plain"
-            className="mt-7 inline-block font-display text-tel-lg text-tannengruen no-underline"
-          >
-            {company.phone}
-          </TextLink>
-          <p className="mt-3">
-            <TextLink href={`mailto:${company.email}`} tone="plain">
-              {company.email}
+          {tel && company.phone ? (
+            <TextLink
+              href={tel}
+              tone="plain"
+              className="mt-7 inline-block font-display text-tel-lg text-tannengruen no-underline"
+            >
+              {company.phone}
             </TextLink>
-          </p>
-          <address className="mt-5 text-schiefer not-italic">
-            {company.street}
-            <br />
-            {company.postalCode} {company.city}
-          </address>
+          ) : null}
+          {company.email ? (
+            <p className="mt-3">
+              <TextLink href={`mailto:${company.email}`} tone="plain">
+                {company.email}
+              </TextLink>
+            </p>
+          ) : null}
+          {address.length > 0 ? (
+            <address className="mt-5 text-schiefer not-italic">
+              {address.map((line, index) => (
+                <Fragment key={line}>
+                  {index > 0 ? <br /> : null}
+                  {line}
+                </Fragment>
+              ))}
+            </address>
+          ) : null}
         </div>
 
         <div className="min-w-0 flex-[5_1_320px]">
-          <h3 className="font-display text-h4">{t("contactHours")}</h3>
-          <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2">
-            {openingHours.map((row) => (
-              <Fragment key={row.id}>
-                <dt className="font-bold">{row.days}</dt>
-                <dd>{t("hours", { hours: row.hours })}</dd>
-              </Fragment>
-            ))}
-          </dl>
+          {openingHours.length > 0 ? (
+            <>
+              <h3 className="font-display text-h4">{t("contactHours")}</h3>
+              <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-8 gap-y-2">
+                {openingHours.map((row) => (
+                  <Fragment key={row.id}>
+                    <dt className="font-bold">{row.days}</dt>
+                    <dd>{t("hours", { hours: row.hours })}</dd>
+                  </Fragment>
+                ))}
+              </dl>
+            </>
+          ) : null}
           {serviceArea.map((paragraph) => (
             <p key={paragraph} className="mt-6 max-w-[34em] text-schiefer">
               {paragraph}

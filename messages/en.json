@@ -88,8 +88,10 @@
     "benefitsTitle": "What we offer",
     "openTitle": "Open positions",
     "noJobs": "We have no open position right now. Feel free to call us if you would still like to work with us: {phone}.",
+    "noJobsNoPhone": "We have no open position right now. Feel free to get in touch if you would still like to work with us.",
     "trialTitle": "Taster day for pupils",
     "trialText": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Call us and arrange a date: {phone}.",
+    "trialTextNoPhone": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Get in touch and arrange a date.",
     "faqTitle": "Frequently asked questions"
   },
   "JobPage": {
@@ -103,6 +105,7 @@
     "benefitsTitle": "What we offer",
     "applyTitle": "Apply",
     "applyText": "Call us and tell us which position you are interested in: {phone}.",
+    "applyTextNoPhone": "Get in touch and tell us which position you are interested in.",
     "call": "Call now",
     "allJobs": "See all open positions"
   },

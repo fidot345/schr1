@@ -5,7 +5,7 @@ import { telHref } from "@/lib/phone";
 
 type ApplyCallProps = {
   /** As people write it, from SiteSettings: "089 99998 412". */
-  phone: string;
+  phone: string | null;
 };
 
 /**
@@ -13,16 +13,18 @@ type ApplyCallProps = {
  * section 6): a button that calls the workshop. It is the only place to
  * replace with the form on /karriere and on a job page.
  * TEMP(stage-4): the form takes its place.
+ * Without a phone number in SiteSettings there is no button.
  */
 export function ApplyCall({ phone }: ApplyCallProps) {
   const t = useTranslations("JobPage");
+  const tel = telHref(phone);
+
+  if (!tel) {
+    return null;
+  }
 
   return (
-    <ButtonLink
-      href={telHref(phone)}
-      icon={<PhoneIcon />}
-      className="w-full md:w-auto"
-    >
+    <ButtonLink href={tel} icon={<PhoneIcon />} className="w-full md:w-auto">
       {t("call")}
     </ButtonLink>
   );

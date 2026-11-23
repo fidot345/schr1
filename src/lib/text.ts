@@ -10,15 +10,38 @@ export const paragraphs = (text: string | null | undefined): string[] =>
     .filter(Boolean);
 
 /**
+ * A text field from the admin panel, trimmed; null when it is empty or
+ * missing. A database whose settings were never saved (a fresh preview
+ * branch) returns null even for required fields.
+ */
+export const filled = (text: string | null | undefined): string | null =>
+  text?.trim() || null;
+
+/**
+ * The lines of the address as the site writes it: "Werkstattweg 4" and
+ * "85999 Wendelfing". Empty parts are left out, and so is a line with
+ * nothing in it; no lines means the page shows no address.
+ */
+export const addressLines = (company: {
+  street: string | null;
+  postalCode: string | null;
+  city: string | null;
+}): string[] =>
+  [
+    company.street,
+    [company.postalCode, company.city].filter(Boolean).join(" "),
+  ].filter((line): line is string => Boolean(line));
+
+/**
  * The word of the logo, BRIEF.md section 3: "Tannrieder", from its own
  * field in SiteSettings. The column is nullable (it came after the first
  * settings were saved), so until someone fills it in, the header shows the
  * full company name instead of an empty logo.
  */
 export const logoWordOf = (company: {
-  name: string;
+  name?: string | null;
   logoWord?: string | null;
-}): string => company.logoWord?.trim() || company.name;
+}): string => company.logoWord?.trim() || company.name?.trim() || "";
 
 /** A step of "Vom Brett zum Schrank": its name and what happens. */
 export type SceneStep = {

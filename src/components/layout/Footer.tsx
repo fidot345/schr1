@@ -1,9 +1,11 @@
 import { useTranslations } from "next-intl";
+import { Fragment, type ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { TextLink } from "@/components/ui/TextLink";
 import type { CompanyData, OpeningHoursRow } from "@/lib/content";
 import { telHref } from "@/lib/phone";
+import { addressLines } from "@/lib/text";
 import { LEGAL_NAVIGATION, MAIN_NAVIGATION } from "./navigation";
 
 type FooterProps = {
@@ -38,6 +40,43 @@ export function Footer({ company, openingHours, tagline }: FooterProps) {
   const t = useTranslations("Footer");
   const tNavigation = useTranslations("Navigation");
   const tDemo = useTranslations("Demo");
+  const tel = telHref(company.phone);
+
+  // Each line only when SiteSettings has it; no lines, no column.
+  const contactLines: { key: string; content: ReactNode }[] = [
+    ...(tel && company.phone
+      ? [
+          {
+            key: "phone",
+            content: (
+              <TextLink href={tel} tone="plain" className={LINK_CLASS}>
+                {company.phone}
+              </TextLink>
+            ),
+          },
+        ]
+      : []),
+    ...(company.email
+      ? [
+          {
+            key: "email",
+            content: (
+              <TextLink
+                href={`mailto:${company.email}`}
+                tone="plain"
+                className={LINK_CLASS}
+              >
+                {company.email}
+              </TextLink>
+            ),
+          },
+        ]
+      : []),
+    ...addressLines(company).map((line, index) => ({
+      key: `address-${index}`,
+      content: line,
+    })),
+  ];
 
   return (
     <footer className="focus-ring-light bg-graphit pt-16 pb-8 text-small text-moos">
@@ -48,41 +87,32 @@ export function Footer({ company, openingHours, tagline }: FooterProps) {
             {tagline ? <p className="mt-4 max-w-[22em]">{tagline}</p> : null}
           </div>
 
-          <div className="flex-[1_1_180px]">
-            <h2 className={HEADING_CLASS}>{t("contactHeading")}</h2>
-            <address className={`${LIST_CLASS} not-italic`}>
-              <TextLink
-                href={telHref(company.phone)}
-                tone="plain"
-                className={LINK_CLASS}
-              >
-                {company.phone}
-              </TextLink>
-              <br />
-              <TextLink
-                href={`mailto:${company.email}`}
-                tone="plain"
-                className={LINK_CLASS}
-              >
-                {company.email}
-              </TextLink>
-              <br />
-              {company.street}
-              <br />
-              {company.postalCode} {company.city}
-            </address>
-          </div>
+          {contactLines.length > 0 ? (
+            <div className="flex-[1_1_180px]">
+              <h2 className={HEADING_CLASS}>{t("contactHeading")}</h2>
+              <address className={`${LIST_CLASS} not-italic`}>
+                {contactLines.map((line, index) => (
+                  <Fragment key={line.key}>
+                    {index > 0 ? <br /> : null}
+                    {line.content}
+                  </Fragment>
+                ))}
+              </address>
+            </div>
+          ) : null}
 
-          <div className="flex-[1_1_180px]">
-            <h2 className={HEADING_CLASS}>{t("hoursHeading")}</h2>
-            <ul className={LIST_CLASS}>
-              {openingHours.map((row) => (
-                <li key={row.id}>
-                  {t("hours", { days: row.days, hours: row.hours })}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {openingHours.length > 0 ? (
+            <div className="flex-[1_1_180px]">
+              <h2 className={HEADING_CLASS}>{t("hoursHeading")}</h2>
+              <ul className={LIST_CLASS}>
+                {openingHours.map((row) => (
+                  <li key={row.id}>
+                    {t("hours", { days: row.days, hours: row.hours })}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <nav aria-labelledby="footer-pages" className="flex-[1_1_160px]">
             <h2 id="footer-pages" className={HEADING_CLASS}>
