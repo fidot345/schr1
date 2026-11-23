@@ -8,21 +8,22 @@ import { TextLink } from "@/components/ui/TextLink";
 import { cn } from "@/lib/cn";
 import type { SceneStepItem } from "@/lib/content";
 
-export type WardrobeSectionProps = {
+export type WardrobeStillProps = {
   /** The six steps, from "Zuschnitt" to "Fertig", from the captions in the admin panel. */
   steps: SceneStepItem[];
-  /** The current step, counted from 1. It gets the filled number. */
-  activeStep: number;
+  /** The current step, counted from 1. It gets the filled number; none without it. */
+  activeStep?: number;
 };
 
 /**
- * TEMP(stage-5): "Vom Brett zum Schrank" as a still picture, mockup 01d. The
- * flat wardrobe from public/images/3d stands in for the 3D scene, and
- * activeStep is fixed by the page. Stage 5 replaces the picture with the
- * scene and drives activeStep from the scroll position. A caption without a
- * step name in front shows only its text.
+ * "Vom Brett zum Schrank" as a still picture, mockup 01d: the flat wardrobe
+ * from public/images/3d and the captions as a list. WardrobeSection shows it
+ * instead of the 3D scene while the system asks to reduce motion and where
+ * the browser has no WebGL 2. The full fallback of BRIEF.md section 4
+ * ("Запасной вариант") comes in step 5 of stage 5. A caption without a step
+ * name in front shows only its text.
  */
-export function WardrobeSection({ steps, activeStep }: WardrobeSectionProps) {
+export function WardrobeStill({ steps, activeStep }: WardrobeStillProps) {
   const t = useTranslations("HomePage");
 
   return (

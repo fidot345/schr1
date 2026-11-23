@@ -9,7 +9,8 @@ import { Process } from "@/components/home/Process";
 import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
-import { WardrobeSection } from "@/components/home/WardrobeSection";
+import { WardrobeSection } from "@/components/wardrobe/WardrobeSection";
+import { WardrobeStill } from "@/components/wardrobe/WardrobeStill";
 import type {
   CompanyData,
   FeaturedProject,
@@ -302,8 +303,8 @@ describe("Services", () => {
   });
 });
 
-describe("WardrobeSection", () => {
-  const html = render(<WardrobeSection steps={sceneSteps} activeStep={3} />);
+describe("WardrobeStill", () => {
+  const html = render(<WardrobeStill steps={sceneSteps} activeStep={3} />);
 
   it("starts with the link that skips the animation, to the projects", () => {
     expect(html).toContain('href="#projekte"');
@@ -333,13 +334,20 @@ describe("WardrobeSection", () => {
     expect(html).toMatch(/aria-current="step"[^>]*>.*?Innenleben/);
     expect(count(html, /bg-tannengruen/g)).toBe(1);
 
-    const first = render(<WardrobeSection steps={sceneSteps} activeStep={1} />);
+    const first = render(<WardrobeStill steps={sceneSteps} activeStep={1} />);
     expect(first).toMatch(/aria-current="step"[^>]*>.*?Zuschnitt/);
+  });
+
+  it("marks no step as the fallback of the scene", () => {
+    const fallback = render(<WardrobeStill steps={sceneSteps} />);
+
+    expect(fallback).not.toContain("aria-current");
+    expect(count(fallback, /<li /g)).toBe(6);
   });
 
   it("shows only the text of a caption without a name", () => {
     const plain = render(
-      <WardrobeSection
+      <WardrobeStill
         steps={[{ id: "x", ...sceneStep("Ohne Namen davor") }]}
         activeStep={1}
       />,
@@ -352,6 +360,52 @@ describe("WardrobeSection", () => {
   it("names the section by the h2", () => {
     expect(html).toContain('aria-labelledby="szene-titel"');
     expect(tagWithId(html, "szene-titel")).toMatch(/^<h2 /);
+  });
+});
+
+describe("WardrobeSection", () => {
+  // The server's markup: the panel of the scene, the flat wardrobe in its place.
+  const html = render(<WardrobeSection steps={sceneSteps} />);
+
+  it("starts with the link that skips the animation, to the projects", () => {
+    expect(html).toContain('href="#projekte"');
+    expect(html.indexOf("Animation überspringen")).toBeLessThan(
+      html.indexOf("<h2"),
+    );
+  });
+
+  it("names the section by the h2 and has the intro from messages", () => {
+    expect(html).toMatch(/^<section [^>]*aria-labelledby="szene-titel"/);
+    expect(tagWithId(html, "szene-titel")).toMatch(/^<h2 /);
+    expect(html).toContain(de.HomePage.sceneIntro);
+  });
+
+  it("shows the flat wardrobe until the scene is there, and no canvas yet", () => {
+    const [image] = images(html);
+
+    expect(image).toContain("schrank-platzhalter.svg");
+    expect(image).toContain(`alt="${de.HomePage.sceneImageAlt}"`);
+    expect(html).not.toContain("<canvas");
+  });
+
+  it("lists all six captions and marks the first step", () => {
+    expect(html).toMatch(/<ol [^>]*>(<li [^>]*>.*?<\/li>){6}<\/ol>/);
+    expect(count(html, /aria-current="step"/g)).toBe(1);
+    expect(html).toMatch(/aria-current="step"[^>]*>.*?Zuschnitt/);
+  });
+
+  it("keeps the other captions for screen readers on a phone", () => {
+    const hidden = html.match(/<li [^>]*max-md:sr-only[^>]*>/g) ?? [];
+
+    expect(hidden).toHaveLength(5);
+    expect(hidden.join("")).not.toContain("aria-current");
+  });
+
+  it("speaks English on /en", () => {
+    const english = render(<WardrobeSection steps={sceneSteps} />, "en");
+
+    expect(english).toContain("Skip animation");
+    expect(english).toContain(en.HomePage.sceneTitle);
   });
 });
 

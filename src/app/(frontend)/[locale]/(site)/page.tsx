@@ -10,7 +10,7 @@ import { Process } from "@/components/home/Process";
 import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
-import { WardrobeSection } from "@/components/home/WardrobeSection";
+import { WardrobeSection } from "@/components/wardrobe/WardrobeSection";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import {
@@ -78,8 +78,7 @@ export default async function HomePage({ params }: PageProps) {
     <>
       <Hero {...home.hero} />
       <Services services={services} />
-      {/* TEMP(stage-5): the step is fixed until the 3D scene sets it. */}
-      <WardrobeSection steps={home.sceneSteps} activeStep={3} />
+      <WardrobeSection steps={home.sceneSteps} />
       <Projects projects={home.featuredProjects} />
       <Process steps={home.processSteps} note={t("processNote")} />
       <Jobs
