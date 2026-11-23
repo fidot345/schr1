@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import type { ConsoleMessage, Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 /* Checks every page test shares: console, axe and going down the page. */
 
@@ -11,32 +11,12 @@ export const AXE_TAGS = [
   "wcag22aa",
 ];
 
-/*
- * TEMP(stage-4): the request form, which the site links to but which does
- * not exist yet, in German and in English. In a production build next/link
- * prefetches it and the browser logs a 404. Only such 404s are ignored;
- * delete this when the form is built.
- */
-const NOT_BUILT_YET = /^(\/en)?\/(anfrage|request)(\/|$)/;
-
-const pathOf = (url: string): string => {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return "";
-  }
-};
-
-const isMissingPage = (message: ConsoleMessage): boolean =>
-  /status of 404/.test(message.text()) &&
-  NOT_BUILT_YET.test(pathOf(message.location().url));
-
 /** Everything the browser reports as an error or a warning, and uncaught errors. */
 export function watchConsole(page: Page): string[] {
   const problems: string[] = [];
   page.on("console", (message) => {
     const type = message.type();
-    if ((type === "error" || type === "warning") && !isMissingPage(message)) {
+    if (type === "error" || type === "warning") {
       problems.push(`${type}: ${message.text()}`);
     }
   });
