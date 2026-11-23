@@ -9,6 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // No test sends a real mail; tests of Resend replace the package.
+    env: { MAIL_TRANSPORT: "log" },
     include: ["tests/unit/**/*.test.{ts,tsx}"],
   },
 });

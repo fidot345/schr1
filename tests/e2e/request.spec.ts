@@ -10,7 +10,7 @@ import {
  * stage 4: no console messages, no axe violations (also with errors shown),
  * filled in with the keyboard alone, errors under the fields and in a list
  * on top with the focus on the first one, the trap field, ?typ= and the
- * request button of a service page. The dev server runs with
+ * request button of a service page. The e2e server runs with
  * MAIL_TRANSPORT=log, so no mail goes out.
  */
 
