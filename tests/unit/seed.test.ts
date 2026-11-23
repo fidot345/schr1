@@ -66,8 +66,32 @@ describe("seed content", () => {
     for (const lang of langs) {
       expect(homePage.text[lang].processSteps).toHaveLength(4);
       expect(homePage.text[lang].sceneCaptions).toHaveLength(6);
+      expect(homePage.text[lang].hero.facts).toHaveLength(3);
+      expect(homePage.text[lang].careers.benefits).toHaveLength(4);
     }
     expect(homePage.featuredProjects).toHaveLength(3);
+  });
+
+  it("gives the about and careers blocks photos the seed uploads", () => {
+    expect(PHOTOS).toContain(homePage.heroImage);
+    expect(PHOTOS).toContain(homePage.aboutImage);
+    expect(PHOTOS).toContain(homePage.careersImage);
+    expect(new Set([homePage.aboutImage, homePage.careersImage]).size).toBe(2);
+  });
+
+  it("starts every scene caption with the step's name", () => {
+    for (const lang of langs) {
+      for (const caption of homePage.text[lang].sceneCaptions) {
+        expect(caption).toMatch(/^[^:.]{1,30}[:.] \S/);
+      }
+    }
+  });
+
+  it("has a footer line in both languages within the field limit", () => {
+    for (const lang of langs) {
+      expect(siteSettings.tagline[lang].length).toBeGreaterThan(0);
+      expect(siteSettings.tagline[lang].length).toBeLessThanOrEqual(120);
+    }
   });
 
   it("uses valid slugs, unique per language", () => {
@@ -136,6 +160,11 @@ describe("seed content", () => {
     expect(siteSettings.company.phone).toBe("089 99998 412");
     expect(siteSettings.company.email).toMatch(/@[a-z0-9.-]+\.example$/);
     expect(siteSettings.company.postalCode).toMatch(/^\d{5}$/);
+  });
+
+  it("puts the family name next to the logo mark", () => {
+    expect(siteSettings.company.logoWord).toBe("Tannrieder");
+    expect(siteSettings.company.name).toContain(siteSettings.company.logoWord);
   });
 
   it("has no walnut, placeholder text or invented counters", () => {

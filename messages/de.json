@@ -1,9 +1,151 @@
 {
   "Metadata": {
-    "title": "Schreinerei Tannrieder"
+    "title": "Schreinerei Tannrieder",
+    "template": "%s | Schreinerei Tannrieder",
+    "siteName": "Schreinerei Tannrieder"
+  },
+  "SkipLink": {
+    "label": "Zum Inhalt springen"
   },
   "HomePage": {
-    "placeholder": "Hier entsteht die Website der Schreinerei Tannrieder."
+    "requestCta": "Projekt anfragen",
+    "jobsCta": "Jobs bei uns",
+    "servicesTitle": "Was wir bauen",
+    "servicesIntro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut.",
+    "sceneTitle": "Vom Brett zum Schrank",
+    "sceneIntro": "So entsteht ein Einbauschrank bei uns – Schritt für Schritt.",
+    "skipAnimation": "Animation überspringen",
+    "sceneImageAlt": "Zeichnung eines Einbauschranks, der Schritt für Schritt zusammengebaut wird",
+    "projectsTitle": "Ausgewählte Projekte",
+    "allProjects": "Alle Referenzen ansehen",
+    "projectMeta": "{objectType}, {year}, {duration}",
+    "processNote": "Vom Aufmaß bis zur Montage vergehen meist 8 bis 10 Wochen.",
+    "openJobsCta": "Offene Stellen ansehen",
+    "trialDayCta": "Schnuppertag anfragen",
+    "aboutMore": "Mehr über uns",
+    "testimonialsTitle": "Was Kunden sagen",
+    "quote": "„{text}“",
+    "contactTitle": "Sprechen Sie mit uns",
+    "contactIntro": "Rufen Sie an oder schicken Sie uns eine Anfrage. Wir melden uns innerhalb von zwei Werktagen.",
+    "contactHours": "Öffnungszeiten",
+    "hours": "{hours} Uhr"
+  },
+  "Process": {
+    "title": "So läuft Ihr Auftrag"
+  },
+  "ProjectCard": {
+    "meta": "{objectType}, {year}"
+  },
+  "ServicesPage": {
+    "title": "Leistungen",
+    "intro": "Jedes Stück planen wir für Ihren Raum, fertigen es in unserer eigenen Werkstatt und bauen es mit unserem Team bei Ihnen ein."
+  },
+  "ServicePage": {
+    "overviewTitle": "Auf einen Blick",
+    "requestCta": "Projekt anfragen",
+    "includedTitle": "Was dazugehört",
+    "materialsTitle": "Materialien",
+    "durationTitle": "Wie lange es dauert",
+    "galleryTitle": "Bilder",
+    "projectsTitle": "Referenzen aus diesem Bereich",
+    "allProjects": "Alle Referenzen ansehen",
+    "allServices": "Alle Leistungen ansehen"
+  },
+  "ProjectsPage": {
+    "title": "Referenzen",
+    "intro": "Küchen, Schränke, Türen und Innenausbau, die wir in den letzten Jahren für Häuser und Wohnungen in der Region gebaut haben.",
+    "filterLabel": "Referenzen nach Leistung filtern",
+    "all": "Alle",
+    "empty": "Aus diesem Bereich zeigen wir noch keine Referenzen."
+  },
+  "ProjectPage": {
+    "objectType": "Objekt",
+    "year": "Jahr",
+    "duration": "Dauer",
+    "material": "Material",
+    "service": "Leistung",
+    "challengeTitle": "Die Aufgabe",
+    "solutionTitle": "Unsere Lösung",
+    "moreTitle": "Weitere Referenzen",
+    "previous": "Vorherige Referenz",
+    "next": "Nächste Referenz",
+    "allProjects": "Alle Referenzen ansehen"
+  },
+  "AboutPage": {
+    "title": "Über uns",
+    "master": "Meisterbetrieb",
+    "principlesTitle": "So arbeiten wir",
+    "teamTitle": "Das Team",
+    "since": "seit {year}"
+  },
+  "CareersPage": {
+    "title": "Karriere",
+    "benefitsTitle": "Was wir bieten",
+    "openTitle": "Offene Stellen",
+    "noJobs": "Zurzeit ist keine Stelle offen. Ruf uns gern an, wenn du trotzdem bei uns arbeiten möchtest: {phone}.",
+    "noJobsNoPhone": "Zurzeit ist keine Stelle offen. Melde dich gern, wenn du trotzdem bei uns arbeiten möchtest.",
+    "trialTitle": "Schnuppertag für Schüler:innen",
+    "trialText": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Ruf uns an und vereinbare einen Termin: {phone}.",
+    "trialTextNoPhone": "Du gehst noch zur Schule und willst wissen, wie ein Tag in der Schreinerei aussieht? Komm für einen Tag in die Werkstatt und sieh, wie bei uns gearbeitet wird. Melde dich bei uns und vereinbare einen Termin.",
+    "faqTitle": "Häufige Fragen"
+  },
+  "JobPage": {
+    "employmentType": "Art der Stelle",
+    "start": "Start",
+    "hours": "Arbeitszeit",
+    "pay": "Lohn",
+    "detailsTitle": "Das erwartet dich",
+    "tasksTitle": "Deine Aufgaben",
+    "requirementsTitle": "Was du mitbringst",
+    "benefitsTitle": "Was wir bieten",
+    "applyTitle": "Bewirb dich",
+    "applyText": "Ruf uns an und sag, für welche Stelle du dich interessierst: {phone}.",
+    "applyTextNoPhone": "Melde dich bei uns und sag, für welche Stelle du dich interessierst.",
+    "call": "Jetzt anrufen",
+    "allJobs": "Alle offenen Stellen ansehen"
+  },
+  "JobPay": {
+    "range": "{min}–{max} € {unit}",
+    "from": "ab {min} € {unit}",
+    "upTo": "bis {max} € {unit}",
+    "fixed": "{amount} € {unit}",
+    "unit": {
+      "hour": "pro Stunde",
+      "month": "im Monat"
+    }
+  },
+  "ContactPage": {
+    "title": "Kontakt",
+    "intro": "Am schnellsten erreichen Sie uns telefonisch während der Öffnungszeiten. Schreiben können Sie uns jederzeit.",
+    "description": "Telefon {phone}, E-Mail {email}, Werkstatt in {street}, {postalCode} {city}.",
+    "hoursTitle": "Öffnungszeiten",
+    "hours": "{hours} Uhr",
+    "areaTitle": "Wo wir arbeiten",
+    "requestCta": "Projekt anfragen"
+  },
+  "ImprintPage": {
+    "title": "Impressum"
+  },
+  "PrivacyPage": {
+    "title": "Datenschutzerklärung",
+    "heading": "Datenschutz\u00aderklärung"
+  },
+  "NotFoundPage": {
+    "title": "Seite nicht gefunden",
+    "text": "Diese Adresse gibt es auf unserer Website nicht. Vielleicht ist der Link veraltet, oder in der Adresse steckt ein Tippfehler.",
+    "home": "Zur Startseite",
+    "services": "Unsere Leistungen",
+    "contact": "Kontakt aufnehmen"
+  },
+  "RequestCta": {
+    "title": "Erzählen Sie uns von Ihrem Projekt",
+    "text": "Beschreiben Sie in ein paar Sätzen, was Sie planen. Wir melden uns bei Ihnen und vereinbaren einen Termin für das Aufmaß vor Ort.",
+    "button": "Projekt anfragen"
+  },
+  "EmploymentType": {
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "apprenticeship": "Ausbildung"
   },
   "Navigation": {
     "services": "Leistungen",
@@ -33,15 +175,29 @@
     "errorSummary": {
       "titleFormal": "Bitte prüfen Sie Ihre Angaben",
       "titleInformal": "Bitte prüf deine Angaben"
+    },
+    "stepper": {
+      "label": "Schritte der Anfrage",
+      "step": "Schritt {current} von {total}"
+    },
+    "nextSteps": {
+      "title": "Was passiert danach?"
+    },
+    "callBox": {
+      "title": "Lieber telefonieren?",
+      "hours": "{days} {hours} Uhr"
     }
   },
   "VacationBanner": {
+    "label": "Betriebsurlaub",
     "text": "Betriebsurlaub vom {from, date, long} bis {to, date, long}"
   },
   "Header": {
-    "homeLabel": "Tannrieder – zur Startseite",
+    "homeLabel": "{name}, zur Startseite",
+    "logoDescriptor": "Schreinerei",
     "menuLabel": "Hauptmenü",
     "menuButton": "Menü",
+    "menuClose": "Schließen",
     "cta": "Projekt anfragen"
   },
   "MobileActionBar": {
@@ -52,10 +208,9 @@
   "Footer": {
     "contactHeading": "Kontakt",
     "hoursHeading": "Öffnungszeiten",
-    "menuHeading": "Menü",
-    "legalHeading": "Rechtliches",
-    "phone": "Telefon",
-    "email": "E-Mail"
+    "hours": "{days} {hours} Uhr",
+    "pagesHeading": "Seiten",
+    "legalHeading": "Rechtliches"
   },
   "Demo": {
     "notice": "Konzeptprojekt – die Schreinerei Tannrieder ist ein fiktives Unternehmen."
@@ -63,80 +218,96 @@
   "DevUi": {
     "metaTitle": "UI-Komponenten",
     "title": "UI-Komponenten",
-    "intro": "Alle Bausteine der Website auf einer Seite. Die Seite gibt es nur im Entwicklungsmodus.",
     "groups": {
       "colors": "Farben",
-      "typography": "Schriften",
-      "headings": "Überschriften",
-      "buttons": "Buttons",
-      "textLinks": "Textlinks",
-      "fields": "Formularfelder",
-      "errorSummary": "Fehlerliste",
-      "vacationBanner": "Urlaubshinweis",
-      "header": "Kopfzeile",
-      "mobileMenu": "Mobiles Menü",
-      "footer": "Fußzeile",
-      "localeSwitcher": "Sprachwahl",
-      "mobileActionBar": "Schnellkontakt auf dem Handy"
+      "typeScale": "Textgrößen",
+      "logo": "Logo",
+      "buttons": "Schaltflächen",
+      "links": "Links",
+      "steps": "Schrittnummern",
+      "icons": "Icons",
+      "sections": "Abschnitte",
+      "form": "Formular"
     },
-    "localeSwitcherLabel": "Sprache, Beispiel",
-    "notes": {
-      "vacationBanner": "Steht über der Kopfzeile, wie oben auf dieser Seite. Ohne gültige Daten zeigt er nichts.",
-      "header": "Die Kopfzeile steht oben auf dieser Seite. Beim Scrollen bleibt sie am oberen Rand und wird niedriger.",
-      "mobileMenu": "Das Menü gehört zur Kopfzeile. Bei einer Fensterbreite unter 1280 px oben auf „Menü“ klicken.",
-      "footer": "Die Fußzeile steht ganz unten auf dieser Seite.",
-      "mobileActionBar": "Die Leiste gibt es nur unter 768 px Breite. Sie steht am Ende der Seite und bleibt beim Scrollen am unteren Rand."
+    "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing",
+    "statesNote": "Hover und Fokus sind hier festgehalten, damit man sie ohne Maus und Tastatur sieht.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Fokus"
     },
-    "typography": {
-      "headingFont": "Überschriften: Zilla Slab",
-      "bodyFont": "Text: Atkinson Hyperlegible Next",
-      "semibold": "SemiBold",
-      "bold": "Bold",
-      "regular": "Regular",
-      "lead": "Großer Text",
-      "body": "Grundtext",
-      "small": "Kleiner Text",
-      "sample": "Möbel nach Maß aus unserer Werkstatt in Wendelfing"
-    },
-    "headings": {
-      "sample": "Überschrift {level}"
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Voll – Kopfzeile ab 1280 px",
+      "compact": "Kompakt – Kopfzeile auf dem Handy",
+      "light": "Hell – Fußzeile"
     },
     "buttons": {
       "primary": "Primär",
       "secondary": "Sekundär",
       "text": "Text",
-      "disabled": "{variant}, deaktiviert"
+      "header": "Primär in der Kopfzeile, 48 px",
+      "menu": "Menü-Schaltfläche, 44 px",
+      "withIcon": "Mit Icon",
+      "fullWidth": "Volle Breite",
+      "textLabel": "Mehr erfahren"
     },
-    "textLinks": {
-      "dark": "Textlink auf hellem Grund",
-      "light": "Textlink auf dunklem Grund"
+    "links": {
+      "strong": "Fett",
+      "plain": "Normal",
+      "muted": "Leise"
     },
-    "fields": {
-      "withoutError": "Ohne Fehler",
-      "withError": "Mit Fehler",
-      "name": "Name",
-      "nameHint": "Vor- und Nachname",
-      "email": "E-Mail",
-      "emailError": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-      "message": "Ihre Nachricht",
-      "messageError": "Bitte beschreiben Sie Ihr Vorhaben in ein paar Sätzen.",
-      "topic": "Worum geht es?",
-      "topicPlaceholder": "Bitte wählen",
-      "topicError": "Bitte wählen Sie ein Thema aus.",
-      "topics": {
-        "kitchen": "Küche",
-        "wardrobe": "Einbauschrank",
-        "doors": "Türen",
-        "interior": "Innenausbau"
+    "steps": {
+      "active": "Aktiv",
+      "default": "Normal",
+      "muted": "Gedämpft",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Telefon",
+      "menu": "Menü",
+      "close": "Schließen",
+      "arrowRight": "Pfeil nach rechts",
+      "error": "Fehler"
+    },
+    "sections": {
+      "default": "Ohne Hintergrund, mit Einleitung und Link",
+      "moos": "Moos-Band",
+      "line": "Weiß mit Linie oben",
+      "intro": "Alles entsteht in unserer Werkstatt und wird von unserem eigenen Team eingebaut."
+    },
+    "form": {
+      "steps": {
+        "what": "Was planen Sie?",
+        "where": "Wo und wann?",
+        "contact": "Wie erreichen wir Sie?"
       },
-      "consent": "Ich bin einverstanden, dass meine Angaben zur Beantwortung der Anfrage verwendet werden.",
-      "consentError": "Bitte stimmen Sie zu, damit wir antworten können."
-    },
-    "errorSummary": {
-      "formal": "Sie-Form, auf den meisten Seiten",
-      "informal": "Du-Form, auf den Karriereseiten",
-      "informalEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
-      "informalMessage": "Bitte schreib uns ein paar Sätze über dich."
+      "typeLegend": "Was möchten Sie bauen lassen?",
+      "types": {
+        "kitchen": "Küche",
+        "wardrobe": "Schrank oder Möbel nach Maß",
+        "doors": "Innentüren",
+        "fitout": "Innenausbau",
+        "other": "Etwas anderes"
+      },
+      "description": {
+        "label": "Beschreiben Sie kurz Ihr Vorhaben",
+        "hint": "Zum Beispiel: Einbauschrank fürs Schlafzimmer, Wand 3,20 m breit, bis unter die Decke.",
+        "error": "Bitte beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen.",
+        "summary": "Beschreiben Sie Ihr Vorhaben in mindestens 20 Zeichen."
+      },
+      "size": {
+        "label": "Ungefähre Maße",
+        "hint": "Breite × Höhe × Tiefe, wenn Sie es schon wissen."
+      },
+      "next": "Weiter zu Schritt 2",
+      "privacy": "Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten. Mehr dazu in der <link>Datenschutzerklärung</link>.",
+      "nextSteps": {
+        "first": "Wir melden uns innerhalb von zwei Werktagen.",
+        "second": "Wir kommen zum Aufmaß zu Ihnen.",
+        "third": "Sie bekommen eine Zeichnung und ein schriftliches Angebot."
+      }
     }
   }
 }

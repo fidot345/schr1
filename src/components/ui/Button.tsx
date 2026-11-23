@@ -1,91 +1,127 @@
 import type { ComponentProps, ReactNode } from "react";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
-import { type InternalHref, textLinkClassName } from "./TextLink";
-
-export type ButtonVariant = "primary" | "secondary" | "text";
-
-const BASE_CLASS =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded text-body font-bold";
-
-const BOX_CLASS =
-  "border-2 px-6 py-2 text-center motion-safe:transition-colors";
+import { type AppHref, AppLink } from "./AppLink";
 
 /*
- * Disabled, the same for primary and secondary: a flat Moos box with a Linie
- * border and Schiefer text (5.1:1). Tailwind sorts disabled: after hover: and
- * active:, so it also wins while the pointer is over the button.
+ * Buttons from the mockup (01b, 01a, 04). Sizes: 52px, 48px in the header,
+ * 44px for the "Menü" button. Hover goes to Tannengrün dunkel. The focus
+ * ring comes from the base styles in globals.css.
+ *
+ * primary:   filled Tannengrün, the main action
+ * secondary: Tannengrün frame, the second action next to it
+ * text:      the same height, no frame, underlined, for quiet actions
+ * menu:      the "Menü" button of the phone header: Feldrand frame, Weiß
+ *            ground, always 44px high
  */
-const DISABLED_BOX_CLASS =
-  "disabled:cursor-not-allowed disabled:border-linie disabled:bg-moos disabled:text-schiefer";
+export type ButtonVariant = "primary" | "secondary" | "text" | "menu";
+export type ButtonSize = "default" | "header";
 
-const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: cn(
-    BOX_CLASS,
-    "border-tannengruen bg-tannengruen text-weiss",
-    "hover:border-tannengruen-dunkel hover:bg-tannengruen-dunkel",
-    "active:border-tannengruen-dunkel active:bg-tannengruen-dunkel",
-    DISABLED_BOX_CLASS,
-  ),
-  secondary: cn(
-    BOX_CLASS,
-    "border-tannengruen text-tannengruen",
-    "hover:border-tannengruen-dunkel hover:bg-moos hover:text-tannengruen-dunkel",
-    "active:border-tannengruen-dunkel active:bg-moos active:text-tannengruen-dunkel",
-    DISABLED_BOX_CLASS,
-  ),
-  text: cn(
-    textLinkClassName(),
-    "disabled:cursor-not-allowed disabled:text-schiefer disabled:decoration-1",
-  ),
+type StyleProps = {
+  variant?: ButtonVariant;
+  /** default 52px, header 48px (the menu variant is always 44px). */
+  size?: ButtonSize;
+  /** Takes the whole width of its row. */
+  fullWidth?: boolean;
+  /** An icon from ui/icons, placed before the label. */
+  icon?: ReactNode;
+  className?: string;
 };
 
-/**
- * Classes of a button, for elements Button does not render itself
- * (for example a tel: link in the mobile bar).
- */
-export function buttonClassName(
-  variant: ButtonVariant = "primary",
-  className?: string,
-) {
-  return cn(BASE_CLASS, VARIANT_CLASS[variant], className);
+const BASE =
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded font-bold no-underline [&>svg]:shrink-0";
+
+const HEIGHT: Record<ButtonVariant, Record<ButtonSize, string>> = {
+  primary: { default: "min-h-13 text-ui", header: "min-h-12 text-small" },
+  secondary: { default: "min-h-13 text-ui", header: "min-h-12 text-small" },
+  text: { default: "min-h-13 text-ui", header: "min-h-12 text-small" },
+  menu: { default: "min-h-11 text-small", header: "min-h-11 text-small" },
+};
+
+/** Total width of the side padding is the same with and without a frame: 26px, in the header 22px. */
+const PADDING: Record<ButtonVariant, Record<ButtonSize, string>> = {
+  primary: { default: "px-6.5", header: "px-5.5" },
+  secondary: { default: "px-6", header: "px-5" },
+  text: { default: "px-0", header: "px-0" },
+  menu: { default: "px-3.5", header: "px-3.5" },
+};
+
+const LOOK: Record<ButtonVariant, string> = {
+  primary:
+    "bg-tannengruen text-weiss hover:bg-tannengruen-dunkel hover:text-weiss",
+  secondary:
+    "border-2 border-tannengruen text-tannengruen hover:border-tannengruen-dunkel hover:text-tannengruen-dunkel",
+  text: "text-tannengruen underline hover:text-tannengruen-dunkel",
+  menu: "border border-feldrand bg-weiss text-graphit hover:border-tannengruen-dunkel hover:text-tannengruen-dunkel",
+};
+
+/** The classes of a button, for the rare element that cannot be a Button. */
+export function buttonClassName({
+  variant = "primary",
+  size = "default",
+  fullWidth = false,
+  className,
+}: Pick<StyleProps, "variant" | "size" | "fullWidth" | "className"> = {}) {
+  return cn(
+    BASE,
+    HEIGHT[variant][size],
+    PADDING[variant][size],
+    LOOK[variant],
+    fullWidth && "w-full",
+    className,
+  );
 }
 
-type CommonProps = {
-  variant?: ButtonVariant;
-  className?: string;
-  children: ReactNode;
-};
-
-type ButtonAsButton = CommonProps &
+type ButtonProps = StyleProps &
   Omit<ComponentProps<"button">, "className" | "children"> & {
-    href?: never;
+    children: ReactNode;
   };
 
-type ButtonAsLink = CommonProps & {
-  href: InternalHref;
-};
-
-export type ButtonProps = ButtonAsButton | ButtonAsLink;
-
-export function Button(props: ButtonProps) {
-  if (props.href !== undefined) {
-    const { href, variant, className, children } = props;
-    return (
-      <Link href={href} className={buttonClassName(variant, className)}>
-        {children}
-      </Link>
-    );
-  }
-
-  const { variant, className, children, type = "button", ...rest } = props;
+/** A button that does something on the page. For navigation use ButtonLink. */
+export function Button({
+  variant,
+  size,
+  fullWidth,
+  icon,
+  className,
+  children,
+  type = "button",
+  ...rest
+}: ButtonProps) {
   return (
     <button
-      {...rest}
       type={type}
-      className={buttonClassName(variant, className)}
+      className={buttonClassName({ variant, size, fullWidth, className })}
+      {...rest}
     >
+      {icon}
       {children}
     </button>
+  );
+}
+
+type ButtonLinkProps = StyleProps &
+  Omit<ComponentProps<"a">, "className" | "children" | "href"> & {
+    href: AppHref;
+    children: ReactNode;
+  };
+
+/** A link that looks like a button: to a page, a phone number or an anchor. */
+export function ButtonLink({
+  variant,
+  size,
+  fullWidth,
+  icon,
+  className,
+  children,
+  ...rest
+}: ButtonLinkProps) {
+  return (
+    <AppLink
+      className={buttonClassName({ variant, size, fullWidth, className })}
+      {...rest}
+    >
+      {icon}
+      {children}
+    </AppLink>
   );
 }

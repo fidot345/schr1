@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
+import { SkipLink } from "@/components/layout/SkipLink";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -37,13 +38,27 @@ export async function generateMetadata({
   params,
 }: Omit<LayoutProps, "children">): Promise<Metadata> {
   const { locale } = await params;
+  // For the metadata of (site)/not-found.tsx, which gets no params: it
+  // awaits this metadata and then reads the locale set here.
   if (!hasLocale(routing.locales, locale)) {
+    // A path that is no language, such as /robots.txt (the proxy skips
+    // file names), is a 404 too. Without a locale here, next-intl would
+    // read the request headers, and the page built ahead fails with 500.
+    setRequestLocale(routing.defaultLocale);
     return {};
   }
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Metadata" });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   return {
-    title: t("title"),
+    // Absolute URLs for alternates and previews; unset when the variable is.
+    metadataBase:
+      siteUrl && URL.canParse(siteUrl) ? new URL(siteUrl) : undefined,
+    title: {
+      default: t("title"),
+      template: t("template"),
+    },
   };
 }
 
@@ -54,16 +69,23 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   }
   setRequestLocale(locale);
 
+  /*
+   * <body> holds the skip link and then the page shell: VacationBanner,
+   * Header, <main id="main">, Footer, MobileActionBar, in that order and as
+   * direct children (sticky works only inside the parent). The shell comes
+   * from (site)/layout.tsx; /dev/ui has none of it. The body is a column at
+   * least as tall as the screen, so the mobile bar stays at the bottom of
+   * the screen on a short page too (main grows, see (site)/layout.tsx).
+   */
   return (
     <html
       lang={locale}
       className={`${zillaSlab.variable} ${atkinson.variable}`}
     >
-      <body>
+      <body className="flex min-h-dvh flex-col">
+        <SkipLink />
         <NextIntlClientProvider>
-          <SmoothScroll>
-            <main>{children}</main>
-          </SmoothScroll>
+          <SmoothScroll>{children}</SmoothScroll>
         </NextIntlClientProvider>
       </body>
     </html>

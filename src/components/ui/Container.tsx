@@ -1,21 +1,9 @@
-import type { ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 
-type ContainerProps = {
-  children: ReactNode;
-  className?: string;
-};
-
-/** Page container, BRIEF.md section 3: up to 1280px, 20px / 40px gutters. */
-export function Container({ children, className }: ContainerProps) {
+/** Page width 1280px with the fluid side margin clamp(20px, 3vw, 40px). */
+export function Container({ className, ...rest }: ComponentProps<"div">) {
   return (
-    <div
-      className={cn(
-        "mx-auto w-full max-w-page px-gutter-mobile md:px-gutter-desktop",
-        className,
-      )}
-    >
-      {children}
-    </div>
+    <div className={cn("mx-auto max-w-page px-gutter", className)} {...rest} />
   );
 }

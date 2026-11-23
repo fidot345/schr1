@@ -764,6 +764,16 @@ export interface HomePage {
      * Großes Querformat, etwa die Werkstatt oder eine fertige Küche.
      */
     image: number | Media;
+    /**
+     * Bis zu drei kurze Zeilen, zum Beispiel „Meisterbetrieb“ + „seit 1989“. Ohne Einträge entfällt die Zeile.
+     */
+    facts?:
+      | {
+          highlight: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Genau drei Referenzen, in der Reihenfolge, in der sie erscheinen.
@@ -778,7 +788,7 @@ export interface HomePage {
     id?: string | null;
   }[];
   /**
-   * Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig.
+   * Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig. Jede beginnt mit dem Namen des Schritts und einem Doppelpunkt oder Punkt, zum Beispiel „Zuschnitt: Jedes Teil …“. Der Name erscheint als Überschrift des Schritts.
    */
   sceneCaptions: {
     text: string;
@@ -790,6 +800,20 @@ export interface HomePage {
      * Absätze mit einer Leerzeile trennen.
      */
     text: string;
+    /**
+     * Die Werkstatt oder die Arbeit darin, ohne Personen, die in die Kamera schauen. Erscheint auf der Startseite und auf „Über uns“.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Drei kurze Grundsätze für die Seite „Über uns“. Ohne Einträge entfällt der Block.
+     */
+    principles?:
+      | {
+          title: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   careers: {
     title: string;
@@ -797,6 +821,29 @@ export interface HomePage {
      * Kurz über die Arbeit bei uns. Die offenen Stellen erscheinen darunter von selbst.
      */
     text: string;
+    /**
+     * Jemand bei der Arbeit in der Werkstatt. Erscheint auf der Startseite und auf „Karriere“.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Bis zu vier Punkte für die Seite „Karriere“, in der Du-Form. Ohne Einträge entfällt der Block.
+     */
+    benefits?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Drei bis vier Fragen für die Seite „Karriere“, etwa „Brauche ich einen Lebenslauf?“. Ohne Einträge entfällt der Block.
+     */
+    faq?:
+      | {
+          question: string;
+          answer: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Titel und Beschreibung für Google und Vorschauen in Messengern. Leer lassen, dann gilt der Titel der Seite.
@@ -820,6 +867,10 @@ export interface SiteSetting {
   company: {
     name: string;
     owner: string;
+    /**
+     * Steht neben dem Zeichen in der Kopfzeile, zum Beispiel „Tannrieder“. Gilt für beide Sprachen.
+     */
+    logoWord?: string | null;
     street: string;
     postalCode: string;
     city: string;
@@ -829,6 +880,10 @@ export interface SiteSetting {
     phone: string;
     email: string;
   };
+  /**
+   * Ein kurzer Satz, zum Beispiel „Schreinerei mit eigener Werkstatt in Wendelfing, seit 1989.“ Bleibt das Feld leer, steht dort nichts.
+   */
+  tagline?: string | null;
   /**
    * Eine Zeile je Zeitraum, in der richtigen Reihenfolge.
    */
@@ -899,6 +954,13 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         text?: T;
         image?: T;
+        facts?:
+          | T
+          | {
+              highlight?: T;
+              text?: T;
+              id?: T;
+            };
       };
   featuredProjects?: T;
   processSteps?:
@@ -919,12 +981,34 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         text?: T;
+        image?: T;
+        principles?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
       };
   careers?:
     | T
     | {
         title?: T;
         text?: T;
+        image?: T;
+        benefits?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        faq?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
       };
   meta?:
     | T
@@ -946,12 +1030,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         name?: T;
         owner?: T;
+        logoWord?: T;
         street?: T;
         postalCode?: T;
         city?: T;
         phone?: T;
         email?: T;
       };
+  tagline?: T;
   openingHours?:
     | T
     | {

@@ -1,9 +1,151 @@
 {
   "Metadata": {
-    "title": "Schreinerei Tannrieder"
+    "title": "Schreinerei Tannrieder",
+    "template": "%s | Schreinerei Tannrieder",
+    "siteName": "Schreinerei Tannrieder"
+  },
+  "SkipLink": {
+    "label": "Skip to content"
   },
   "HomePage": {
-    "placeholder": "The website of Schreinerei Tannrieder is being built here."
+    "requestCta": "Request a project",
+    "jobsCta": "Jobs with us",
+    "servicesTitle": "What we build",
+    "servicesIntro": "Everything is made in our workshop and installed by our own team.",
+    "sceneTitle": "From board to wardrobe",
+    "sceneIntro": "This is how a built-in wardrobe is made here – step by step.",
+    "skipAnimation": "Skip animation",
+    "sceneImageAlt": "Drawing of a built-in wardrobe being put together step by step",
+    "projectsTitle": "Selected projects",
+    "allProjects": "See all projects",
+    "projectMeta": "{objectType}, {year}, {duration}",
+    "processNote": "From measuring to installation usually takes 8 to 10 weeks.",
+    "openJobsCta": "See open positions",
+    "trialDayCta": "Request a trial day",
+    "aboutMore": "More about us",
+    "testimonialsTitle": "What our customers say",
+    "quote": "“{text}”",
+    "contactTitle": "Talk to us",
+    "contactIntro": "Give us a call or send us a request. We get back to you within two working days.",
+    "contactHours": "Opening hours",
+    "hours": "{hours}"
+  },
+  "Process": {
+    "title": "How your project works"
+  },
+  "ProjectCard": {
+    "meta": "{objectType}, {year}"
+  },
+  "ServicesPage": {
+    "title": "Services",
+    "intro": "We plan every piece for your room, make it in our own workshop and install it with our own team."
+  },
+  "ServicePage": {
+    "overviewTitle": "At a glance",
+    "requestCta": "Request a project",
+    "includedTitle": "What is included",
+    "materialsTitle": "Materials",
+    "durationTitle": "How long it takes",
+    "galleryTitle": "Photos",
+    "projectsTitle": "Projects of this kind",
+    "allProjects": "See all projects",
+    "allServices": "See all services"
+  },
+  "ProjectsPage": {
+    "title": "Projects",
+    "intro": "Kitchens, cabinets, doors and interior fit-outs we have built for houses and flats in the region in recent years.",
+    "filterLabel": "Filter projects by service",
+    "all": "All",
+    "empty": "We have no projects of this kind to show yet."
+  },
+  "ProjectPage": {
+    "objectType": "Property",
+    "year": "Year",
+    "duration": "Duration",
+    "material": "Material",
+    "service": "Service",
+    "challengeTitle": "The task",
+    "solutionTitle": "Our solution",
+    "moreTitle": "More projects",
+    "previous": "Previous project",
+    "next": "Next project",
+    "allProjects": "See all projects"
+  },
+  "RequestCta": {
+    "title": "Tell us about your project",
+    "text": "Describe in a few sentences what you are planning. We will get in touch and arrange a visit to measure up at your home.",
+    "button": "Request a project"
+  },
+  "AboutPage": {
+    "title": "About us",
+    "master": "Master craftsman's workshop",
+    "principlesTitle": "How we work",
+    "teamTitle": "The team",
+    "since": "since {year}"
+  },
+  "CareersPage": {
+    "title": "Careers",
+    "benefitsTitle": "What we offer",
+    "openTitle": "Open positions",
+    "noJobs": "We have no open position right now. Feel free to call us if you would still like to work with us: {phone}.",
+    "noJobsNoPhone": "We have no open position right now. Feel free to get in touch if you would still like to work with us.",
+    "trialTitle": "Taster day for pupils",
+    "trialText": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Call us and arrange a date: {phone}.",
+    "trialTextNoPhone": "You are still at school and want to know what a day in a joinery is like? Come to the workshop for a day and see how we work. Get in touch and arrange a date.",
+    "faqTitle": "Frequently asked questions"
+  },
+  "JobPage": {
+    "employmentType": "Type of job",
+    "start": "Start",
+    "hours": "Working hours",
+    "pay": "Pay",
+    "detailsTitle": "What to expect",
+    "tasksTitle": "Your tasks",
+    "requirementsTitle": "What you bring",
+    "benefitsTitle": "What we offer",
+    "applyTitle": "Apply",
+    "applyText": "Call us and tell us which position you are interested in: {phone}.",
+    "applyTextNoPhone": "Get in touch and tell us which position you are interested in.",
+    "call": "Call now",
+    "allJobs": "See all open positions"
+  },
+  "JobPay": {
+    "range": "€{min}–{max} {unit}",
+    "from": "from €{min} {unit}",
+    "upTo": "up to €{max} {unit}",
+    "fixed": "€{amount} {unit}",
+    "unit": {
+      "hour": "per hour",
+      "month": "per month"
+    }
+  },
+  "ContactPage": {
+    "title": "Contact",
+    "intro": "The quickest way to reach us is by phone during opening hours. You can write to us at any time.",
+    "description": "Phone {phone}, email {email}, workshop at {street}, {postalCode} {city}.",
+    "hoursTitle": "Opening hours",
+    "hours": "{hours}",
+    "areaTitle": "Where we work",
+    "requestCta": "Request a project"
+  },
+  "ImprintPage": {
+    "title": "Imprint"
+  },
+  "PrivacyPage": {
+    "title": "Privacy policy",
+    "heading": "Privacy policy"
+  },
+  "NotFoundPage": {
+    "title": "Page not found",
+    "text": "This address does not exist on our website. The link may be out of date, or there may be a typo in the address.",
+    "home": "Go to the home page",
+    "services": "Our services",
+    "contact": "Get in touch"
+  },
+  "EmploymentType": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "apprenticeship": "Apprenticeship"
   },
   "Navigation": {
     "services": "Services",
@@ -33,15 +175,29 @@
     "errorSummary": {
       "titleFormal": "Please check your details",
       "titleInformal": "Please check your details"
+    },
+    "stepper": {
+      "label": "Steps of the request",
+      "step": "Step {current} of {total}"
+    },
+    "nextSteps": {
+      "title": "What happens next?"
+    },
+    "callBox": {
+      "title": "Prefer to call?",
+      "hours": "{days} {hours}"
     }
   },
   "VacationBanner": {
+    "label": "Company holidays",
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
   },
   "Header": {
-    "homeLabel": "Tannrieder – home page",
+    "homeLabel": "{name}, home page",
+    "logoDescriptor": "Schreinerei",
     "menuLabel": "Main menu",
     "menuButton": "Menu",
+    "menuClose": "Close",
     "cta": "Request a project"
   },
   "MobileActionBar": {
@@ -52,10 +208,9 @@
   "Footer": {
     "contactHeading": "Contact",
     "hoursHeading": "Opening hours",
-    "menuHeading": "Menu",
-    "legalHeading": "Legal",
-    "phone": "Phone",
-    "email": "Email"
+    "hours": "{days} {hours}",
+    "pagesHeading": "Pages",
+    "legalHeading": "Legal"
   },
   "Demo": {
     "notice": "Concept project – Schreinerei Tannrieder is a fictitious company."
@@ -63,80 +218,96 @@
   "DevUi": {
     "metaTitle": "UI components",
     "title": "UI components",
-    "intro": "Every building block of the website on one page. The page exists only in development mode.",
     "groups": {
-      "colors": "Colours",
-      "typography": "Typefaces",
-      "headings": "Headings",
+      "colors": "Colors",
+      "typeScale": "Type scale",
+      "logo": "Logo",
       "buttons": "Buttons",
-      "textLinks": "Text links",
-      "fields": "Form fields",
-      "errorSummary": "Error summary",
-      "vacationBanner": "Holiday notice",
-      "header": "Header",
-      "mobileMenu": "Mobile menu",
-      "footer": "Footer",
-      "localeSwitcher": "Language switcher",
-      "mobileActionBar": "Quick contact on phones"
+      "links": "Links",
+      "steps": "Step numbers",
+      "icons": "Icons",
+      "sections": "Sections",
+      "form": "Form"
     },
-    "localeSwitcherLabel": "Language, example",
-    "notes": {
-      "vacationBanner": "Sits above the header, as at the top of this page. Without valid dates it shows nothing.",
-      "header": "The header is at the top of this page. While scrolling it stays at the top edge and gets lower.",
-      "mobileMenu": "The menu belongs to the header. With a window narrower than 1280 px, click “Menu” at the top.",
-      "footer": "The footer is at the very bottom of this page.",
-      "mobileActionBar": "The bar exists only below 768 px width. It sits at the end of the page and stays at the bottom edge while scrolling."
+    "sample": "Custom furniture from our workshop in Wendelfing",
+    "statesNote": "Hover and focus are pinned here, so you can see them without a mouse or keyboard.",
+    "states": {
+      "normal": "Normal",
+      "hover": "Hover",
+      "focus": "Focus"
     },
-    "typography": {
-      "headingFont": "Headings: Zilla Slab",
-      "bodyFont": "Text: Atkinson Hyperlegible Next",
-      "semibold": "SemiBold",
-      "bold": "Bold",
-      "regular": "Regular",
-      "lead": "Large text",
-      "body": "Body text",
-      "small": "Small text",
-      "sample": "Made-to-measure furniture from our workshop in Wendelfing"
-    },
-    "headings": {
-      "sample": "Heading {level}"
+    "logo": {
+      "name": "Tannrieder",
+      "descriptor": "Schreinerei",
+      "full": "Full – header from 1280 px",
+      "compact": "Compact – header on the phone",
+      "light": "Light – footer"
     },
     "buttons": {
       "primary": "Primary",
       "secondary": "Secondary",
       "text": "Text",
-      "disabled": "{variant}, disabled"
+      "header": "Primary in the header, 48 px",
+      "menu": "Menu button, 44 px",
+      "withIcon": "With icon",
+      "fullWidth": "Full width",
+      "textLabel": "Learn more"
     },
-    "textLinks": {
-      "dark": "Text link on a light background",
-      "light": "Text link on a dark background"
+    "links": {
+      "strong": "Bold",
+      "plain": "Regular",
+      "muted": "Quiet"
     },
-    "fields": {
-      "withoutError": "Without error",
-      "withError": "With error",
-      "name": "Name",
-      "nameHint": "First and last name",
-      "email": "Email",
-      "emailError": "Please enter a valid email address.",
-      "message": "Your message",
-      "messageError": "Please describe your project in a few sentences.",
-      "topic": "What is it about?",
-      "topicPlaceholder": "Please choose",
-      "topicError": "Please choose a topic.",
-      "topics": {
-        "kitchen": "Kitchen",
-        "wardrobe": "Built-in wardrobe",
-        "doors": "Doors",
-        "interior": "Interior fittings"
+    "steps": {
+      "active": "Active",
+      "default": "Regular",
+      "muted": "Muted",
+      "size": "{size} px"
+    },
+    "icons": {
+      "phone": "Phone",
+      "menu": "Menu",
+      "close": "Close",
+      "arrowRight": "Arrow right",
+      "error": "Error"
+    },
+    "sections": {
+      "default": "No background, with intro and link",
+      "moos": "Moss band",
+      "line": "White with a line on top",
+      "intro": "Everything is made in our own workshop and installed by our own team."
+    },
+    "form": {
+      "steps": {
+        "what": "What are you planning?",
+        "where": "Where and when?",
+        "contact": "How can we reach you?"
       },
-      "consent": "I agree that my details are used to answer my request.",
-      "consentError": "Please agree so that we can reply."
-    },
-    "errorSummary": {
-      "formal": "Formal address, on most pages",
-      "informal": "Informal address, on the career pages",
-      "informalEmail": "Please enter a valid email address.",
-      "informalMessage": "Please write us a few sentences about yourself."
+      "typeLegend": "What would you like us to build?",
+      "types": {
+        "kitchen": "Kitchen",
+        "wardrobe": "Wardrobe or made-to-measure furniture",
+        "doors": "Interior doors",
+        "fitout": "Interior fit-out",
+        "other": "Something else"
+      },
+      "description": {
+        "label": "Briefly describe your project",
+        "hint": "For example: built-in wardrobe for the bedroom, wall 3.20 m wide, up to the ceiling.",
+        "error": "Please describe your project in at least 20 characters.",
+        "summary": "Describe your project in at least 20 characters."
+      },
+      "size": {
+        "label": "Approximate dimensions",
+        "hint": "Width × height × depth, if you already know."
+      },
+      "next": "Continue to step 2",
+      "privacy": "We only use your details to process your request. More in our <link>privacy policy</link>.",
+      "nextSteps": {
+        "first": "We will get back to you within two working days.",
+        "second": "We will come to you to take measurements.",
+        "third": "You will receive a drawing and a written quote."
+      }
     }
   }
 }

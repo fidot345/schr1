@@ -12,6 +12,8 @@ const dirname = path.dirname(__filename);
 const nextConfig: NextConfig = {
   agentRules: false,
   images: {
+    // BRIEF.md section 3: AVIF first (smaller), WebP for browsers without it.
+    formats: ["image/avif", "image/webp"],
     localPatterns: [
       {
         pathname: "/api/media/file/**",
@@ -32,6 +34,26 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(withNextIntl(nextConfig), {
+const withPayloadConfig = withPayload(withNextIntl(nextConfig), {
   devBundleServerPackages: false,
 });
+
+const payloadHeaders = withPayloadConfig.headers;
+
+/*
+ * withPayload sends the color-scheme client hint (Accept-CH, Critical-CH,
+ * Vary) on every path. Only the admin panel reads it, for its light or dark
+ * theme. On the site, Critical-CH makes the browser request each first page
+ * twice (about 600 ms on a phone), and Vary splits the CDN cache. So the
+ * rule applies to /admin only; the other rules stay as they are.
+ */
+export default {
+  ...withPayloadConfig,
+  headers: async () =>
+    (payloadHeaders ? await payloadHeaders() : []).map((rule) =>
+      rule.source === "/:path*" &&
+      rule.headers.some((header) => header.key === "Critical-CH")
+        ? { ...rule, source: "/admin/:path*" }
+        : rule,
+    ),
+} satisfies NextConfig;

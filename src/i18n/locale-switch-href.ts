@@ -1,12 +1,23 @@
 import type { ComponentProps } from "react";
 import type { Link } from "./navigation";
-import type { routing } from "./routing";
+import { type Locale, routing } from "./routing";
 
 export type Href = ComponentProps<typeof Link>["href"];
 type Pathname = keyof typeof routing.pathnames;
-type SlugPathname = Extract<Pathname, `${string}/[slug]`>;
+export type SlugPathname = Extract<Pathname, `${string}/[slug]`>;
 
-const isSlugPathname = (pathname: Pathname): pathname is SlugPathname =>
+/** A slug of this language → the same page's slug in another language. */
+export type SlugMap = Record<string, string>;
+
+/**
+ * Translated slugs per route and target language, for example
+ * { "/leistungen/[slug]": { en: { kuechen: "kitchens" } } } on a German page.
+ */
+export type SlugTranslations = Partial<
+  Record<SlugPathname, Partial<Record<Locale, SlugMap>>>
+>;
+
+export const isSlugPathname = (pathname: Pathname): pathname is SlugPathname =>
   pathname.endsWith("/[slug]");
 
 /**
@@ -14,17 +25,31 @@ const isSlugPathname = (pathname: Pathname): pathname is SlugPathname =>
  * locale. `pathname` is the internal pathname from next-intl's usePathname
  * ("/leistungen/[slug]"), `params` the route params from useParams.
  *
- * The slug is kept as it is. Pages whose slug differs between languages
- * (services, projects, jobs) pass the other language's href to the switcher.
+ * `slugMap` translates the slug for the target language (services,
+ * projects, jobs have their own slug per language). A slug it does not
+ * know is kept as it is.
+ *
+ * An address that is no route of the site (the 404 of /gibt-es-nicht, where
+ * usePathname returns the address itself) has no counterpart in the other
+ * language, so the switch leads to that language's home page.
  */
 export function localeSwitchHref(
   pathname: Pathname,
   params: Record<string, string | string[] | undefined>,
+  slugMap?: SlugMap,
 ): Href {
+  if (!Object.hasOwn(routing.pathnames, pathname)) {
+    return "/";
+  }
   if (!isSlugPathname(pathname)) {
     return pathname;
   }
 
   const { slug } = params;
-  return typeof slug === "string" ? { pathname, params: { slug } } : "/";
+  if (typeof slug !== "string") {
+    return "/";
+  }
+  const translated =
+    slugMap && Object.hasOwn(slugMap, slug) ? slugMap[slug] : undefined;
+  return { pathname, params: { slug: translated ?? slug } };
 }

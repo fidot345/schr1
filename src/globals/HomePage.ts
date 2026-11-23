@@ -7,6 +7,10 @@ import { exactRelations, exactRows } from "./validators";
 export const FEATURED_PROJECTS = 3;
 export const PROCESS_STEPS = 4;
 export const SCENE_CAPTIONS = 6;
+export const HERO_FACTS = 3;
+export const ABOUT_PRINCIPLES = 3;
+export const CAREERS_BENEFITS = 4;
+export const CAREERS_FAQ = 4;
 
 export const HomePage: GlobalConfig = {
   slug: "home-page",
@@ -57,6 +61,41 @@ export const HomePage: GlobalConfig = {
                     description:
                       "Großes Querformat, etwa die Werkstatt oder eine fertige Küche.",
                   },
+                },
+                {
+                  name: "facts",
+                  type: "array",
+                  label: "Fakten unter dem ersten Bildschirm",
+                  maxRows: HERO_FACTS,
+                  labels: {
+                    singular: "Fakt",
+                    plural: "Fakten",
+                  },
+                  admin: {
+                    description:
+                      "Bis zu drei kurze Zeilen, zum Beispiel „Meisterbetrieb“ + „seit 1989“. Ohne Einträge entfällt die Zeile.",
+                  },
+                  fields: [
+                    {
+                      type: "row",
+                      fields: [
+                        {
+                          name: "highlight",
+                          type: "text",
+                          label: "Fett gedruckt",
+                          required: true,
+                          localized: true,
+                        },
+                        {
+                          name: "text",
+                          type: "text",
+                          label: "Rest der Zeile",
+                          required: true,
+                          localized: true,
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
@@ -140,7 +179,7 @@ export const HomePage: GlobalConfig = {
               },
               admin: {
                 description:
-                  "Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig.",
+                  "Genau sechs, eine je Schritt der Szene: Zuschnitt, Korpus, Innenleben, Fronten, Montage, Fertig. Jede beginnt mit dem Namen des Schritts und einem Doppelpunkt oder Punkt, zum Beispiel „Zuschnitt: Jedes Teil …“. Der Name erscheint als Überschrift des Schritts.",
               },
               fields: [
                 {
@@ -179,6 +218,46 @@ export const HomePage: GlobalConfig = {
                     description: "Absätze mit einer Leerzeile trennen.",
                   },
                 },
+                {
+                  name: "image",
+                  type: "upload",
+                  label: "Foto",
+                  relationTo: "media",
+                  admin: {
+                    description:
+                      "Die Werkstatt oder die Arbeit darin, ohne Personen, die in die Kamera schauen. Erscheint auf der Startseite und auf „Über uns“.",
+                  },
+                },
+                {
+                  name: "principles",
+                  type: "array",
+                  label: "So arbeiten wir",
+                  maxRows: ABOUT_PRINCIPLES,
+                  labels: {
+                    singular: "Grundsatz",
+                    plural: "Grundsätze",
+                  },
+                  admin: {
+                    description:
+                      "Drei kurze Grundsätze für die Seite „Über uns“. Ohne Einträge entfällt der Block.",
+                  },
+                  fields: [
+                    {
+                      name: "title",
+                      type: "text",
+                      label: "Überschrift",
+                      required: true,
+                      localized: true,
+                    },
+                    {
+                      name: "text",
+                      type: "textarea",
+                      label: "Text",
+                      required: true,
+                      localized: true,
+                    },
+                  ],
+                },
               ],
             },
             {
@@ -203,6 +282,69 @@ export const HomePage: GlobalConfig = {
                     description:
                       "Kurz über die Arbeit bei uns. Die offenen Stellen erscheinen darunter von selbst.",
                   },
+                },
+                {
+                  name: "image",
+                  type: "upload",
+                  label: "Foto",
+                  relationTo: "media",
+                  admin: {
+                    description:
+                      "Jemand bei der Arbeit in der Werkstatt. Erscheint auf der Startseite und auf „Karriere“.",
+                  },
+                },
+                {
+                  name: "benefits",
+                  type: "array",
+                  label: "Warum es sich bei uns gut arbeitet",
+                  maxRows: CAREERS_BENEFITS,
+                  labels: {
+                    singular: "Punkt",
+                    plural: "Punkte",
+                  },
+                  admin: {
+                    description:
+                      "Bis zu vier Punkte für die Seite „Karriere“, in der Du-Form. Ohne Einträge entfällt der Block.",
+                  },
+                  fields: [
+                    {
+                      name: "text",
+                      type: "text",
+                      label: "Punkt",
+                      required: true,
+                      localized: true,
+                    },
+                  ],
+                },
+                {
+                  name: "faq",
+                  type: "array",
+                  label: "Häufige Fragen",
+                  maxRows: CAREERS_FAQ,
+                  labels: {
+                    singular: "Frage",
+                    plural: "Fragen",
+                  },
+                  admin: {
+                    description:
+                      "Drei bis vier Fragen für die Seite „Karriere“, etwa „Brauche ich einen Lebenslauf?“. Ohne Einträge entfällt der Block.",
+                  },
+                  fields: [
+                    {
+                      name: "question",
+                      type: "text",
+                      label: "Frage",
+                      required: true,
+                      localized: true,
+                    },
+                    {
+                      name: "answer",
+                      type: "textarea",
+                      label: "Antwort",
+                      required: true,
+                      localized: true,
+                    },
+                  ],
                 },
               ],
             },

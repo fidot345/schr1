@@ -799,6 +799,8 @@ export const testimonials: TestimonialSeed[] = [
 
 export const homePage = {
   heroImage: "hero-1.jpg" as PhotoFile,
+  aboutImage: "about-werkstatt.jpg" as PhotoFile,
+  careersImage: "karriere.jpg" as PhotoFile,
   /** German project slugs, in the order they appear. */
   featuredProjects: [
     "wohnkueche-in-eiche",
@@ -810,6 +812,11 @@ export const homePage = {
       hero: {
         title: "Möbel nach Maß aus unserer Werkstatt in Wendelfing",
         text: "Küchen, Einbauschränke, Türen und Innenausbau – geplant, gebaut und montiert von unserem Team.",
+        facts: [
+          { highlight: "Meisterbetrieb", text: "seit 1989" },
+          { highlight: "Neun Leute", text: "in der eigenen Werkstatt" },
+          { highlight: "Montage", text: "im Umkreis von 40 km" },
+        ],
       },
       processSteps: [
         {
@@ -826,7 +833,7 @@ export const homePage = {
         },
         {
           title: "Montage",
-          text: "Unser Team baut bei Ihnen ein, sauber und zum vereinbarten Termin. Vom Aufmaß bis hierher vergehen meist 8–10 Wochen.",
+          text: "Unser Team baut bei Ihnen ein, sauber und zum vereinbarten Termin.",
         },
       ],
       sceneCaptions: [
@@ -844,6 +851,7 @@ export const homePage = {
       careers: {
         title: "Wir suchen Verstärkung",
         text: "Für Werkstatt und Montage suchen wir Verstärkung, dazu Auszubildende ab September 2027. Bei uns gibt es feste Arbeitszeiten, freitags ist um 12 Uhr Schluss, und in der Werkstatt stehen moderne Maschinen.",
+        benefits: BENEFITS.de,
       },
       meta: {
         title: "Schreinerei Tannrieder – Möbel nach Maß aus Wendelfing",
@@ -855,6 +863,11 @@ export const homePage = {
       hero: {
         title: "Made-to-measure furniture from our workshop in Wendelfing",
         text: "Kitchens, built-in wardrobes, doors and interior fit-out – planned, built and installed by our team.",
+        facts: [
+          { highlight: "Master craftsman's workshop", text: "since 1989" },
+          { highlight: "Nine people", text: "in our own workshop" },
+          { highlight: "Installation", text: "within 40 km" },
+        ],
       },
       processSteps: [
         {
@@ -871,7 +884,7 @@ export const homePage = {
         },
         {
           title: "Installation",
-          text: "Our team installs everything in your home, cleanly and on the agreed date. From measuring to this point usually takes 8–10 weeks.",
+          text: "Our team installs everything in your home, cleanly and on the agreed date.",
         },
       ],
       sceneCaptions: [
@@ -889,6 +902,7 @@ export const homePage = {
       careers: {
         title: "We're hiring",
         text: "We are looking for people for the workshop and for installation, plus apprentices starting in September 2027. You get fixed working hours, Fridays finish at noon, and the workshop has modern machines.",
+        benefits: BENEFITS.en,
       },
       meta: {
         title:
@@ -904,11 +918,16 @@ export const siteSettings = {
   company: {
     name: "Schreinerei Tannrieder",
     owner: "Johannes Tannrieder",
+    logoWord: "Tannrieder",
     street: "Werkstattweg 4",
     postalCode: "85999",
     city: "Wendelfing",
     phone: "089 99998 412",
     email: "info@tannrieder.example",
+  },
+  tagline: {
+    de: "Schreinerei mit eigener Werkstatt in Wendelfing, seit 1989.",
+    en: "Joinery with its own workshop in Wendelfing, since 1989.",
   },
   openingHours: [
     { hours: "7:00–16:30", days: { de: "Mo–Do", en: "Mon–Thu" } },
