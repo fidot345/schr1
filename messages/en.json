@@ -188,6 +188,124 @@
       "hours": "{days} {hours}"
     }
   },
+  "RequestPage": {
+    "metaTitle": "Request a project",
+    "metaDescription": "Request a kitchen, wardrobe, interior doors or an interior fit-out: three short steps, then we get back to you within two working days.",
+    "title": "Request a project",
+    "lead": "Three short questions, then we will get back to you. It takes about two minutes.",
+    "noscript": "The form needs JavaScript. Just give us a call: <link>{phone}</link>",
+    "noscriptNoPhone": "The form needs JavaScript. Other ways to reach us are on the <link>contact page</link>.",
+    "nextSteps": {
+      "first": "We will get back to you within two working days.",
+      "second": "We will come to you to take measurements.",
+      "third": "You will receive a drawing and a written quote."
+    }
+  },
+  "RequestForm": {
+    "steps": {
+      "what": "What are you planning?",
+      "where": "Where and when?",
+      "contact": "How can we reach you?"
+    },
+    "stepHeading": "Step {current} of {total}: {title}",
+    "typeLegend": "What would you like us to build?",
+    "types": {
+      "kueche": "Kitchen",
+      "schrank": "Wardrobe or made-to-measure furniture",
+      "tueren": "Interior doors",
+      "ausbau": "Interior fit-out",
+      "anderes": "Something else"
+    },
+    "description": {
+      "label": "Briefly describe your project",
+      "hint": "For example: built-in wardrobe for the bedroom, wall 3.20 m wide, up to the ceiling."
+    },
+    "dimensions": {
+      "label": "Approximate dimensions",
+      "hint": "Width × height × depth, if you already know."
+    },
+    "postalCode": "Postcode",
+    "city": "Town",
+    "timeframeLegend": "When would you like to start?",
+    "timeframes": {
+      "asap": "As soon as possible",
+      "1-3-months": "In 1–3 months",
+      "3-6-months": "In 3–6 months",
+      "later": "Later"
+    },
+    "budgetLegend": "What is your approximate budget?",
+    "budgets": {
+      "up-to-5000": "Up to €5,000",
+      "5000-10000": "€5,000–10,000",
+      "10000-20000": "€10,000–20,000",
+      "over-20000": "Over €20,000",
+      "unknown": "I don’t know yet"
+    },
+    "name": "Your name",
+    "phone": "Phone",
+    "email": "Email",
+    "contactHint": "Phone or email – one of the two is enough.",
+    "preferenceLegend": "How would you prefer us to contact you?",
+    "preferences": {
+      "phone": "By phone",
+      "email": "By email",
+      "any": "Either"
+    },
+    "next": "Continue to step {step}",
+    "back": "Back",
+    "submit": "Send request",
+    "sending": "Sending …",
+    "privacy": "We only use your details to process your request. More in our <link>privacy policy</link>.",
+    "failed": "Sorry, that did not work. Please call us: <link>{phone}</link>.",
+    "failedNoPhone": "Sorry, that did not work. Please try again later.",
+    "trapLabel": "Please leave this field empty",
+    "errors": {
+      "projectTypeMissing": "Please choose what you would like us to build.",
+      "descriptionShort": "Please describe your project in at least 20 characters.",
+      "descriptionLong": "Please sum up your project in no more than 1,000 characters.",
+      "dimensionsLong": "Please give the dimensions in no more than 200 characters.",
+      "postalCodeInvalid": "Please enter a five-digit German postcode.",
+      "cityMissing": "Please enter your town.",
+      "cityLong": "Please enter the town in no more than 100 characters.",
+      "timeframeMissing": "Please choose roughly when you would like to start.",
+      "budgetMissing": "Please choose your approximate budget. If you don’t know it yet, choose “I don’t know yet”.",
+      "nameMissing": "Please enter your name.",
+      "nameLong": "Please enter your name in no more than 100 characters.",
+      "phoneInvalid": "Please enter a phone number with area code, using only digits, spaces and + / ( ) -.",
+      "emailInvalid": "Please enter a complete email address with an @.",
+      "contactMissing": "Please enter a phone number or an email address so we can reach you.",
+      "phoneForCall": "You would like a call: please enter your phone number.",
+      "emailForMail": "You would like an email: please enter your email address.",
+      "contactPreferenceMissing": "Please choose how you would prefer us to contact you."
+    }
+  },
+  "RequestThanksPage": {
+    "metaTitle": "Thank you for your request",
+    "title": "Thank you for your request",
+    "text": "Your request has reached us. We will get back to you within two working days, the way you asked: by phone or by email.",
+    "call": "Forgot something or have a question? Call us: <link>{phone}</link>",
+    "home": "Back to the home page",
+    "projects": "See our projects"
+  },
+  "RequestMail": {
+    "subject": "New request: {type} – {postalCode} {city}",
+    "intro": "New request from the form on the website. Language: {language}.",
+    "languages": {
+      "de": "German",
+      "en": "English"
+    },
+    "projectType": "Kind of work",
+    "description": "Project",
+    "dimensions": "Approximate dimensions",
+    "place": "Postcode and town",
+    "timeframe": "Start",
+    "budget": "Budget",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "contactPreference": "Preferred contact",
+    "notGiven": "not given"
+  },
   "VacationBanner": {
     "label": "Company holidays",
     "text": "Closed for company holidays from {from, date, long} to {to, date, long}"
