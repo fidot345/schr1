@@ -187,6 +187,51 @@ test.describe("content from Payload", () => {
   });
 });
 
+/*
+ * Nothing makes the page wider than the window: not on first paint, not
+ * when the 3D scene arrives, pins its panel and builds the wardrobe, not
+ * further down. Phones as in the device mode of DevTools (touch, mobile
+ * viewport), the tablet as a plain window.
+ */
+const NARROW_SCREENS = [
+  { width: 360, height: 640, mobile: true },
+  { width: 390, height: 844, mobile: true },
+  { width: 768, height: 1024, mobile: false },
+] as const;
+
+for (const { width, height, mobile } of NARROW_SCREENS) {
+  test.describe(`home page at ${width} px`, () => {
+    test.use({
+      viewport: { width, height },
+      isMobile: mobile,
+      hasTouch: mobile,
+    });
+
+    test("never scrolls sideways, all the way down", async ({ page }) => {
+      const overflow = () =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth - window.innerWidth,
+        );
+      await page.goto("/");
+      expect(await overflow(), "on first paint").toBe(0);
+
+      const scene = page.locator('section[aria-labelledby="szene-titel"]');
+      await scene.scrollIntoViewIfNeeded();
+      await expect(scene.locator("canvas")).toBeAttached();
+      await expect(page.locator(".pin-spacer")).toBeAttached();
+
+      const bottom = await page.evaluate(
+        () => document.documentElement.scrollHeight,
+      );
+      for (let y = 0; y <= bottom; y += height / 2) {
+        await page.evaluate((top) => window.scrollTo(0, top), y);
+        await page.waitForTimeout(50);
+        expect(await overflow(), `at ${y} px`).toBe(0);
+      }
+    });
+  });
+}
+
 test.describe("phone menu at 390 px", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 

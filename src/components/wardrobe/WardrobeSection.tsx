@@ -77,11 +77,13 @@ export type WardrobeSectionProps = {
 };
 
 /**
- * "Vom Brett zum Schrank", BRIEF.md section 4, step 1 of stage 5: the grey
- * prototype. The panel stays on screen (pinned) while the scroll builds
- * the wardrobe; next to the scene on a computer, under it on a phone, the
- * captions as a numbered list with the current step marked. On a phone the
- * other captions are there only for screen readers.
+ * "Vom Brett zum Schrank", BRIEF.md section 4, steps 1 and 3 of stage 5:
+ * the scene in oak, light and shadow. The panel stays on screen (pinned)
+ * while the scroll builds the wardrobe; next to the scene on a computer,
+ * under it on a phone, the captions as a numbered list with the current
+ * step marked. On a phone the other captions are there only for screen
+ * readers. The flat wardrobe stands in for the scene until its wood is
+ * loaded.
  *
  * With reduced motion or without WebGL 2 it is the still picture
  * (WardrobeStill). The link before the panel skips to the projects.

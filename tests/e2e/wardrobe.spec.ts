@@ -2,10 +2,11 @@ import { expect, type Page, test } from "@playwright/test";
 import { axeViolations, watchConsole } from "./support/page-checks";
 
 /*
- * "Vom Brett zum Schrank", BRIEF.md section 4, the grey prototype: the
- * scroll builds the wardrobe in a pinned panel and back, the captions
- * follow the steps, the 3D code comes only near the section, and with
- * reduced motion or without WebGL the still picture stands in its place.
+ * "Vom Brett zum Schrank", BRIEF.md section 4: the scroll builds the
+ * wardrobe in a pinned panel and back, the captions follow the steps, the
+ * 3D code and the wood textures come only near the section and only from
+ * our domain, and with reduced motion or without WebGL the still picture
+ * stands in its place.
  */
 
 const SECTION = 'section[aria-labelledby="szene-titel"]';
@@ -133,6 +134,40 @@ test.describe("loading", () => {
     expect(scripts.length).toBeGreaterThan(atLoad);
     // Once the scene draws, the picture goes.
     await expect(page.locator(`${SECTION} img`)).toHaveCount(0);
+  });
+
+  test("takes the wood textures from our own domain and nothing from others", async ({
+    page,
+    baseURL,
+  }) => {
+    const textures: { url: string; status: number }[] = [];
+    const foreign: string[] = [];
+    page.on("response", (response) => {
+      const url = response.url();
+      if (url.includes("/textures/")) {
+        textures.push({ url, status: response.status() });
+      }
+    });
+    page.on("request", (request) => {
+      const url = request.url();
+      if (!url.startsWith(baseURL ?? "") && !url.startsWith("data:")) {
+        foreign.push(url);
+      }
+    });
+
+    await page.goto("/");
+    await page.locator(SECTION).scrollIntoViewIfNeeded();
+    // The picture stays until the wardrobe has its wood.
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0);
+
+    expect(textures.map(({ url }) => new URL(url).pathname).sort()).toEqual([
+      "/textures/birch/color.webp",
+      "/textures/oak/color.webp",
+      "/textures/oak/normal.webp",
+      "/textures/oak/roughness.webp",
+    ]);
+    expect(textures.every(({ status }) => status === 200)).toBe(true);
+    expect(foreign).toEqual([]);
   });
 });
 

@@ -146,7 +146,11 @@ describe("the parts of the wardrobe", () => {
     expect(byId("rail")).toMatchObject({ shape: "rod", material: "metal" });
     expect(byId("rail").assembled[1]).toBe(1.7);
     expect(byId("back-panel").material).toBe("birch");
-    expect(byId("handle-left").material).toBe("metal");
+    expect(byId("handle-left").material).toBe("polished-metal");
+    expect(byId("handle-right").material).toBe("polished-metal");
+    const oak = PARTS.filter(({ material }) => material === "oak");
+    expect(oak.map(({ id }) => id)).not.toContain("back-panel");
+    expect(oak).toHaveLength(12);
   });
 
   it("make a wardrobe 1.2 m wide and 2 m high, standing on the floor at the centre", () => {
@@ -291,8 +295,8 @@ describe("the storyboard", () => {
   it("frames the whole stack and the finished wardrobe from the starting view", () => {
     for (const aspect of [0.75, 0.9, 1.1]) {
       const camera = new PerspectiveCamera(CAMERA.fov, aspect, 0.1, 50);
-      camera.position.set(...CAMERA.start);
-      camera.lookAt(...CAMERA.target);
+      camera.position.set(...CAMERA.start.position);
+      camera.lookAt(...CAMERA.start.target);
       camera.updateMatrixWorld();
 
       for (const part of PARTS) {
@@ -305,6 +309,29 @@ describe("the storyboard", () => {
           const seen = corner.clone().project(camera);
           expect(Math.abs(seen.x), `${part.id} at ${aspect}`).toBeLessThan(1);
           expect(Math.abs(seen.y), `${part.id} at ${aspect}`).toBeLessThan(1);
+        }
+      }
+    }
+  });
+
+  it("shows the finished wardrobe whole from the end view, with room round it", () => {
+    // Canvas shapes from a wide desktop window to a short phone screen.
+    for (const aspect of [0.7, 0.9, 1.1, 1.4]) {
+      const camera = new PerspectiveCamera(CAMERA.fov, aspect, 0.1, 50);
+      camera.position.set(...CAMERA.end.position);
+      camera.lookAt(...CAMERA.end.target);
+      camera.updateMatrixWorld();
+
+      for (const part of PARTS) {
+        const corners = cornersOf(
+          part.size,
+          new Vector3(...part.assembled),
+          new Quaternion(),
+        );
+        for (const corner of corners) {
+          const seen = corner.project(camera);
+          expect(Math.abs(seen.x), `${part.id} at ${aspect}`).toBeLessThan(0.9);
+          expect(Math.abs(seen.y), `${part.id} at ${aspect}`).toBeLessThan(0.9);
         }
       }
     }
@@ -362,6 +389,9 @@ describe("placePart", () => {
   });
 
   it("brings a door in open on its hinge and closes it", () => {
+    // The left door arrives open by 75°, the right one, nearer the camera, by 90°.
+    expect(byId("door-left").hinge?.open).toBeCloseTo((-75 * Math.PI) / 180, 6);
+    expect(byId("door-right").hinge?.open).toBeCloseTo(Math.PI / 2, 6);
     for (const door of PARTS.filter(({ hinge }) => hinge)) {
       const open = pose(door, { lift: 1, fly: 1, swing: 0 });
       const closed = pose(door, { lift: 1, fly: 1, swing: 1 });
@@ -369,7 +399,7 @@ describe("placePart", () => {
       // Open, the door stands out in front of the wardrobe.
       expect(open.position.z).toBeGreaterThan(door.assembled[2] + 0.2);
       expect(Math.abs(open.quaternion.angleTo(new Quaternion()))).toBeCloseTo(
-        (100 * Math.PI) / 180,
+        Math.abs(door.hinge?.open ?? 0),
         6,
       );
       // The edge on the hinge stays where it is while the door closes.
