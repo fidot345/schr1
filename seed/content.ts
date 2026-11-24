@@ -333,6 +333,7 @@ const savedHome = await payload.updateGlobal({
     ),
     processSteps: home.de.processSteps,
     sceneCaptions: home.de.sceneCaptions.map((text) => ({ text })),
+    sceneButton: home.de.sceneButton,
     // No principles and no questions: neither the brief nor the mockup has texts for them yet.
     about: {
       ...home.de.about,
@@ -384,6 +385,7 @@ await payload.updateGlobal({
       text,
       id: captionIds[index],
     })),
+    sceneButton: home.en.sceneButton,
     about: home.en.about,
     careers: {
       ...home.en.careers,

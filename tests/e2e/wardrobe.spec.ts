@@ -5,8 +5,9 @@ import { axeViolations, watchConsole } from "./support/page-checks";
  * "Vom Brett zum Schrank", BRIEF.md section 4: the scroll builds the
  * wardrobe in a pinned panel and back, the captions follow the steps, the
  * 3D code and the wood textures come only near the section and only from
- * our domain, and with reduced motion or without WebGL the still picture
- * stands in its place.
+ * our domain, and with reduced motion, without WebGL or without JavaScript
+ * the still picture stands in its place. The button of the last step leads
+ * to the request form.
  */
 
 const SECTION = 'section[aria-labelledby="szene-titel"]';
@@ -23,6 +24,10 @@ const markedStep = (page: Page) =>
     const items = [...section.querySelectorAll("ol > li")];
     return items.findIndex((item) => item.ariaCurrent === "step") + 1;
   });
+
+/** The button of the last step, to the request form. */
+const button = (page: Page, name = "Projekt anfragen") =>
+  page.locator(SECTION).getByRole("link", { name });
 
 /** Where the pin starts, on the page. */
 const pinStart = (page: Page) =>
@@ -77,12 +82,21 @@ for (const { name, width, height, screens } of SCREENS) {
           .locator(".pin-spacer > div")
           .evaluate((element) => element.getBoundingClientRect().top);
         expect(Math.abs(top)).toBeLessThan(2);
+        // The marked caption is on screen, the last one too.
+        await expect(
+          page.locator(`${SECTION} li[aria-current="step"]`),
+        ).toBeInViewport({ ratio: 1 });
+        // The button comes only with the finished wardrobe.
+        if (seen.length < 6) await expect(button(page)).toBeHidden();
       }
       expect(seen).toEqual([1, 2, 3, 4, 5, 6]);
+      await expect(button(page)).toBeVisible();
+      await expect(button(page)).toBeInViewport();
 
-      // Up again: back to the first step.
+      // Up again: back to the first step, the button goes again.
       await page.evaluate((y) => window.scrollTo(0, y), start);
       await expect.poll(() => markedStep(page)).toBe(1);
+      await expect(button(page)).toBeHidden();
 
       // After the last step the page goes on.
       await page.evaluate(
@@ -106,6 +120,23 @@ for (const { name, width, height, screens } of SCREENS) {
       ).toHaveCount(1);
       await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
       expect(await axeViolations(page)).toEqual([]);
+    });
+
+    test("leads from the finished wardrobe to the request form", async ({
+      page,
+    }) => {
+      await comeNear(page);
+      const start = await pinStart(page);
+      await page.evaluate(
+        (y) => window.scrollTo(0, y),
+        start + 0.98 * screens * height,
+      );
+      await expect.poll(() => markedStep(page)).toBe(6);
+      await expect(button(page)).toBeVisible();
+      expect(await axeViolations(page)).toEqual([]);
+
+      await button(page).click();
+      await expect(page).toHaveURL(/\/anfrage$/);
     });
   });
 }
@@ -200,6 +231,18 @@ test.describe("the skip link", () => {
     await expect(page).toHaveURL(/#projekte$/);
     await expect(page.locator("#projekte")).toBeInViewport();
   });
+
+  test("goes on past the hidden button of the last step", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Animation überspringen" }).focus();
+    await page.keyboard.press("Tab");
+
+    const inScene = await page.evaluate(
+      (selector) => document.activeElement?.closest(selector) !== null,
+      SECTION,
+    );
+    expect(inScene).toBe(false);
+  });
 });
 
 test.describe("the still picture instead of the scene", () => {
@@ -221,6 +264,8 @@ test.describe("the still picture instead of the scene", () => {
       await expect(item).toBeVisible();
       await expect(item).not.toHaveAttribute("aria-current");
     }
+    await expect(button(page)).toBeVisible();
+    await expect(button(page)).toHaveAttribute("href", "/anfrage");
   });
 
   test("without WebGL: the same picture", async ({ page }) => {
@@ -243,5 +288,50 @@ test.describe("the still picture instead of the scene", () => {
     await expect(page.locator(`${SECTION} canvas`)).toHaveCount(0);
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
     await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
+    await expect(button(page)).toBeVisible();
+  });
+});
+
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  /** The still picture comes from <noscript>, with a heading id of its own. */
+  const STILL = 'section[aria-labelledby="szene-titel-bild"]';
+
+  test("shows the picture, all captions and the button instead of the panel", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.locator(SECTION)).toBeHidden();
+    const still = page.locator(STILL);
+    await expect(still).toBeVisible();
+    await expect(
+      still.getByRole("heading", { name: "Vom Brett zum Schrank" }),
+    ).toBeVisible();
+    await expect(still.locator("img")).toHaveAttribute(
+      "src",
+      /schrank-platzhalter\.svg/,
+    );
+    await expect(still.locator("ol > li")).toHaveCount(6);
+    for (const item of await still.locator("ol > li").all()) {
+      await expect(item).toBeVisible();
+    }
+    const request = still.getByRole("link", { name: "Projekt anfragen" });
+    await expect(request).toBeVisible();
+    await expect(request).toHaveAttribute("href", "/anfrage");
+    await expect(page.locator("canvas")).toHaveCount(0);
+  });
+
+  test("skips the picture with the keyboard", async ({ page }) => {
+    await page.goto("/");
+    const skip = page
+      .locator(STILL)
+      .getByRole("link", { name: "Animation überspringen" });
+    await skip.focus();
+    await page.keyboard.press("Enter");
+
+    await expect(page).toHaveURL(/#projekte$/);
+    await expect(page.locator("#projekte")).toBeInViewport();
   });
 });

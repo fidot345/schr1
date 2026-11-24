@@ -103,6 +103,9 @@ const CAPTIONS = [
   "Montage: Wir bauen bei Ihnen ein – sauber und pünktlich.",
   "Fertig. Vom Aufmaß bis zur Montage in 8–10 Wochen.",
 ];
+/** The button of the last step, as in the admin panel. */
+const BUTTON = "Projekt anfragen";
+
 const sceneSteps = CAPTIONS.map((caption, index) => ({
   id: String(index),
   ...sceneStep(caption),
@@ -304,7 +307,9 @@ describe("Services", () => {
 });
 
 describe("WardrobeStill", () => {
-  const html = render(<WardrobeStill steps={sceneSteps} activeStep={3} />);
+  const html = render(
+    <WardrobeStill steps={sceneSteps} buttonLabel={BUTTON} activeStep={3} />,
+  );
 
   it("starts with the link that skips the animation, to the projects", () => {
     expect(html).toContain('href="#projekte"');
@@ -332,23 +337,38 @@ describe("WardrobeStill", () => {
   it("marks only the active step", () => {
     expect(count(html, /aria-current="step"/g)).toBe(1);
     expect(html).toMatch(/aria-current="step"[^>]*>.*?Innenleben/);
-    expect(count(html, /bg-tannengruen/g)).toBe(1);
+    expect(count(html, /rounded-full[^"]*bg-tannengruen/g)).toBe(1);
 
-    const first = render(<WardrobeStill steps={sceneSteps} activeStep={1} />);
+    const first = render(
+      <WardrobeStill steps={sceneSteps} buttonLabel={BUTTON} activeStep={1} />,
+    );
     expect(first).toMatch(/aria-current="step"[^>]*>.*?Zuschnitt/);
   });
 
   it("marks no step as the fallback of the scene", () => {
-    const fallback = render(<WardrobeStill steps={sceneSteps} />);
+    const fallback = render(
+      <WardrobeStill steps={sceneSteps} buttonLabel={BUTTON} />,
+    );
 
     expect(fallback).not.toContain("aria-current");
     expect(count(fallback, /<li /g)).toBe(6);
+  });
+
+  it("ends with the button to the request form, always in view", () => {
+    const button = html.match(/<a href="\/anfrage"[^>]*>([^<]*)<\/a>/);
+
+    expect(button?.[1]).toBe(BUTTON);
+    expect(button?.[0]).not.toContain("invisible");
+    expect(html.indexOf('href="/anfrage"')).toBeGreaterThan(
+      html.indexOf("</ol>"),
+    );
   });
 
   it("shows only the text of a caption without a name", () => {
     const plain = render(
       <WardrobeStill
         steps={[{ id: "x", ...sceneStep("Ohne Namen davor") }]}
+        buttonLabel={BUTTON}
         activeStep={1}
       />,
     );
@@ -357,31 +377,48 @@ describe("WardrobeStill", () => {
     expect(plain).not.toContain("text-h4");
   });
 
-  it("names the section by the h2", () => {
+  it("names the section by the h2, by another id where asked", () => {
     expect(html).toContain('aria-labelledby="szene-titel"');
     expect(tagWithId(html, "szene-titel")).toMatch(/^<h2 /);
+
+    const other = render(
+      <WardrobeStill
+        steps={sceneSteps}
+        buttonLabel={BUTTON}
+        headingId="szene-titel-bild"
+      />,
+    );
+    expect(other).toContain('aria-labelledby="szene-titel-bild"');
+    expect(tagWithId(other, "szene-titel-bild")).toMatch(/^<h2 /);
+    expect(other).not.toContain('id="szene-titel"');
   });
 });
 
 describe("WardrobeSection", () => {
-  // The server's markup: the panel of the scene, the flat wardrobe in its place.
-  const html = render(<WardrobeSection steps={sceneSteps} />);
+  // The server's markup: the still picture for browsers without
+  // JavaScript, then the panel of the scene with the flat wardrobe in place.
+  const html = render(
+    <WardrobeSection steps={sceneSteps} buttonLabel={BUTTON} />,
+  );
+  const closing = "</noscript>";
+  const fallback = html.slice(0, html.indexOf(closing) + closing.length);
+  const panel = html.slice(fallback.length);
 
   it("starts with the link that skips the animation, to the projects", () => {
-    expect(html).toContain('href="#projekte"');
-    expect(html.indexOf("Animation überspringen")).toBeLessThan(
-      html.indexOf("<h2"),
+    expect(panel).toContain('href="#projekte"');
+    expect(panel.indexOf("Animation überspringen")).toBeLessThan(
+      panel.indexOf("<h2"),
     );
   });
 
   it("names the section by the h2 and has the intro from messages", () => {
-    expect(html).toMatch(/^<section [^>]*aria-labelledby="szene-titel"/);
-    expect(tagWithId(html, "szene-titel")).toMatch(/^<h2 /);
-    expect(html).toContain(de.HomePage.sceneIntro);
+    expect(panel).toMatch(/^<section [^>]*aria-labelledby="szene-titel"/);
+    expect(tagWithId(panel, "szene-titel")).toMatch(/^<h2 /);
+    expect(panel).toContain(de.HomePage.sceneIntro);
   });
 
   it("shows the flat wardrobe until the scene is there, and no canvas yet", () => {
-    const [image] = images(html);
+    const [image] = images(panel);
 
     expect(image).toContain("schrank-platzhalter.svg");
     expect(image).toContain(`alt="${de.HomePage.sceneImageAlt}"`);
@@ -389,23 +426,51 @@ describe("WardrobeSection", () => {
   });
 
   it("lists all six captions and marks the first step", () => {
-    expect(html).toMatch(/<ol [^>]*>(<li [^>]*>.*?<\/li>){6}<\/ol>/);
-    expect(count(html, /aria-current="step"/g)).toBe(1);
-    expect(html).toMatch(/aria-current="step"[^>]*>.*?Zuschnitt/);
+    expect(panel).toMatch(/<ol [^>]*>(<li [^>]*>.*?<\/li>){6}<\/ol>/);
+    expect(count(panel, /aria-current="step"/g)).toBe(1);
+    expect(panel).toMatch(/aria-current="step"[^>]*>.*?Zuschnitt/);
   });
 
   it("keeps the other captions for screen readers on a phone", () => {
-    const hidden = html.match(/<li [^>]*max-md:sr-only[^>]*>/g) ?? [];
+    const hidden = panel.match(/<li [^>]*max-md:sr-only[^>]*>/g) ?? [];
 
     expect(hidden).toHaveLength(5);
     expect(hidden.join("")).not.toContain("aria-current");
   });
 
+  it("keeps the button to the request form hidden until the wardrobe is finished", () => {
+    const button = panel.match(/<a href="\/anfrage"[^>]*>([^<]*)<\/a>/);
+
+    expect(button?.[1]).toBe(BUTTON);
+    expect(button?.[0]).toMatch(/class="[^"]*\binvisible\b/);
+    // After the captions, so a screen reader comes to it last.
+    expect(panel.indexOf('href="/anfrage"')).toBeGreaterThan(
+      panel.indexOf("</ol>"),
+    );
+  });
+
+  it("has the still picture for browsers without JavaScript and hides the panel there", () => {
+    expect(fallback).toMatch(/^<noscript><section [^>]*>/);
+    expect(count(fallback, /<li /g)).toBe(6);
+    expect(fallback).not.toContain("aria-current");
+    expect(fallback).toContain('href="#projekte"');
+    expect(images(fallback)[0]).toContain("schrank-platzhalter.svg");
+    expect(fallback).toMatch(/<a href="\/anfrage"[^>]*>Projekt anfragen<\/a>/);
+    expect(fallback).toContain('aria-labelledby="szene-titel-bild"');
+    expect(panel).toMatch(/^<section [^>]*class="[^"]*\bnoscript:hidden\b/);
+    // One heading id each: the page never has two "szene-titel".
+    expect(count(html, /id="szene-titel"/g)).toBe(1);
+  });
+
   it("speaks English on /en", () => {
-    const english = render(<WardrobeSection steps={sceneSteps} />, "en");
+    const english = render(
+      <WardrobeSection steps={sceneSteps} buttonLabel="Request a project" />,
+      "en",
+    );
 
     expect(english).toContain("Skip animation");
     expect(english).toContain(en.HomePage.sceneTitle);
+    expect(english).toContain(">Request a project</a>");
   });
 });
 

@@ -17,6 +17,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -25,11 +26,14 @@ import { TextLink } from "@/components/ui/TextLink";
 import { cn } from "@/lib/cn";
 import type { SceneStepItem } from "@/lib/content";
 import { REDUCED_MOTION_QUERY } from "@/lib/smooth-scroll";
-import type { SceneStep } from "./parts";
-import { WardrobeStill } from "./WardrobeStill";
+import { type SceneStep, STEP_RANGES } from "./parts";
+import { SCENE_HEADING, WardrobeStill } from "./WardrobeStill";
 
 /** three, fiber, drei and GSAP: loaded only when the section comes near. */
 const WardrobeScene = dynamic(() => import("./WardrobeScene"), { ssr: false });
+
+/** The step of the finished wardrobe, where the button comes. */
+const LAST_STEP = STEP_RANGES.length;
 
 /** The scene loads once the section is one screen away, BRIEF.md "Загрузка". */
 const NEAR = "100% 0px";
@@ -74,21 +78,26 @@ function useNear(element: RefObject<HTMLElement | null>): boolean {
 export type WardrobeSectionProps = {
   /** The six steps, from "Zuschnitt" to "Fertig", from the captions in the admin panel. */
   steps: SceneStepItem[];
+  /** The button of the last step, "Projekt anfragen", from the admin panel. */
+  buttonLabel: string;
 };
 
 /**
- * "Vom Brett zum Schrank", BRIEF.md section 4, steps 1 and 3 of stage 5:
+ * "Vom Brett zum Schrank", BRIEF.md section 4, steps 1, 3 and 4 of stage 5:
  * the scene in oak, light and shadow. The panel stays on screen (pinned)
  * while the scroll builds the wardrobe; next to the scene on a computer,
  * under it on a phone, the captions as a numbered list with the current
  * step marked. On a phone the other captions are there only for screen
  * readers. The flat wardrobe stands in for the scene until its wood is
- * loaded.
+ * loaded. When the wardrobe is finished (step 6), the button to the
+ * request form comes up in the corner of the scene, as in mockup 02.
  *
  * With reduced motion or without WebGL 2 it is the still picture
- * (WardrobeStill). The link before the panel skips to the projects.
+ * (WardrobeStill); without JavaScript the same picture comes from
+ * <noscript> and the panel is hidden. The link before the panel skips to
+ * the projects.
  */
-export function WardrobeSection({ steps }: WardrobeSectionProps) {
+export function WardrobeSection({ steps, buttonLabel }: WardrobeSectionProps) {
   const t = useTranslations("HomePage");
   const panel = useRef<HTMLDivElement>(null);
   const near = useNear(panel);
@@ -108,84 +117,112 @@ export function WardrobeSection({ steps }: WardrobeSectionProps) {
   );
 
   if (!motion || !webgl) {
-    return <WardrobeStill steps={steps} />;
+    return <WardrobeStill steps={steps} buttonLabel={buttonLabel} />;
   }
 
-  return (
-    <Section labelledBy="szene-titel">
-      <Container>
-        <TextLink href="#projekte" tone="muted">
-          {t("skipAnimation")}
-        </TextLink>
-      </Container>
-      {/* Pinned at the top of the window: the space of the sticky bars stays empty. */}
-      <div
-        ref={panel}
-        className="h-svh pt-(--header-height) max-md:pb-(--action-bar-height)"
-      >
-        <Container className="grid h-full grid-rows-[auto_minmax(0,1fr)_auto] gap-6 py-6 md:grid-cols-[3fr_2fr] md:grid-rows-2 md:gap-x-12 md:gap-y-8 md:py-10">
-          <SectionHeading
-            id="szene-titel"
-            title={t("sceneTitle")}
-            intro={t("sceneIntro")}
-            className="md:col-start-2 md:row-start-1 md:self-end"
-          />
-          <div className="relative min-h-0 md:col-start-1 md:row-span-2 md:row-start-1">
-            {ready ? null : (
-              <Image
-                src="/images/3d/schrank-platzhalter.svg"
-                alt={t("sceneImageAlt")}
-                fill
-                sizes="(min-width: 768px) 60vw, 100vw"
-                className="object-contain"
-              />
-            )}
-            {near ? (
-              <div className="absolute inset-0">
-                <WardrobeScene
-                  pin={panel}
-                  onStep={setActiveStep}
-                  onReady={onReady}
-                />
-              </div>
-            ) : null}
-          </div>
-          <ol className="flex flex-col gap-5 max-md:min-h-28 md:col-start-2 md:row-start-2 md:self-start">
-            {steps.map((step, index) => {
-              const active = index + 1 === activeStep;
+  const finished = activeStep === LAST_STEP;
 
-              return (
-                <li
-                  key={step.id}
-                  aria-current={active ? "step" : undefined}
-                  className={cn(
-                    "flex items-start gap-4",
-                    active ? "text-graphit" : "text-schiefer max-md:sr-only",
-                  )}
-                >
-                  <StepNumber
-                    value={index + 1}
-                    state={active ? "active" : "muted"}
-                  />
-                  <div>
-                    {step.title ? (
-                      <p
-                        className={cn(
-                          "mb-0.5 font-display text-h4",
-                          active && "text-tannengruen",
-                        )}
-                      >
-                        {step.title}
-                      </p>
-                    ) : null}
-                    <p className="text-small">{step.text}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+  return (
+    <>
+      {/* Only the server renders this; React leaves the inside of <noscript> alone. */}
+      <noscript>
+        <WardrobeStill
+          steps={steps}
+          buttonLabel={buttonLabel}
+          headingId={`${SCENE_HEADING}-bild`}
+        />
+      </noscript>
+      <Section labelledBy={SCENE_HEADING} className="noscript:hidden">
+        <Container>
+          <TextLink href="#projekte" tone="muted">
+            {t("skipAnimation")}
+          </TextLink>
         </Container>
-      </div>
-    </Section>
+        {/* Pinned at the top of the window: the space of the sticky bars stays empty. */}
+        <div
+          ref={panel}
+          className="h-svh pt-(--header-height) max-md:pb-(--action-bar-height)"
+        >
+          {/*
+            On a computer the captions take the height they need and the heading
+            the rest, so the last step stays on screen. The button shares the
+            cell of the scene, so it follows the captions when read.
+          */}
+          <Container className="grid h-full grid-rows-[auto_minmax(0,1fr)_auto] gap-6 py-6 md:grid-cols-[3fr_2fr] md:grid-rows-[1fr_auto] md:gap-x-12 md:gap-y-8 md:py-10">
+            <SectionHeading
+              id={SCENE_HEADING}
+              title={t("sceneTitle")}
+              intro={t("sceneIntro")}
+              className="md:col-start-2 md:row-start-1 md:self-end"
+            />
+            <div className="relative col-start-1 row-start-2 min-h-0 md:row-span-2 md:row-start-1">
+              {ready ? null : (
+                <Image
+                  src="/images/3d/schrank-platzhalter.svg"
+                  alt={t("sceneImageAlt")}
+                  fill
+                  sizes="(min-width: 768px) 60vw, 100vw"
+                  className="object-contain"
+                />
+              )}
+              {near ? (
+                <div className="absolute inset-0">
+                  <WardrobeScene
+                    pin={panel}
+                    onStep={setActiveStep}
+                    onReady={onReady}
+                  />
+                </div>
+              ) : null}
+            </div>
+            <ol className="row-start-3 flex flex-col gap-5 max-md:min-h-28 md:col-start-2 md:row-start-2 md:self-start">
+              {steps.map((step, index) => {
+                const active = index + 1 === activeStep;
+
+                return (
+                  <li
+                    key={step.id}
+                    aria-current={active ? "step" : undefined}
+                    className={cn(
+                      "flex items-start gap-4",
+                      active ? "text-graphit" : "text-schiefer max-md:sr-only",
+                    )}
+                  >
+                    <StepNumber
+                      value={index + 1}
+                      state={active ? "active" : "muted"}
+                    />
+                    <div>
+                      {step.title ? (
+                        <p
+                          className={cn(
+                            "mb-0.5 font-display text-h4",
+                            active && "text-tannengruen",
+                          )}
+                        >
+                          {step.title}
+                        </p>
+                      ) : null}
+                      <p className="text-small">{step.text}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+            {/* Hidden until the wardrobe is finished: then it can be seen, read and focused. */}
+            <ButtonLink
+              href="/anfrage"
+              size="header"
+              className={cn(
+                "relative z-10 col-start-1 row-start-2 m-4 self-end justify-self-end",
+                !finished && "invisible",
+              )}
+            >
+              {buttonLabel}
+            </ButtonLink>
+          </Container>
+        </div>
+      </Section>
+    </>
   );
 }

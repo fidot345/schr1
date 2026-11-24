@@ -770,6 +770,8 @@ export type HomeContent = {
   featuredProjects: FeaturedProject[];
   processSteps: ProcessStep[];
   sceneSteps: SceneStepItem[];
+  /** The button of the last step, "Projekt anfragen". */
+  sceneButton: string;
   about: AboutBlock;
   careers: CareersBlock;
   meta: {
@@ -829,6 +831,7 @@ export const getHomePage = cache(
         id: rowId(caption.id, index),
         ...sceneStep(caption.text),
       })),
+      sceneButton: home.sceneButton,
       about: {
         title: home.about.title,
         paragraphs: paragraphs(home.about.text),

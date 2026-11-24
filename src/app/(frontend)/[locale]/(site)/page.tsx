@@ -78,7 +78,7 @@ export default async function HomePage({ params }: PageProps) {
     <>
       <Hero {...home.hero} />
       <Services services={services} />
-      <WardrobeSection steps={home.sceneSteps} />
+      <WardrobeSection steps={home.sceneSteps} buttonLabel={home.sceneButton} />
       <Projects projects={home.featuredProjects} />
       <Process steps={home.processSteps} note={t("processNote")} />
       <Jobs

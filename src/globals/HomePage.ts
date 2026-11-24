@@ -191,6 +191,19 @@ export const HomePage: GlobalConfig = {
                 },
               ],
             },
+            {
+              name: "sceneButton",
+              type: "text",
+              label: "Schaltfläche beim Schritt „Fertig“",
+              required: true,
+              localized: true,
+              // Also the database default, so the column comes to a filled table.
+              defaultValue: "Projekt anfragen",
+              admin: {
+                description:
+                  "Erscheint, wenn der Schrank fertig ist, und führt zur Anfrage. Kurz halten, zum Beispiel „Projekt anfragen“.",
+              },
+            },
           ],
         },
         {

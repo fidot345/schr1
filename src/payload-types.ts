@@ -794,6 +794,10 @@ export interface HomePage {
     text: string;
     id?: string | null;
   }[];
+  /**
+   * Erscheint, wenn der Schrank fertig ist, und führt zur Anfrage. Kurz halten, zum Beispiel „Projekt anfragen“.
+   */
+  sceneButton: string;
   about: {
     title: string;
     /**
@@ -976,6 +980,7 @@ export interface HomePageSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  sceneButton?: T;
   about?:
     | T
     | {
