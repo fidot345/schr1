@@ -844,6 +844,7 @@ export const homePage = {
         "Montage: Wir bauen bei Ihnen ein – sauber und pünktlich.",
         "Fertig. Vom Aufmaß bis zur Montage in 8–10 Wochen.",
       ],
+      sceneButton: "Projekt anfragen",
       about: {
         title: "Familienbetrieb seit 1989",
         text: "Georg Tannrieder hat die Werkstatt 1989 in Wendelfing gegründet. Heute führt sein Sohn Johannes Tannrieder, Schreinermeister, den Betrieb – mit vier Schreinern, einem Monteur, zwei Auszubildenden und Anna Huber im Büro.\n\nWir arbeiten im Umkreis von etwa 40 km. Alles, was wir bei Ihnen montieren, entsteht vorher in unserer eigenen Werkstatt, und wer bei Ihnen einbaut, kennt das Stück von Anfang an.",
@@ -895,6 +896,7 @@ export const homePage = {
         "Installation: we fit it in your home – clean and on time.",
         "Done. From measuring to installation in 8–10 weeks.",
       ],
+      sceneButton: "Request a project",
       about: {
         title: "Family business since 1989",
         text: "Georg Tannrieder founded the workshop in Wendelfing in 1989. Today his son Johannes Tannrieder, a master joiner, runs the business – with four joiners, a fitter, two apprentices and Anna Huber in the office.\n\nWe work within about 40 km. Everything we install in your home is made in our own workshop first, and the people who fit it have known the piece from the start.",

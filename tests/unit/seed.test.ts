@@ -87,6 +87,11 @@ describe("seed content", () => {
     }
   });
 
+  it("has the button of the last scene step from the brief", () => {
+    expect(homePage.text.de.sceneButton).toBe("Projekt anfragen");
+    expect(homePage.text.en.sceneButton).toBe("Request a project");
+  });
+
   it("has a footer line in both languages within the field limit", () => {
     for (const lang of langs) {
       expect(siteSettings.tagline[lang].length).toBeGreaterThan(0);

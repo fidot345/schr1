@@ -90,6 +90,7 @@ const HOME = {
     { id: "s1", text: "Zuschnitt: Jedes Teil wird zugeschnitten." },
     { id: "s6", text: "Fertig. In 8–10 Wochen." },
   ],
+  sceneButton: "Projekt anfragen",
   about: {
     title: "Familienbetrieb seit 1989",
     text: "Erster Absatz.\n\nZweiter Absatz.",
@@ -229,6 +230,12 @@ describe("getHomePage", () => {
       { id: "s1", title: "Zuschnitt", text: "Jedes Teil wird zugeschnitten." },
       { id: "s6", title: "Fertig", text: "In 8–10 Wochen." },
     ]);
+  });
+
+  it("has the button of the last scene step", async () => {
+    const { sceneButton } = await getHomePage("de");
+
+    expect(sceneButton).toBe("Projekt anfragen");
   });
 
   it("has the readable featured projects with their duration", async () => {

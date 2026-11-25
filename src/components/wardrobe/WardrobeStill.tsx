@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -8,25 +9,39 @@ import { TextLink } from "@/components/ui/TextLink";
 import { cn } from "@/lib/cn";
 import type { SceneStepItem } from "@/lib/content";
 
-export type WardrobeSectionProps = {
+/** The id of the heading that names the section. */
+export const SCENE_HEADING = "szene-titel";
+
+export type WardrobeStillProps = {
   /** The six steps, from "Zuschnitt" to "Fertig", from the captions in the admin panel. */
   steps: SceneStepItem[];
-  /** The current step, counted from 1. It gets the filled number. */
-  activeStep: number;
+  /** The button after the last step, "Projekt anfragen", from the admin panel. */
+  buttonLabel: string;
+  /** The current step, counted from 1. It gets the filled number; none without it. */
+  activeStep?: number;
+  /** The id of the heading; another one where the scene's panel has the same heading. */
+  headingId?: string;
 };
 
 /**
- * TEMP(stage-5): "Vom Brett zum Schrank" as a still picture, mockup 01d. The
- * flat wardrobe from public/images/3d stands in for the 3D scene, and
- * activeStep is fixed by the page. Stage 5 replaces the picture with the
- * scene and drives activeStep from the scroll position. A caption without a
- * step name in front shows only its text.
+ * "Vom Brett zum Schrank" as a still picture, mockup 01d: the flat wardrobe
+ * from public/images/3d, all six captions as a list and the button to the
+ * request form. This is the fallback of BRIEF.md section 4 ("Запасной
+ * вариант"): WardrobeSection shows it instead of the 3D scene while the
+ * system asks to reduce motion, where the browser has no WebGL 2 and,
+ * through <noscript>, without JavaScript. Nothing is pinned. A caption
+ * without a step name in front shows only its text.
  */
-export function WardrobeSection({ steps, activeStep }: WardrobeSectionProps) {
+export function WardrobeStill({
+  steps,
+  buttonLabel,
+  activeStep,
+  headingId = SCENE_HEADING,
+}: WardrobeStillProps) {
   const t = useTranslations("HomePage");
 
   return (
-    <Section labelledBy="szene-titel">
+    <Section labelledBy={headingId}>
       <Container>
         <TextLink href="#projekte" tone="muted">
           {t("skipAnimation")}
@@ -43,7 +58,7 @@ export function WardrobeSection({ steps, activeStep }: WardrobeSectionProps) {
           </div>
           <div className="min-w-0 flex-[2_1_360px]">
             <SectionHeading
-              id="szene-titel"
+              id={headingId}
               title={t("sceneTitle")}
               intro={t("sceneIntro")}
             />
@@ -81,6 +96,9 @@ export function WardrobeSection({ steps, activeStep }: WardrobeSectionProps) {
                 );
               })}
             </ol>
+            <ButtonLink href="/anfrage" className="mt-8 w-full md:w-auto">
+              {buttonLabel}
+            </ButtonLink>
           </div>
         </div>
       </Container>

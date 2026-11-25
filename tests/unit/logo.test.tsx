@@ -99,6 +99,15 @@ describe("Logo", () => {
     expect(html).toContain("text-[1.5rem]");
   });
 
+  it("compact: a long name wraps in tight lines instead of widening the header", () => {
+    const html = render(
+      <Logo variant="compact" name="Schreinerei Tannrieder" />,
+    );
+
+    expect(html).toMatch(/class="[^"]*\bwrap-anywhere\b[^"]*"/);
+    expect(html).toContain("leading-[1.05]");
+  });
+
   it("light: Moos mark and Weiß name for the Graphit footer", () => {
     const html = render(<Logo variant="light" name="Tannrieder" />);
 

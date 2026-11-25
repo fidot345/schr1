@@ -11,11 +11,21 @@ export const AXE_TAGS = [
   "wcag22aa",
 ];
 
+/*
+ * Headless Chromium has no GPU and draws WebGL with SwiftShader. Showing the
+ * 3D scene then makes the browser's own GL driver report a stall when it
+ * copies the canvas back. It is not a message of the page: with a real GPU
+ * (Chrome with --enable-gpu, D3D11) the console stays empty.
+ */
+const SOFTWARE_GL_NOTICE =
+  /^\[\.WebGL-[^\]]+\]GL Driver Message \(OpenGL, Performance, [^)]+\): GPU stall due to ReadPixels/;
+
 /** Everything the browser reports as an error or a warning, and uncaught errors. */
 export function watchConsole(page: Page): string[] {
   const problems: string[] = [];
   page.on("console", (message) => {
     const type = message.type();
+    if (type === "warning" && SOFTWARE_GL_NOTICE.test(message.text())) return;
     if (type === "error" || type === "warning") {
       problems.push(`${type}: ${message.text()}`);
     }

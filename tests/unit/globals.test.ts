@@ -122,6 +122,7 @@ const requiredFields: Record<string, string[]> = {
     "processSteps.title",
     "processSteps.text",
     "sceneCaptions.text",
+    "sceneButton",
     "about.title",
     "about.text",
     "about.image",
@@ -346,6 +347,14 @@ describe("home page", () => {
     expect(validate(field, rows(count - 1))).not.toBe(true);
     expect(validate(field, rows(count + 1))).not.toBe(true);
     expect(validate(field, undefined)).not.toBe(true);
+  });
+
+  it("asks for the button of the last scene step, Projekt anfragen by default", () => {
+    const field = find(HomePage, "sceneButton");
+    expect(field.type).toBe("text");
+    expect(prop(field, "required")).toBe(true);
+    expect(prop(field, "localized")).toBe(true);
+    expect(prop(field, "defaultValue")).toBe("Projekt anfragen");
   });
 
   it.each([

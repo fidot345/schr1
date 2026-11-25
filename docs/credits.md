@@ -17,3 +17,9 @@
 | projekt-badmoebel.jpg | подвесная деревянная тумба с накладной раковиной у кирпичной стены | Polina | https://www.pexels.com/photo/5644275/ | Pexels License |
 | about-werkstatt.jpg | верстак у окна в мастерской, инструменты на стене | Yaroslav Shuraev | https://www.pexels.com/photo/4888924/ | Pexels License |
 | karriere.jpg | руки столяра в фартуке строгают рубанком брусок на верстаке, рядом стружка | Burst | https://www.pexels.com/photo/374861/ | Pexels License |
+| textures/oak/color.webp | дуб «Oak Veneer 01», цвет; 1K, плитка 1,83 м, волокна вдоль картинки | Jenelle van Heerden | https://polyhaven.com/a/oak_veneer_01 | CC0 |
+| textures/oak/roughness.webp | дуб «Oak Veneer 01», шероховатость (в оттенках серого) | Jenelle van Heerden | https://polyhaven.com/a/oak_veneer_01 | CC0 |
+| textures/oak/normal.webp | дуб «Oak Veneer 01», нормали (OpenGL) | Jenelle van Heerden | https://polyhaven.com/a/oak_veneer_01 | CC0 |
+| textures/birch/color.webp | клён «White Maple Veneer», цвет; 1K, плитка 1 м, повёрнут на 90°, чтобы волокна шли вдоль картинки. Замена берёзовой фанеры для задней стенки: CC0-текстуры берёзовой фанеры на Poly Haven и ambientCG нет (решение Максона, сессия 34) | Jenelle van Heerden | https://polyhaven.com/a/white_maple_veneer | CC0 |
+
+Текстуры лежат в `public/textures/`: 1K-JPG с Poly Haven пересжаты в WebP (sharp), иначе файлы не влезали в 300 КБ.

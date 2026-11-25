@@ -4,6 +4,7 @@ import * as migration_20261119_134151_content_collections from './20261119_13415
 import * as migration_20261119_174831_site_settings_home_page from './20261119_174831_site_settings_home_page';
 import * as migration_20261120_154509_site_settings_logo_word from './20261120_154509_site_settings_logo_word';
 import * as migration_20261122_124736_home_page_blocks_and_tagline from './20261122_124736_home_page_blocks_and_tagline';
+import * as migration_20261124_221729_home_page_scene_button from './20261124_221729_home_page_scene_button';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261122_124736_home_page_blocks_and_tagline.up,
     down: migration_20261122_124736_home_page_blocks_and_tagline.down,
-    name: '20261122_124736_home_page_blocks_and_tagline'
+    name: '20261122_124736_home_page_blocks_and_tagline',
+  },
+  {
+    up: migration_20261124_221729_home_page_scene_button.up,
+    down: migration_20261124_221729_home_page_scene_button.down,
+    name: '20261124_221729_home_page_scene_button'
   },
 ];

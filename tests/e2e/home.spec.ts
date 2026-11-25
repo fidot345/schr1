@@ -100,9 +100,17 @@ test.describe("content from Payload", () => {
 
       await expect(page.locator(".photo-placeholder")).toHaveCount(0);
       await expect(page.locator('main div[role="img"]')).toHaveCount(0);
-      // The text of the page, without the scripts that carry all messages.
-      const text = await page.locator("body > :not(script)").allTextContents();
-      expect(text.join(" ")).not.toMatch(PLACEHOLDER);
+      // The text of the page, without the scripts that carry all messages
+      // and without <noscript>: with JavaScript on, the still picture of
+      // the scene is raw markup there, with the file name of its drawing.
+      const text = await page.evaluate(() => {
+        const body = document.body.cloneNode(true) as HTMLElement;
+        for (const element of body.querySelectorAll("script, noscript")) {
+          element.remove();
+        }
+        return body.textContent ?? "";
+      });
+      expect(text).not.toMatch(PLACEHOLDER);
     });
   }
 
@@ -186,6 +194,8 @@ test.describe("content from Payload", () => {
     ).toBeVisible();
   });
 });
+
+// That no page scrolls sideways on a phone: page-width.spec.ts.
 
 test.describe("phone menu at 390 px", () => {
   test.use({ viewport: { width: 390, height: 844 } });
