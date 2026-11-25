@@ -44,11 +44,14 @@ export function Header({
   const tNavigation = useTranslations("Navigation");
   const tLocaleSwitcher = useTranslations("LocaleSwitcher");
 
+  // May get narrower than its word: a long logo word (or the company name,
+  // while SiteSettings has no logo word) wraps instead of pushing "Menü"
+  // past the edge of a phone.
   const homeLink = (
     <Link
       href="/"
       aria-label={t("homeLabel", { name: companyName })}
-      className="flex shrink-0 items-center text-graphit no-underline"
+      className="flex min-w-0 items-center text-graphit no-underline"
     >
       <Logo
         variant="full"

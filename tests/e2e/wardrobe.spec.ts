@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "@playwright/test";
+import { devices, expect, type Page, test } from "@playwright/test";
 import { axeViolations, watchConsole } from "./support/page-checks";
 
 /*
@@ -6,11 +6,22 @@ import { axeViolations, watchConsole } from "./support/page-checks";
  * wardrobe in a pinned panel and back, the captions follow the steps, the
  * 3D code and the wood textures come only near the section and only from
  * our domain, and with reduced motion, without WebGL or without JavaScript
- * the still picture stands in its place. The button of the last step leads
- * to the request form.
+ * the still picture stands in its place; so it does when the WebGL context
+ * is lost or the scene does not load, with a warning that names the cause.
+ * On a low screen the steps other than the current one show their name
+ * only. The button of the last step leads to the request form.
  */
 
 const SECTION = 'section[aria-labelledby="szene-titel"]';
+
+/**
+ * How long the scene may take to arrive and draw its wood. Headless browsers
+ * draw WebGL in software; in a parallel local run many of them at once, and
+ * the scene then comes after the usual 5 seconds (measured up to about 25
+ * from opening the page, with no context lost and no failure, session 36).
+ */
+const SCENE_ARRIVES = { timeout: 20_000 };
+test.describe.configure({ timeout: 60_000 });
 
 /** Scroll lengths of the pin: three screens on a computer, two and a half on a phone. */
 const SCREENS = [
@@ -53,9 +64,52 @@ async function showStill(page: Page) {
 async function comeNear(page: Page) {
   await page.goto("/");
   await page.locator(SECTION).scrollIntoViewIfNeeded();
-  await expect(page.locator(`${SECTION} canvas`)).toBeAttached();
-  await expect(page.locator(".pin-spacer")).toBeAttached();
+  await expect(page.locator(`${SECTION} canvas`)).toBeAttached(SCENE_ARRIVES);
+  await expect(page.locator(".pin-spacer")).toBeAttached(SCENE_ARRIVES);
 }
+
+/** The warning the section leaves when the scene fails, by its code. */
+const failureWarning = (code: string) =>
+  `warning: [wardrobe-scene] ${code}: the still picture stands in for the 3D scene.`;
+
+/** Whether the console has the warning of `code`; an error that caused it comes after it. */
+const warned = (problems: string[], code: string) =>
+  problems.some((problem) => problem.startsWith(failureWarning(code)));
+
+/**
+ * Chrome's own notice when the photo of the first screen, preloaded, is not
+ * drawn within a few seconds: with a phone's pixel density it comes while
+ * a test is still busy further down. Not a message of the scene.
+ */
+const PRELOAD_NOTICE = "was preloaded using link preload but not used";
+
+/** The still picture in place of the panel: picture, all six captions, the button. */
+async function expectStill(page: Page) {
+  await expect(page.locator(`${SECTION} canvas`)).toHaveCount(0);
+  await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  await expect(page.locator(`${SECTION} img`)).toHaveAttribute(
+    "src",
+    /schrank-platzhalter\.svg/,
+  );
+  await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
+  for (const item of await page.locator(`${SECTION} ol > li`).all()) {
+    await expect(item).toBeVisible();
+    await expect(item).not.toHaveAttribute("aria-current");
+  }
+  await expect(button(page)).toBeVisible();
+}
+
+/** Whether the text under each caption's name can be seen (not only read by a screen reader). */
+const shownTexts = (page: Page) =>
+  page
+    .locator(`${SECTION} ol > li`)
+    .evaluateAll((items) =>
+      items.map(
+        (item) =>
+          (item.querySelector("p:last-child")?.getBoundingClientRect().height ??
+            0) > 1,
+      ),
+    );
 
 for (const { name, width, height, screens } of SCREENS) {
   test.describe(`the scene at ${name}`, () => {
@@ -161,10 +215,10 @@ test.describe("loading", () => {
     );
 
     await page.locator(SECTION).scrollIntoViewIfNeeded();
-    await expect(page.locator(`${SECTION} canvas`)).toBeAttached();
+    await expect(page.locator(`${SECTION} canvas`)).toBeAttached(SCENE_ARRIVES);
     expect(scripts.length).toBeGreaterThan(atLoad);
     // Once the scene draws, the picture goes.
-    await expect(page.locator(`${SECTION} img`)).toHaveCount(0);
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
   });
 
   test("takes the wood textures from our own domain and nothing from others", async ({
@@ -189,7 +243,7 @@ test.describe("loading", () => {
     await page.goto("/");
     await page.locator(SECTION).scrollIntoViewIfNeeded();
     // The picture stays until the wardrobe has its wood.
-    await expect(page.locator(`${SECTION} img`)).toHaveCount(0);
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
 
     expect(textures.map(({ url }) => new URL(url).pathname).sort()).toEqual([
       "/textures/birch/color.webp",
@@ -209,8 +263,10 @@ test.describe("opened below the section", () => {
     }) => {
       await page.setViewportSize({ width, height });
       await page.goto("/#projekte");
-      await expect(page.locator(".pin-spacer")).toBeAttached();
-      await expect(page.locator(`${SECTION} canvas`)).toBeAttached();
+      await expect(page.locator(".pin-spacer")).toBeAttached(SCENE_ARRIVES);
+      await expect(page.locator(`${SECTION} canvas`)).toBeAttached(
+        SCENE_ARRIVES,
+      );
 
       await expect(page.locator("#projekte")).toBeInViewport();
       // Past the pin, the scene shows the finished wardrobe.
@@ -249,9 +305,12 @@ test.describe("the still picture instead of the scene", () => {
   test("with reduced motion: picture and all captions, nothing pinned", async ({
     page,
   }) => {
+    // A setting, not a failure: no warning on the console.
+    const problems = watchConsole(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await showStill(page);
+    expect(problems).toEqual([]);
 
     await expect(page.locator(`${SECTION} canvas`)).toHaveCount(0);
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
@@ -282,6 +341,7 @@ test.describe("the still picture instead of the scene", () => {
         ).call(this, type, ...rest);
       } as typeof HTMLCanvasElement.prototype.getContext;
     });
+    const problems = watchConsole(page);
     await page.goto("/");
     await showStill(page);
 
@@ -289,6 +349,142 @@ test.describe("the still picture instead of the scene", () => {
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
     await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
     await expect(button(page)).toBeVisible();
+    expect(problems).toEqual([failureWarning("no-webgl2")]);
+  });
+});
+
+/*
+ * The scene fails: the still picture for good, BRIEF.md "Запасной вариант",
+ * and a warning with the cause. A phone as Chrome on Android has it (touch,
+ * no real shadows) and a computer.
+ */
+const PIXEL_7 = devices["Pixel 7"];
+const FAILING_SCREENS = [
+  {
+    name: "a computer",
+    use: { viewport: { width: 1440, height: 900 } },
+    screens: 3,
+  },
+  {
+    name: "a Pixel 7",
+    use: {
+      viewport: PIXEL_7.viewport,
+      userAgent: PIXEL_7.userAgent,
+      deviceScaleFactor: PIXEL_7.deviceScaleFactor,
+      isMobile: true,
+      hasTouch: true,
+    },
+    screens: 2.5,
+  },
+];
+
+for (const { name, use, screens } of FAILING_SCREENS) {
+  test.describe(`the still picture when the scene fails on ${name}`, () => {
+    test.use(use);
+
+    test("loses the WebGL context halfway through: the picture in the panel's place", async ({
+      page,
+    }) => {
+      const problems = watchConsole(page);
+      await comeNear(page);
+      // The wardrobe is drawn: the flat picture has gone.
+      await expect(page.locator(`${SECTION} img`)).toHaveCount(
+        0,
+        SCENE_ARRIVES,
+      );
+      const start = await pinStart(page);
+      await page.evaluate(
+        (y) => window.scrollTo(0, y),
+        start + 0.5 * screens * use.viewport.height,
+      );
+      await expect.poll(() => markedStep(page)).toBe(3);
+
+      // What the browser does to a phone short of memory or sent to the background.
+      await page
+        .locator(`${SECTION} canvas`)
+        .evaluate((canvas: HTMLCanvasElement) =>
+          canvas
+            .getContext("webgl2")
+            ?.getExtension("WEBGL_lose_context")
+            ?.loseContext(),
+        );
+
+      await expectStill(page);
+      await expect(
+        page.locator(SECTION).getByRole("heading", { level: 2 }),
+      ).toBeInViewport();
+      // The warning with the cause, and nothing from three or React.
+      expect(
+        problems.filter((problem) => !problem.includes(PRELOAD_NOTICE)),
+      ).toEqual([failureWarning("context-lost")]);
+    });
+
+    test("a texture does not load: the picture instead", async ({ page }) => {
+      const problems = watchConsole(page);
+      await page.route("**/textures/oak/normal.webp", (route) => route.abort());
+      await page.goto("/");
+      await page.locator(SECTION).scrollIntoViewIfNeeded();
+
+      await expectStill(page);
+      expect(warned(problems, "scene-error")).toBe(true);
+    });
+
+    test("the 3D code does not load: the picture instead", async ({ page }) => {
+      const problems = watchConsole(page);
+      await page.goto("/");
+      await page.waitForLoadState("load");
+      // Every script from here on fails, the scene's chunk among them.
+      await page.route("**/_next/static/chunks/**", (route) => route.abort());
+      await page.locator(SECTION).scrollIntoViewIfNeeded();
+
+      await expectStill(page);
+      expect(warned(problems, "scene-error")).toBe(true);
+    });
+  });
+}
+
+test.describe("captions on a low screen", () => {
+  test("1280 x 720: the text of the current step only, the others by their name", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await comeNear(page);
+    const start = await pinStart(page);
+
+    // Scroll progress and the step it marks, BRIEF.md "Раскадровка".
+    for (const [progress, marked] of [
+      [0.02, 1],
+      [0.48, 3],
+      [0.98, 6],
+    ]) {
+      await page.evaluate(
+        (y) => window.scrollTo(0, y),
+        start + progress * 3 * 720,
+      );
+      // The scrub catches up with the scroll over a few frames.
+      await expect.poll(() => markedStep(page)).toBe(marked);
+      await expect
+        .poll(() => shownTexts(page))
+        .toEqual([1, 2, 3, 4, 5, 6].map((step) => step === marked));
+      // Heading, every name and the current text on screen.
+      await expect(
+        page.locator(SECTION).getByRole("heading", { level: 2 }),
+      ).toBeInViewport({ ratio: 1 });
+      for (const item of await page.locator(`${SECTION} ol > li`).all()) {
+        await expect(item).toBeInViewport({ ratio: 1 });
+      }
+    }
+    // The other texts stay there for screen readers.
+    await expect(page.locator(`${SECTION} ol`)).toContainText(
+      "Jedes Teil wird",
+    );
+  });
+
+  test("1440 x 900: every text", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await comeNear(page);
+
+    expect(await shownTexts(page)).toEqual(Array(6).fill(true));
   });
 });
 

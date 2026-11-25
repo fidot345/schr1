@@ -438,6 +438,15 @@ describe("WardrobeSection", () => {
     expect(hidden.join("")).not.toContain("aria-current");
   });
 
+  it("shows the other steps by their name only on a low screen, their text for screen readers", () => {
+    const items = panel.match(/<li [^>]*>.*?<\/li>/g) ?? [];
+    const lowText = (item: string) =>
+      /<p class="[^"]*\blow-screen:sr-only\b[^"]*">/.test(item);
+
+    expect(items).toHaveLength(6);
+    expect(items.map(lowText)).toEqual([false, true, true, true, true, true]);
+  });
+
   it("keeps the button to the request form hidden until the wardrobe is finished", () => {
     const button = panel.match(/<a href="\/anfrage"[^>]*>([^<]*)<\/a>/);
 

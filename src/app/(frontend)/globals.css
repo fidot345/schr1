@@ -19,6 +19,23 @@
 }
 
 /*
+ * low-screen: a window too low for the pinned panel of the 3D scene to show
+ * its heading and all six captions in full, such as a 1280 x 720 laptop.
+ * There the steps other than the current one show only their name (Maxon,
+ * session 36). Measured: from xl the panel needs about 780px, narrower
+ * columns wrap the captions into more lines and need up to about 930px.
+ */
+@custom-variant low-screen {
+  @media (height < 50rem) {
+    @slot;
+  }
+
+  @media (width < 80rem) and (height < 58rem) {
+    @slot;
+  }
+}
+
+/*
  * Design tokens from the mockup in design/, docs/REDESIGN.md "Токены".
  * `static` emits every variable even when no utility uses it yet.
  * Sizes are in rem (16px root): the same as the mockup's px, but they follow

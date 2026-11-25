@@ -44,6 +44,8 @@ type WardrobeSceneProps = {
   onStep: (step: SceneStep) => void;
   /** Called once the wardrobe with its textures is ready to draw. */
   onReady: () => void;
+  /** Called when the browser takes the WebGL context away while the scene runs. */
+  onContextLost: () => void;
 };
 
 /*
@@ -132,14 +134,27 @@ const onComputer = () => window.matchMedia(COMPUTER).matches;
 const GRAIN_OFFSETS = PARTS.map((_, index) => grainOffset(index));
 
 /*
- * fiber 9.8 still makes a THREE.Clock, and three r183 warns on the console
- * that Clock is deprecated, once per canvas. That one message is dropped;
- * everything else three reports goes to the console as before. Remove this
- * when fiber moves to THREE.Timer.
+ * Two warnings of three are dropped; everything else three reports goes to
+ * the console as before.
+ * - fiber 9.8 still makes a THREE.Clock, and three r183 warns that Clock is
+ *   deprecated, once per canvas. Remove this when fiber moves to
+ *   THREE.Timer.
+ * - When the context is lost, the section takes the scene down, and fiber
+ *   asks the lost context to be lost once more: a lost context lends no
+ *   extension, so three reports WEBGL_lose_context as missing. That would
+ *   only muddle the warning of the section that names the loss.
  */
-const FIBER_CLOCK_WARNING = "THREE.Clock: This module has been deprecated.";
+const DROPPED_WARNINGS = [
+  "THREE.Clock: This module has been deprecated.",
+  "THREE.WebGLRenderer: WEBGL_lose_context extension not supported.",
+];
 setConsoleFunction((type, message, ...params) => {
-  if (type === "warn" && message.startsWith(FIBER_CLOCK_WARNING)) return;
+  if (
+    type === "warn" &&
+    DROPPED_WARNINGS.some((warning) => message.startsWith(warning))
+  ) {
+    return;
+  }
   console[type](message, ...params);
 });
 
@@ -272,6 +287,23 @@ function Surroundings({
   );
 }
 
+/**
+ * Hears the loss of the WebGL context, BRIEF.md "Запасной вариант". three
+ * would draw again after a restore, but without the light all round (its
+ * cube is drawn once) the wood came back dark: the section shows the still
+ * picture instead. The listener goes before fiber drops the context itself
+ * when the scene is taken down.
+ */
+function ContextLoss({ onLost }: { onLost: () => void }) {
+  const canvas = useThree((state) => state.gl.domElement);
+
+  useEffect(() => {
+    canvas.addEventListener("webglcontextlost", onLost);
+    return () => canvas.removeEventListener("webglcontextlost", onLost);
+  }, [canvas, onLost]);
+  return null;
+}
+
 /** The 16 parts in their materials; suspends until the textures are there. */
 function Wardrobe({
   motion,
@@ -312,6 +344,7 @@ export default function WardrobeScene({
   pin,
   onStep,
   onReady,
+  onContextLost,
 }: WardrobeSceneProps) {
   const motion = useWardrobeTimeline(pin, onStep);
   const [colors] = useState(readColors);
@@ -331,6 +364,7 @@ export default function WardrobeScene({
       shadows={shadows ? SHADOW_TYPE : false}
       style={STYLE}
     >
+      <ContextLoss onLost={onContextLost} />
       <CameraPath motion={motion} />
       <Sun motion={motion} color={colors.light} shadows={shadows} />
       <Surroundings

@@ -128,10 +128,17 @@ export function Logo({
         height={light ? 30 : 27}
         className={light ? "text-moos" : "text-tannengruen"}
       />
+      {/*
+        In the phone header a name too long for the row wraps, in lines as
+        tight as the full logo's, so the header keeps its 64px; a single
+        word too long breaks where it has to.
+      */}
       <span
         className={cn(
           "font-display text-[1.5rem] font-semibold",
-          light ? "text-weiss" : "text-tannengruen",
+          light
+            ? "text-weiss"
+            : "leading-[1.05] wrap-anywhere text-tannengruen",
         )}
       >
         {name}
