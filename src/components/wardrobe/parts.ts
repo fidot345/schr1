@@ -32,8 +32,9 @@ type CameraView = { position: Vec3; target: Vec3 };
 
 /**
  * The camera, BRIEF.md "Камера": a 35° field of view (wider on narrow
- * canvases, fovFor), a little above at the start, three quarters at eye
- * level from step 5 on. The start view is the brief's (2.6, 2.4, 3.2) moved
+ * canvases at the start, fovFor), a little above at the start, three
+ * quarters at eye level from step 5 on; how near the end view comes
+ * depends on the canvas (cameraAt). The start view is the brief's (2.6, 2.4, 3.2) moved
  * back 15 % along the same line, so the doors on their way round stay in
  * the picture. The end view is further back than the brief's (1.9, 1.3,
  * 2.6), which cuts off the top and the foot of the wardrobe (Maxon,
@@ -47,40 +48,98 @@ export const CAMERA = {
 
 /**
  * The narrowest canvas (width over height) that sees all of the scene at
- * 35°. A narrower one, like a tablet standing upright (0.46), widens its
- * field of view until it sees as far to the sides; it then shows more
- * above and below instead of cutting off the stack and the doors.
+ * 35° from the start view. A narrower one, like a tablet standing upright
+ * (0.46) or a phone (0.6), widens its field of view until it sees as far
+ * to the sides; it then shows more above and below instead of cutting off
+ * the stack and the doors.
  */
 const NARROWEST_FULL_VIEW = 0.75;
 
-/** The vertical field of view, in degrees, for a canvas of `aspect`. */
+/** Half the field of view of the brief, as the tangent the projection uses. */
+const HALF_FOV_TAN = Math.tan((CAMERA.fov * Math.PI) / 360);
+
+/**
+ * The vertical field of view of the start view, in degrees, for a canvas
+ * of `aspect`.
+ */
 export function fovFor(aspect: number): number {
   if (aspect >= NARROWEST_FULL_VIEW) return CAMERA.fov;
-  const half = (CAMERA.fov * Math.PI) / 360;
-  const wider = Math.atan((Math.tan(half) * NARROWEST_FULL_VIEW) / aspect);
+  const wider = Math.atan((HALF_FOV_TAN * NARROWEST_FULL_VIEW) / aspect);
   return (wider * 360) / Math.PI;
+}
+
+/** The shape of the canvas and the layout it is part of. */
+export type CanvasShape = {
+  /** Width over height. */
+  aspect: number;
+  /** The phone layout, under 48rem: the scene above one caption. */
+  phone: boolean;
+};
+
+/** From the end target towards the end position, one metre long. */
+const END_LINE = (() => {
+  const { position, target } = CAMERA.end;
+  const x = position[0] - target[0];
+  const y = position[1] - target[1];
+  const z = position[2] - target[2];
+  const length = Math.hypot(x, y, z);
+  return { x: x / length, y: y / length, z: z / length, length };
+})();
+
+/**
+ * How far the end view stands from its target. On a computer Maxon's view
+ * (session 34), with room above and below the wardrobe. On a phone closer:
+ * there the finished wardrobe fills the canvas, about 93 % of its height
+ * and, on a canvas of 0.7, about 77 % of its width (session 37).
+ */
+const END_DISTANCE = { computer: END_LINE.length, phone: 4 };
+
+/**
+ * How far the end view sees to each side of its target, in metres at its
+ * distance: the finished wardrobe and the way of the handles in step 5.
+ * Where a canvas is too narrow for that, the camera steps back along the
+ * same line and keeps the 35° of the brief, instead of widening its view
+ * as the start view does: so the finished wardrobe fills the width.
+ */
+const END_HALF_WIDTH = 0.84;
+
+/** How far the end view stands from its target on `canvas`. */
+export function endDistance(canvas: CanvasShape): number {
+  const fit = END_HALF_WIDTH / (HALF_FOV_TAN * canvas.aspect);
+  return Math.max(END_DISTANCE[canvas.phone ? "phone" : "computer"], fit);
 }
 
 /**
  * Where the camera stands and what it looks at, `progress` (0 to 1) of the
- * way from the start view to the end view, into `position` and `target`.
+ * way from the start view to the end view on `canvas`, into `position` and
+ * `target`. Returns the vertical field of view, in degrees: on a narrow
+ * canvas it goes from the wider one of the start view back to 35°.
  */
 export function cameraAt(
   progress: number,
+  canvas: CanvasShape,
   position: Vector3,
   target: Vector3,
-): void {
+): number {
   const { start, end } = CAMERA;
+  const away = endDistance(canvas);
+  const endPosition = [
+    end.target[0] + END_LINE.x * away,
+    end.target[1] + END_LINE.y * away,
+    end.target[2] + END_LINE.z * away,
+  ];
   position.set(
-    start.position[0] + (end.position[0] - start.position[0]) * progress,
-    start.position[1] + (end.position[1] - start.position[1]) * progress,
-    start.position[2] + (end.position[2] - start.position[2]) * progress,
+    start.position[0] + (endPosition[0] - start.position[0]) * progress,
+    start.position[1] + (endPosition[1] - start.position[1]) * progress,
+    start.position[2] + (endPosition[2] - start.position[2]) * progress,
   );
   target.set(
     start.target[0] + (end.target[0] - start.target[0]) * progress,
     start.target[1] + (end.target[1] - start.target[1]) * progress,
     start.target[2] + (end.target[2] - start.target[2]) * progress,
   );
+  const startFov = fovFor(canvas.aspect);
+  return startFov + (CAMERA.fov - startFov) * progress;
 }
 
 /** The step that is under way at this progress of the scroll. */

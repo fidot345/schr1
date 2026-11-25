@@ -5,6 +5,8 @@ import {
   MeshStandardMaterial,
   RepeatWrapping,
   SRGBColorSpace,
+  type Texture,
+  TextureSource,
   Vector2,
 } from "three";
 import type { PartMaterial } from "./parts";
@@ -52,16 +54,42 @@ const MAX_ANISOTROPY = 8;
 useTexture.preload(TEXTURES);
 
 /**
+ * `texture` at most `size` pixels on its longest side: itself when it is
+ * not larger, else a smaller copy drawn on a canvas. The copy has a source
+ * of its own, so the loaded texture in drei's cache stays as it is.
+ */
+function atMost(texture: Texture, size: number): Texture {
+  const image = texture.image;
+  if (!(image instanceof HTMLImageElement)) return texture;
+  const scale = size / Math.max(image.naturalWidth, image.naturalHeight);
+  if (scale >= 1) return texture;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(image.naturalWidth * scale);
+  canvas.height = Math.round(image.naturalHeight * scale);
+  canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const smaller = texture.clone();
+  smaller.source = new TextureSource(canvas);
+  smaller.needsUpdate = true;
+  return smaller;
+}
+
+/**
  * The four materials of the parts, made once and shared by all of them;
- * `metal` is the colour of rail and handles, a token of globals.css.
- * Suspends until the textures are loaded; gives everything back to the
- * graphics card when the scene goes.
+ * `metal` is the colour of rail and handles, a token of globals.css. The
+ * wood textures are at most `textureSize` pixels on a side: smaller ones
+ * for a light scene (quality.ts). Suspends until the textures are loaded;
+ * gives everything back to the graphics card when the scene goes.
  */
 export function useWardrobeMaterials(
   metal: string,
+  textureSize: number,
 ): Record<PartMaterial, MeshStandardMaterial> {
   const gl = useThree((state) => state.gl);
-  const textures = useTexture(TEXTURES);
+  const loaded = useTexture(TEXTURES);
+  const textures = useMemo(
+    () => loaded.map((texture) => atMost(texture, textureSize)),
+    [loaded, textureSize],
+  );
 
   const materials = useMemo(() => {
     const [oakColor, oakRoughness, oakNormal, birchColor] = textures;

@@ -6,10 +6,13 @@ import { axeViolations, watchConsole } from "./support/page-checks";
  * wardrobe in a pinned panel and back, the captions follow the steps, the
  * 3D code and the wood textures come only near the section and only from
  * our domain, and with reduced motion, without WebGL or without JavaScript
- * the still picture stands in its place; so it does when the WebGL context
- * is lost or the scene does not load, with a warning that names the cause.
- * On a low screen the steps other than the current one show their name
- * only. The button of the last step leads to the request form.
+ * the still picture stands in its place. A lost WebGL context builds the
+ * scene anew, lighter, up to three times; only then, or when the scene does
+ * not load, comes the still picture, with a warning that names the cause.
+ * A weak phone starts with the light scene. On a phone the wardrobe fills
+ * most of a tall scene. On a low screen the steps other than the current
+ * one show their name only. The button of the last step leads to the
+ * request form.
  */
 
 const SECTION = 'section[aria-labelledby="szene-titel"]';
@@ -72,9 +75,71 @@ async function comeNear(page: Page) {
 const failureWarning = (code: string) =>
   `warning: [wardrobe-scene] ${code}: the still picture stands in for the 3D scene.`;
 
+/** The warning of the scene each time it is built anew, `rebuild` of 3. */
+const rebuildWarning = (code: string, rebuild: number) =>
+  `warning: [wardrobe-scene] ${code}: the scene is built anew, lighter (${rebuild} of 3).`;
+
 /** Whether the console has the warning of `code`; an error that caused it comes after it. */
 const warned = (problems: string[], code: string) =>
   problems.some((problem) => problem.startsWith(failureWarning(code)));
+
+type Device = { memory: number; cores: number };
+/**
+ * Makes the browser tell `memory` GiB and `cores` cores, as Chrome on
+ * Android does; headless Chromium tells the cores of the machine it runs
+ * on. For page.addInitScript, with the device as its argument.
+ */
+const tellDevice = ({ memory, cores }: Device) => {
+  Object.defineProperty(Navigator.prototype, "deviceMemory", {
+    get: () => memory,
+  });
+  Object.defineProperty(Navigator.prototype, "hardwareConcurrency", {
+    get: () => cores,
+  });
+};
+const STRONG_PHONE: Device = { memory: 8, cores: 8 };
+const WEAK_PHONE: Device = { memory: 2, cores: 8 };
+
+/** The canvas of the scene: pixels per CSS pixel and whether its edges are smoothed. */
+const canvasOf = (page: Page) =>
+  page.locator(`${SECTION} canvas`).evaluate((canvas: HTMLCanvasElement) => ({
+    density: canvas.width / canvas.clientWidth,
+    antialias: canvas.getContext("webgl2")?.getContextAttributes()?.antialias,
+  }));
+
+/**
+ * Takes the WebGL context of the scene away, as the browser does on a phone
+ * short of memory or after a reset of the GPU, and gives it back after a
+ * moment when `restore`. The canvas is marked, so a new one can be told
+ * apart from it.
+ */
+async function loseContext(page: Page, { restore }: { restore: boolean }) {
+  await page
+    .locator(`${SECTION} canvas`)
+    .evaluate(async (canvas: HTMLCanvasElement, restore) => {
+      const extension = canvas
+        .getContext("webgl2")
+        ?.getExtension("WEBGL_lose_context");
+      if (!extension) throw new Error("the scene has no context to lose");
+      canvas.dataset.lost = "";
+      const lost = new Promise((resolve) =>
+        canvas.addEventListener("webglcontextlost", resolve, { once: true }),
+      );
+      extension.loseContext();
+      await lost;
+      if (restore) setTimeout(() => extension.restoreContext(), 200);
+    }, restore);
+}
+
+/** Waits for the scene built anew: a new canvas with the wood drawn, the flat picture gone. */
+async function expectBuiltAnew(page: Page) {
+  await expect(page.locator(`${SECTION} canvas[data-lost]`)).toHaveCount(
+    0,
+    SCENE_ARRIVES,
+  );
+  await expect(page.locator(`${SECTION} canvas`)).toHaveCount(1);
+  await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
+}
 
 /**
  * Chrome's own notice when the photo of the first screen, preloaded, is not
@@ -160,6 +225,24 @@ for (const { name, width, height, screens } of SCREENS) {
       await expect(page.locator("#projekte")).toBeInViewport();
 
       expect(problems).toEqual([]);
+    });
+
+    test("gives the scene most of the window", async ({ page }) => {
+      await comeNear(page);
+      // Drawn, so sized: a canvas fresh in the page is 300 × 150.
+      await expect(page.locator(`${SECTION} img`)).toHaveCount(
+        0,
+        SCENE_ARRIVES,
+      );
+      const box = await page.locator(`${SECTION} canvas`).boundingBox();
+      if (!box) throw new Error("the scene has no canvas");
+
+      // A computer: three fifths of the row next to the captions, all the
+      // height under the header. A phone: the width, above one caption.
+      expect(box.height / height).toBeGreaterThanOrEqual(0.6);
+      expect(box.width / width).toBeGreaterThanOrEqual(
+        width >= 768 ? 0.45 : 0.88,
+      );
     });
 
     test("hides the canvas from screen readers and has no axe violations", async ({
@@ -349,75 +432,155 @@ test.describe("the still picture instead of the scene", () => {
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
     await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
     await expect(button(page)).toBeVisible();
-    expect(problems).toEqual([failureWarning("no-webgl2")]);
+    // The warning tells whether WebGL 1 is there; three.js needs WebGL 2.
+    expect(problems).toEqual([
+      `${failureWarning("no-webgl2")} No WebGL at all.`,
+    ]);
+  });
+
+  test("with reduced motion: says so on the console, but not as a warning", async ({
+    page,
+  }) => {
+    const notes: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "info") notes.push(message.text());
+    });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await showStill(page);
+
+    await expect
+      .poll(() => notes)
+      .toContain(
+        "[wardrobe-scene] reduced-motion: the still picture, as the system asks for less motion.",
+      );
   });
 });
 
-/*
- * The scene fails: the still picture for good, BRIEF.md "Запасной вариант",
- * and a warning with the cause. A phone as Chrome on Android has it (touch,
- * no real shadows) and a computer.
- */
+/** Chrome on Android on a Pixel 7: touch, no real shadows. */
 const PIXEL_7 = devices["Pixel 7"];
+const ON_PIXEL_7 = {
+  viewport: PIXEL_7.viewport,
+  userAgent: PIXEL_7.userAgent,
+  deviceScaleFactor: PIXEL_7.deviceScaleFactor,
+  isMobile: true,
+  hasTouch: true,
+};
 const FAILING_SCREENS = [
   {
     name: "a computer",
     use: { viewport: { width: 1440, height: 900 } },
     screens: 3,
   },
-  {
-    name: "a Pixel 7",
-    use: {
-      viewport: PIXEL_7.viewport,
-      userAgent: PIXEL_7.userAgent,
-      deviceScaleFactor: PIXEL_7.deviceScaleFactor,
-      isMobile: true,
-      hasTouch: true,
-    },
-    screens: 2.5,
-  },
+  { name: "a Pixel 7", use: ON_PIXEL_7, screens: 2.5 },
 ];
 
-for (const { name, use, screens } of FAILING_SCREENS) {
-  test.describe(`the still picture when the scene fails on ${name}`, () => {
-    test.use(use);
+/** Waits for the wood, then scrolls halfway through the pin, to step 3. */
+async function halfway(page: Page, screens: number, height: number) {
+  await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
+  const start = await pinStart(page);
+  await page.evaluate(
+    (y) => window.scrollTo(0, y),
+    start + 0.5 * screens * height,
+  );
+  await expect.poll(() => markedStep(page)).toBe(3);
+  return start;
+}
 
-    test("loses the WebGL context halfway through: the picture in the panel's place", async ({
+/** What the console has, without Chrome's notice about the preloaded photo. */
+const ownProblems = (problems: string[]) =>
+  problems.filter((problem) => !problem.includes(PRELOAD_NOTICE));
+
+/*
+ * The browser takes the WebGL context away, BRIEF.md "Запасной вариант"
+ * (Maxon, session 37): the scene is built anew, lighter, and keeps its
+ * place in the story, up to three times. The fourth loss brings the still
+ * picture for good. A phone and a computer, both strong, so the first
+ * scene is the full one.
+ */
+for (const { name, use, screens } of FAILING_SCREENS) {
+  test.describe(`a lost WebGL context on ${name}`, () => {
+    test.use(use);
+    test.beforeEach(({ page }) => page.addInitScript(tellDevice, STRONG_PHONE));
+
+    test("halfway through: the scene is built anew, lighter, at the same step", async ({
       page,
     }) => {
       const problems = watchConsole(page);
       await comeNear(page);
-      // The wardrobe is drawn: the flat picture has gone.
-      await expect(page.locator(`${SECTION} img`)).toHaveCount(
-        0,
-        SCENE_ARRIVES,
-      );
-      const start = await pinStart(page);
+      const start = await halfway(page, screens, use.viewport.height);
+      expect((await canvasOf(page)).antialias).toBe(true);
+
+      await loseContext(page, { restore: true });
+
+      await expectBuiltAnew(page);
+      const lighter = await canvasOf(page);
+      expect(lighter.antialias).toBe(false);
+      expect(lighter.density).toBeLessThanOrEqual(1.5);
+      // Still pinned at the same step, and it goes on from there.
+      expect(await markedStep(page)).toBe(3);
+      const top = await page
+        .locator(".pin-spacer > div")
+        .evaluate((element) => element.getBoundingClientRect().top);
+      expect(Math.abs(top)).toBeLessThan(2);
       await page.evaluate(
         (y) => window.scrollTo(0, y),
-        start + 0.5 * screens * use.viewport.height,
+        start + 0.98 * screens * use.viewport.height,
       );
-      await expect.poll(() => markedStep(page)).toBe(3);
+      await expect.poll(() => markedStep(page)).toBe(6);
+      await expect(button(page)).toBeVisible();
+      expect(ownProblems(problems)).toEqual([
+        rebuildWarning("context-lost", 1),
+      ]);
+    });
 
-      // What the browser does to a phone short of memory or sent to the background.
-      await page
-        .locator(`${SECTION} canvas`)
-        .evaluate((canvas: HTMLCanvasElement) =>
-          canvas
-            .getContext("webgl2")
-            ?.getExtension("WEBGL_lose_context")
-            ?.loseContext(),
-        );
+    test("a context that does not come back: the flat wardrobe, then a new scene", async ({
+      page,
+    }) => {
+      const problems = watchConsole(page);
+      await comeNear(page);
+      await halfway(page, screens, use.viewport.height);
+
+      await loseContext(page, { restore: false });
+
+      // The flat wardrobe while the scene waits for its context.
+      await expect(page.locator(`${SECTION} img`)).toHaveCount(1);
+      await expectBuiltAnew(page);
+      expect(await markedStep(page)).toBe(3);
+      expect(ownProblems(problems)).toEqual([
+        rebuildWarning("context-lost", 1),
+      ]);
+    });
+
+    test("lost again and again: the picture in the panel's place after three new builds", async ({
+      page,
+    }) => {
+      const problems = watchConsole(page);
+      await comeNear(page);
+      await halfway(page, screens, use.viewport.height);
+
+      for (let rebuild = 1; rebuild <= 3; rebuild++) {
+        await loseContext(page, { restore: true });
+        await expectBuiltAnew(page);
+      }
+      await loseContext(page, { restore: true });
 
       await expectStill(page);
       await expect(
         page.locator(SECTION).getByRole("heading", { level: 2 }),
       ).toBeInViewport();
-      // The warning with the cause, and nothing from three or React.
-      expect(
-        problems.filter((problem) => !problem.includes(PRELOAD_NOTICE)),
-      ).toEqual([failureWarning("context-lost")]);
+      // The warnings with the cause, and nothing from three or React.
+      expect(ownProblems(problems)).toEqual([
+        rebuildWarning("context-lost", 1),
+        rebuildWarning("context-lost", 2),
+        rebuildWarning("context-lost", 3),
+        failureWarning("context-lost"),
+      ]);
     });
+  });
+
+  test.describe(`the still picture when the scene does not load on ${name}`, () => {
+    test.use(use);
 
     test("a texture does not load: the picture instead", async ({ page }) => {
       const problems = watchConsole(page);
@@ -439,6 +602,168 @@ for (const { name, use, screens } of FAILING_SCREENS) {
 
       await expectStill(page);
       expect(warned(problems, "scene-error")).toBe(true);
+    });
+  });
+}
+
+test.describe("a renderer that gets no context", () => {
+  test("is made anew, lighter: no smooth edges this time", async ({ page }) => {
+    // WebGL 2 is there, but not with smooth edges, as on a phone short of memory.
+    await page.addInitScript(() => {
+      const getContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (
+        this: HTMLCanvasElement,
+        type: string,
+        options?: { antialias?: boolean },
+      ) {
+        if (type === "webgl2" && options?.antialias) return null;
+        return (
+          getContext as (...args: unknown[]) => RenderingContext | null
+        ).call(this, type, options);
+      } as typeof HTMLCanvasElement.prototype.getContext;
+    });
+    const problems = watchConsole(page);
+    await comeNear(page);
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
+
+    expect((await canvasOf(page)).antialias).toBe(false);
+    expect(ownProblems(problems)).toContain(rebuildWarning("no-context", 1));
+    expect(warned(problems, "no-context")).toBe(false);
+  });
+});
+
+test.describe("how much the scene asks of a phone", () => {
+  test.use(ON_PIXEL_7);
+
+  test("a weak phone starts with the light scene: no smoothing, 1.5 pixels per CSS pixel", async ({
+    page,
+  }) => {
+    await page.addInitScript(tellDevice, WEAK_PHONE);
+    const problems = watchConsole(page);
+    await comeNear(page);
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
+
+    const canvas = await canvasOf(page);
+    expect(canvas.antialias).toBe(false);
+    expect(canvas.density).toBeCloseTo(1.5, 1);
+    expect(ownProblems(problems)).toEqual([]);
+  });
+
+  test("a strong phone draws the brief's scene: smooth edges, 1.75 pixels per CSS pixel", async ({
+    page,
+  }) => {
+    await page.addInitScript(tellDevice, STRONG_PHONE);
+    await comeNear(page);
+    await expect(page.locator(`${SECTION} img`)).toHaveCount(0, SCENE_ARRIVES);
+
+    const canvas = await canvasOf(page);
+    expect(canvas.antialias).toBe(true);
+    expect(canvas.density).toBeCloseTo(1.75, 1);
+  });
+});
+
+/**
+ * How much of the canvas the oak takes, across and up (1 is all of it), and
+ * whether it keeps off the edges of the canvas: from a screenshot, by the
+ * warm colour of the wood. Papier, the wall (Moos), the floor (Linie), the
+ * shadows, the metal and the green button are not warm.
+ */
+async function oakOf(page: Page) {
+  const shot = await page.locator(`${SECTION} canvas`).screenshot();
+  return page.evaluate(async (png) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${png}`;
+    await image.decode();
+    const board = document.createElement("canvas");
+    board.width = image.width;
+    board.height = image.height;
+    const context = board.getContext("2d");
+    if (!context) throw new Error("no 2D canvas");
+    context.drawImage(image, 0, 0);
+    const { data, width, height } = context.getImageData(
+      0,
+      0,
+      board.width,
+      board.height,
+    );
+    let [left, right, top, bottom] = [width, -1, height, -1];
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const at = (y * width + x) * 4;
+        const [red, green, blue] = [data[at], data[at + 1], data[at + 2]];
+        if (red - blue > 40 && red > 80 && red >= green) {
+          left = Math.min(left, x);
+          right = Math.max(right, x);
+          top = Math.min(top, y);
+          bottom = Math.max(bottom, y);
+        }
+      }
+    }
+    return {
+      across: (right - left + 1) / width,
+      up: (bottom - top + 1) / height,
+      inside: left > 0 && top > 0 && right < width - 1 && bottom < height - 1,
+    };
+  }, shot.toString("base64"));
+}
+
+/*
+ * On a phone the scene stays on screen above one caption and takes most of
+ * the height, and the finished wardrobe fills it: most of its width on a
+ * tall scene, most of its height on a low one (Maxon, session 37). Pixel 7
+ * and the widths 360 to 430 at 640 and 900 high.
+ */
+const PHONES = [
+  { name: "a Pixel 7", use: ON_PIXEL_7 },
+  ...[360, 393, 412, 430].flatMap((width) =>
+    [640, 900].map((height) => ({
+      name: `${width} x ${height}`,
+      use: {
+        viewport: { width, height },
+        deviceScaleFactor: 2,
+        isMobile: true,
+        hasTouch: true,
+      },
+    })),
+  ),
+];
+
+for (const { name, use } of PHONES) {
+  test.describe(`the wardrobe on ${name}`, () => {
+    test.use(use);
+
+    test("fills most of a scene that takes most of the screen", async ({
+      page,
+    }) => {
+      await comeNear(page);
+      await expect(page.locator(`${SECTION} img`)).toHaveCount(
+        0,
+        SCENE_ARRIVES,
+      );
+      const start = await pinStart(page);
+      const screen = use.viewport;
+      await page.evaluate(
+        (y) => window.scrollTo(0, y),
+        start + 0.98 * 2.5 * screen.height,
+      );
+      await expect.poll(() => markedStep(page)).toBe(6);
+
+      const box = await page.locator(`${SECTION} canvas`).boundingBox();
+      if (!box) throw new Error("the scene has no canvas");
+      expect(box.height / screen.height).toBeGreaterThanOrEqual(0.5);
+      expect(box.width / screen.width).toBeGreaterThanOrEqual(0.88);
+
+      // The scrub and the camera settle over a few frames.
+      if (box.width / box.height <= 0.75) {
+        await expect
+          .poll(async () => (await oakOf(page)).across, SCENE_ARRIVES)
+          .toBeGreaterThanOrEqual(0.7);
+      } else {
+        await expect
+          .poll(async () => (await oakOf(page)).up, SCENE_ARRIVES)
+          .toBeGreaterThanOrEqual(0.85);
+      }
+      expect((await oakOf(page)).inside).toBe(true);
     });
   });
 }

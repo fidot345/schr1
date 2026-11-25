@@ -23,6 +23,16 @@ gsap.ticker.lagSmoothing(0);
 /** Pinned for three screens of scrolling on a computer, two and a half on a phone. */
 const SCREENS = { desktop: "(width >= 48rem)", phone: "(width < 48rem)" };
 
+/**
+ * What stays on screen: on a computer the panel with heading, scene and
+ * captions, on a phone the scene with its caption (the heading goes by
+ * above it).
+ */
+export type WardrobePins = Record<
+  keyof typeof SCREENS,
+  RefObject<HTMLElement | null>
+>;
+
 /** GSAP's ticker as a frame loop for Lenis, in milliseconds as Lenis counts. */
 const gsapTicker: FrameLoop = (frame) => {
   const tick = (time: number) => frame(time * 1000);
@@ -31,18 +41,19 @@ const gsapTicker: FrameLoop = (frame) => {
 };
 
 /**
- * The scroll drives the scene: `pin` stays on screen while one GSAP
+ * The scroll drives the scene: one of `pins` stays on screen while one GSAP
  * timeline, scrubbed by ScrollTrigger, moves the returned object. Every
  * update of the timeline asks the canvas for a frame (frameloop "demand").
  * `onStep` hears the step under way when it changes; it has to stay the
- * same function (a state setter), or the timeline is built anew.
+ * same function (a state setter), and `pins` the same object, or the
+ * timeline is built anew.
  *
  * Lenis gets GSAP's ticker as its clock and tells ScrollTrigger about each
  * scroll, the setup of the brief. useGSAP undoes the pin and the timeline
  * when the scene goes.
  */
 export function useWardrobeTimeline(
-  pin: RefObject<HTMLElement | null>,
+  pins: WardrobePins,
   onStep: (step: SceneStep) => void,
 ): WardrobeMotion {
   const [motion] = useState(createMotion);
@@ -50,9 +61,6 @@ export function useWardrobeTimeline(
 
   useGSAP(
     () => {
-      const panel = pin.current;
-      if (!panel) return;
-
       // The scene can arrive when the window is already past the start of
       // the pin: the page was opened lower down, scrolled up from below or
       // jumped over the section with the skip link. The pin adds its scroll
@@ -64,6 +72,8 @@ export function useWardrobeTimeline(
       const screens = gsap.matchMedia();
       screens.add(SCREENS, (context) => {
         const desktop = context.conditions?.desktop ?? true;
+        const panel = pins[desktop ? "desktop" : "phone"].current;
+        if (!panel) return;
         const passed = firstPin && panel.getBoundingClientRect().top < 0;
         firstPin = false;
         const timeline = gsap.timeline({
@@ -111,7 +121,7 @@ export function useWardrobeTimeline(
 
       return () => screens.revert();
     },
-    { dependencies: [motion, onStep, pin] },
+    { dependencies: [motion, onStep, pins] },
   );
 
   useEffect(() => {
