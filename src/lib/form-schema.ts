@@ -8,6 +8,16 @@ import { z } from "zod";
  */
 
 /*
+ * Without jitless, Zod tries new Function("") on the first check to see
+ * whether it may compile faster checks. The Content-Security-Policy of
+ * next.config.ts forbids eval, and the browser reports the attempt as a
+ * violation even though Zod catches the error. Both schemas import this
+ * module, so the setting comes before any check, in the browser and on
+ * the server.
+ */
+z.config({ jitless: true });
+
+/*
  * Spam protection without a third-party captcha: a trap field that people
  * never see (a bot fills it in) and the time from opening the form to
  * sending it. The browser measures that time itself, so a visitor's wrong

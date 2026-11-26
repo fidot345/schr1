@@ -57,6 +57,69 @@ const noindexHeaders =
       ];
 
 /*
+ * Security headers, BRIEF.md section 5 "Безопасность и приватность", on
+ * every path. The browser may load and send things to our own domain only:
+ * photos come through /_next/image and /api/media/file (Payload streams
+ * them from Vercel Blob on the server, uploads go through the server too),
+ * so no other host is allowed. The admin panel works under the same policy
+ * (its Gravatar pictures are off in payload.config.ts); /_next/image keeps
+ * the stricter policy Next.js gives it.
+ *
+ * 'unsafe-inline' in script-src: the pages are built ahead and updated from
+ * the admin panel, and Next.js writes the data of each page into inline
+ * scripts (self.__next_f.push). A nonce works only when every page is
+ * rendered per request; hashes would differ per page and per build. So the
+ * brief keeps 'unsafe-inline' and the static pages.
+ * 'unsafe-inline' in style-src: style attributes in the HTML, such as the
+ * photo position from the admin panel and those of next/image.
+ * 'unsafe-eval' in development only: React rebuilds server error stacks
+ * with eval there. The production build has no eval.
+ */
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const contentSecurityPolicy = (directives: Record<string, string>) =>
+  Object.entries(directives)
+    .map(([name, sources]) => `${name} ${sources}`)
+    .join("; ");
+
+const policy = {
+  "default-src": "'self'",
+  "script-src": `'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+  "style-src": "'self' 'unsafe-inline'",
+  "img-src": "'self' data: blob:",
+  "font-src": "'self'",
+  "connect-src": "'self'",
+  "object-src": "'none'",
+  "frame-ancestors": "'none'",
+  "base-uri": "'self'",
+  "form-action": "'self'",
+};
+
+const securityHeaders = [
+  {
+    source: "/:path*",
+    headers: [
+      {
+        key: "Content-Security-Policy",
+        value: contentSecurityPolicy(policy),
+      },
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains",
+      },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(), geolocation=()",
+      },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+    ],
+  },
+];
+
+/*
  * withPayload sends the color-scheme client hint (Accept-CH, Critical-CH,
  * Vary) on every path. Only the admin panel reads it, for its light or dark
  * theme. On the site, Critical-CH makes the browser request each first page
@@ -73,5 +136,6 @@ export default {
         : rule,
     ),
     ...noindexHeaders,
+    ...securityHeaders,
   ],
 } satisfies NextConfig;
