@@ -24,6 +24,10 @@ const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // Payload's default, gravatar, would load each user's picture from
+    // www.gravatar.com: another host, which the Content-Security-Policy of
+    // next.config.ts blocks. The built-in icon comes from our own domain.
+    avatar: "default",
     components: {
       graphics: {
         Logo: "/components/admin/AdminGraphics#AdminLogo",
