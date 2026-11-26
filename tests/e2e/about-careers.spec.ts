@@ -446,9 +446,15 @@ test.describe("language switch at 1440 px", () => {
     await page.goto("/karriere/schreiner");
     await page.getByRole("link", { name: "EN – English" }).click();
     await expect(page).toHaveURL(/\/en\/careers\/joiner$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Joiner/);
 
     await page.getByRole("link", { name: "DE – Deutsch" }).click();
     await expect(page).toHaveURL(/\/karriere\/schreiner$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "de");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      /Schreiner/,
+    );
   });
 
   test("keeps the apprenticeship and the other two pages", async ({ page }) => {

@@ -56,8 +56,12 @@ const route = vi.hoisted(() => ({
   params: {} as Record<string, string>,
 }));
 
-/* Link is a plain <a>; the locale it was given shows up as data-locale. */
-vi.mock("@/i18n/navigation", () => ({
+/*
+ * Link is a plain <a>; the locale it was given shows up as data-locale.
+ * getPathname builds the paths as next-intl does (support/navigation.ts).
+ */
+vi.mock("@/i18n/navigation", async () => ({
+  getPathname: (await import("./support/navigation")).getPathname,
   Link: ({
     href,
     locale,
@@ -237,7 +241,7 @@ describe("LocaleSwitcher", () => {
     const html = renderOn("de");
     expect(html).toMatch(/<span lang="de" aria-current="true"[^>]*>/);
     expect(html).toMatch(
-      /<a href="\/" data-locale="en" lang="en" hrefLang="en" aria-label="EN – English"[^>]*>EN<\/a>/,
+      /<a lang="en" hrefLang="en" aria-label="EN – English"[^>]*href="\/en"[^>]*>EN<\/a>/,
     );
     expect(html).toMatch(
       /<span aria-hidden="true" class="text-linie">\|<\/span>/,
@@ -248,8 +252,14 @@ describe("LocaleSwitcher", () => {
   it("is turned around on /en", () => {
     const html = renderOn("en");
     expect(html).toMatch(/<span lang="en" aria-current="true"/);
-    expect(html).toMatch(/data-locale="de"[^>]*aria-label="DE – Deutsch"/);
+    expect(html).toMatch(/<a lang="de"[^>]*aria-label="DE – Deutsch"/);
     expect(html).toContain('<nav aria-label="Language"');
+  });
+
+  it("links German without the /de prefix, which would redirect", () => {
+    route.pathname = "/leistungen";
+    const html = render(<LocaleSwitcher />, "en");
+    expect(html).toMatch(/<a lang="de"[^>]*href="\/leistungen"/);
   });
 });
 

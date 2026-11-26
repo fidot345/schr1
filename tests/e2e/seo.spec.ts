@@ -216,6 +216,7 @@ test.describe("markup for Google", () => {
           streetAddress: "Werkstattweg 4",
           postalCode: "85999",
           addressLocality: "Wendelfing",
+          addressRegion: "Bayern",
           addressCountry: "DE",
         },
         openingHoursSpecification: [

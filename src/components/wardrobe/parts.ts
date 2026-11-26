@@ -1,32 +1,17 @@
 import { CatmullRomCurve3, Euler, Quaternion, Vector3 } from "three";
+import type { SceneStep } from "./steps";
 
 /*
  * The wardrobe of "Vom Brett zum Schrank", BRIEF.md section 4: its 16
  * parts with their sizes, where each one lies in the stack and stands in
- * the finished wardrobe, the step it arrives in and its way there.
+ * the finished wardrobe, the step it arrives in and its way there. The
+ * steps themselves are in steps.ts.
  *
  * One unit is a metre. The wardrobe stands on the floor (y = 0), its base
  * centred on (0, 0, 0), its front to +z, towards the camera.
  */
 
 export type Vec3 = readonly [number, number, number];
-
-/** The six steps of the scene, from "Zuschnitt" to "Fertig". */
-export type SceneStep = 1 | 2 | 3 | 4 | 5 | 6;
-
-/** The storyboard: the stretch of the pinned scroll (0 to 1) each step takes. */
-export const STEP_RANGES: readonly {
-  step: SceneStep;
-  from: number;
-  to: number;
-}[] = [
-  { step: 1, from: 0, to: 0.15 },
-  { step: 2, from: 0.15, to: 0.4 },
-  { step: 3, from: 0.4, to: 0.55 },
-  { step: 4, from: 0.55, to: 0.75 },
-  { step: 5, from: 0.75, to: 0.9 },
-  { step: 6, from: 0.9, to: 1 },
-];
 
 type CameraView = { position: Vec3; target: Vec3 };
 
@@ -142,12 +127,6 @@ export function cameraAt(
   return startFov + (CAMERA.fov - startFov) * progress;
 }
 
-/** The step that is under way at this progress of the scroll. */
-export function stepAt(progress: number): SceneStep {
-  const range = STEP_RANGES.find(({ to }) => progress < to);
-  return range?.step ?? 6;
-}
-
 export type PartShape = "board" | "rod";
 /**
  * BRIEF.md "Шкаф: размеры и детали": oak, the light back panel, the rail's
@@ -226,12 +205,14 @@ const HINGE_X = DOOR_GAP / 2 + DOOR_WIDTH;
  */
 const DOOR_OPEN = { left: (75 * Math.PI) / 180, right: Math.PI / 2 };
 /**
- * Doors stand up early, above the stack, and go round the sides upright,
- * close to them: lying, their 2 m would reach far out of the picture. The
- * right door has the longer way and stands up sooner; the left one, lower
- * at that point, a little later, or its foot would go through the floor.
+ * Doors stand up while they rise straight up off the stack, and go round
+ * the sides upright, close to them: lying, their 2 m reach out past the
+ * right side of the wardrobe (session 40: the right door stuck out there at
+ * an angle). The right door has the longer way, so it rises faster and
+ * stands up sooner; the left one more slowly, or its foot would go through
+ * the floor.
  */
-const DOOR_TURN = { left: [0.25, 0.55], right: [0.12, 0.42] } as const;
+const DOOR_TURN = { left: [0.12, 0.5], right: [0.06, 0.32] } as const;
 /** Bar handles on the door fronts, next to the gap between the doors. */
 const HANDLE: Vec3 = [0.012, 0.3, 0.02];
 /**
@@ -501,8 +482,10 @@ export const PARTS: readonly WardrobePart[] = [
       rotation: PANEL_ON_FACE,
       layer: 0,
     },
-    // Upright behind the wardrobe, along its right side, forward onto its hinge.
+    // Up above the stack, upright behind the wardrobe, along its right side,
+    // forward onto its hinge.
     via: [
+      [-0.92, 1.2, -1.33],
       [0, 1.2, -0.85],
       [0.76, 1.05, -0.45],
     ],

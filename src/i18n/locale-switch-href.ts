@@ -1,8 +1,8 @@
-import type { ComponentProps } from "react";
-import type { Link } from "./navigation";
+import type { getPathname } from "./navigation";
 import { type Locale, routing } from "./routing";
 
-export type Href = ComponentProps<typeof Link>["href"];
+/** A route of the site as getPathname takes it: a pathname, with params for a slug. */
+export type Href = Parameters<typeof getPathname>[0]["href"];
 type Pathname = keyof typeof routing.pathnames;
 export type SlugPathname = Extract<Pathname, `${string}/[slug]`>;
 

@@ -19,7 +19,6 @@ const HEADERS = {
   "referrer-policy": "strict-origin-when-cross-origin",
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
   "x-frame-options": "DENY",
-  "cross-origin-opener-policy": "same-origin",
   // The demo's rule, next to the security headers.
   "x-robots-tag": "noindex, nofollow",
 };
@@ -126,6 +125,18 @@ test.describe("security headers", () => {
       expect(response.headers()).toMatchObject(HEADERS);
     });
   }
+
+  /*
+   * Cross-Origin-Opener-Policy on the admin panel only: Lighthouse cannot
+   * measure a page that sends it (next.config.ts).
+   */
+  test("only the admin panel isolates its window", async ({ request }) => {
+    const admin = await request.get("/admin/login");
+    const page = await request.get("/");
+
+    expect(admin.headers()["cross-origin-opener-policy"]).toBe("same-origin");
+    expect(page.headers()["cross-origin-opener-policy"]).toBeUndefined();
+  });
 
   test("a photo from Payload answers with them", async ({ request }) => {
     const media = await request.get("/api/media?limit=1&depth=0");

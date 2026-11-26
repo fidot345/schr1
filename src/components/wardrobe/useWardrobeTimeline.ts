@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { type RefObject, useEffect, useState } from "react";
 import { useLenis } from "@/components/layout/SmoothScroll";
 import { driveLenisWith, type FrameLoop } from "@/lib/smooth-scroll";
-import { type SceneStep, stepAt } from "./parts";
+import { type SceneStep, stepAt } from "./steps";
 import { buildTimeline, createMotion, type WardrobeMotion } from "./storyboard";
 
 /*
