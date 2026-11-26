@@ -40,7 +40,7 @@ import {
 import { Board } from "./Board";
 import { grainOffset } from "./grain";
 import { useWardrobeMaterials } from "./materials";
-import { CAMERA, cameraAt, PARTS, type SceneStep } from "./parts";
+import { CAMERA, cameraAt, PARTS } from "./parts";
 import { isWeakDevice, qualityFor, REBUILDS } from "./quality";
 import { Room } from "./Room";
 import {
@@ -49,6 +49,7 @@ import {
   type SceneFailure,
   type SceneSetback,
 } from "./scene-failure";
+import type { SceneStep } from "./steps";
 import type { WardrobeMotion } from "./storyboard";
 import { useWardrobeTimeline, type WardrobePins } from "./useWardrobeTimeline";
 

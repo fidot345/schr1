@@ -1,5 +1,6 @@
 import type gsap from "gsap";
-import { PARTS, type PartMotion, type SceneStep, STEP_RANGES } from "./parts";
+import { PARTS, type PartMotion } from "./parts";
+import { type SceneStep, STEP_RANGES } from "./steps";
 
 /*
  * The storyboard of BRIEF.md section 4 as one GSAP timeline: what moves in

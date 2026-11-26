@@ -130,6 +130,7 @@ describe("HomeAndConstructionBusiness", () => {
         streetAddress: "Werkstattweg 4",
         postalCode: "85999",
         addressLocality: "Wendelfing",
+        addressRegion: "Bayern",
         addressCountry: "DE",
       },
       openingHoursSpecification: openingHoursSpecification(
@@ -164,6 +165,7 @@ describe("HomeAndConstructionBusiness", () => {
     expect(business?.address).toEqual({
       "@type": "PostalAddress",
       addressLocality: "Wendelfing",
+      addressRegion: "Bayern",
       addressCountry: "DE",
     });
   });

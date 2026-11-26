@@ -28,13 +28,13 @@ import { TextLink } from "@/components/ui/TextLink";
 import { cn } from "@/lib/cn";
 import type { SceneStepItem } from "@/lib/content";
 import { REDUCED_MOTION_QUERY } from "@/lib/smooth-scroll";
-import { type SceneStep, STEP_RANGES } from "./parts";
 import {
   reportFailure,
   reportReducedMotion,
   SceneBoundary,
   type SceneFailure,
 } from "./scene-failure";
+import { type SceneStep, STEP_RANGES } from "./steps";
 import { SCENE_HEADING, WardrobeStill } from "./WardrobeStill";
 
 /** three, fiber, drei and GSAP: loaded only when the section comes near. */

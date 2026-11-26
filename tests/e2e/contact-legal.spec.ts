@@ -529,8 +529,8 @@ test.describe("header and footer", () => {
       expect(targets.length).toBeGreaterThanOrEqual(8);
 
       for (const target of targets) {
-        // The switch on an English page links to /de/…, which redirects.
-        const response = await request.get(target);
+        // Straight to the page: the language switch too, without a redirect.
+        const response = await request.get(target, { maxRedirects: 0 });
         expect(response.status(), target).toBe(200);
       }
     });

@@ -6,11 +6,10 @@ import {
   type PartMotion,
   partsOfStep,
   placePart,
-  STEP_RANGES,
-  stepAt,
   type Vec3,
   type WardrobePart,
 } from "@/components/wardrobe/parts";
+import { STEP_RANGES, stepAt } from "@/components/wardrobe/steps";
 
 /*
  * The wardrobe of the 3D scene, BRIEF.md section 4: its parts as the brief
@@ -416,6 +415,42 @@ describe("placePart", () => {
 
       close(closed.position, door.assembled);
       expect(closed.quaternion.angleTo(new Quaternion())).toBeCloseTo(0, 6);
+    }
+  });
+
+  /*
+   * Lying, a door's 2 m reach out past the right side of the wardrobe
+   * (session 40: the right door stuck out there at an angle). So it stands
+   * up while it rises off the stack, before it goes anywhere, and its foot
+   * stays above the floor all the way.
+   */
+  it("stands a door up while it rises, above the floor", () => {
+    const degrees = (radians: number) => (radians * 180) / Math.PI;
+    for (const door of PARTS.filter(({ hinge }) => hinge)) {
+      const lifted = pose(door, { lift: 1, fly: 0, swing: 0 }).position;
+      let risen = false;
+      let moved = false;
+      for (let fly = 0; fly <= 1; fly += 0.005) {
+        const { position, quaternion } = pose(door, { lift: 1, fly, swing: 0 });
+        const lowest = Math.min(
+          ...cornersOf(door.size, position, quaternion).map(({ y }) => y),
+        );
+        const tilt = degrees(
+          new Vector3(0, 1, 0).applyQuaternion(quaternion).angleTo(UP),
+        );
+        const aside = Math.hypot(position.x - lifted.x, position.z - lifted.z);
+
+        expect(lowest, `${door.id} at ${fly}`).toBeGreaterThanOrEqual(0);
+        if (!risen && position.y >= 1) {
+          risen = true;
+          expect(tilt, `${door.id} 1 m up`).toBeLessThan(45);
+        }
+        if (!moved && aside >= 0.3) {
+          moved = true;
+          expect(tilt, `${door.id} 0.3 m aside`).toBeLessThan(30);
+        }
+      }
+      expect(risen && moved, door.id).toBe(true);
     }
   });
 });

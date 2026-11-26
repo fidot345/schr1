@@ -113,6 +113,7 @@ const postalAddress = (
         ...(company.postalCode ? { postalCode: company.postalCode } : {}),
         ...(company.city ? { addressLocality: company.city } : {}),
         // The workshop is in Upper Bavaria (BRIEF.md section 2).
+        addressRegion: "Bayern",
         addressCountry: "DE",
       }
     : null;

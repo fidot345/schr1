@@ -114,8 +114,19 @@ const securityHeaders = [
         value: "camera=(), microphone=(), geolocation=()",
       },
       { key: "X-Frame-Options", value: "DENY" },
-      { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
     ],
+  },
+  /*
+   * Cross-Origin-Opener-Policy on the admin panel only, where the login
+   * cookie lives. With COOP of any value, Lighthouse 13.6 (Chrome 158/159)
+   * cannot read the trace of the page load and gives no performance score
+   * (NO_NAVSTART), and BRIEF.md section 7 measures every page with it. The
+   * public pages have no cookie and open no windows, so COOP protects
+   * nothing there.
+   */
+  {
+    source: "/admin/:path*",
+    headers: [{ key: "Cross-Origin-Opener-Policy", value: "same-origin" }],
   },
 ];
 
