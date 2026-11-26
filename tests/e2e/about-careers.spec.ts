@@ -41,11 +41,24 @@ const linkPaths = (page: Page): Promise<string[]> =>
     links.map((link) => new URL((link as HTMLAnchorElement).href).pathname),
   );
 
-/** The JobPosting markup of the open page. */
+/** The types of the JSON-LD blocks of the open page, in their order. */
+const markupTypes = (page: Page): Promise<string[]> =>
+  page.$$eval('script[type="application/ld+json"]', (scripts) =>
+    scripts.map((script) => JSON.parse(script.textContent ?? "{}")["@type"]),
+  );
+
+/** The JobPosting markup of the open page; next to it is only the BreadcrumbList. */
 const jobPosting = async (page: Page) => {
+  expect((await markupTypes(page)).sort()).toEqual([
+    "BreadcrumbList",
+    "JobPosting",
+  ]);
   const scripts = page.locator('script[type="application/ld+json"]');
-  await expect(scripts).toHaveCount(1);
-  return JSON.parse((await scripts.textContent()) ?? "null");
+  for (const text of await scripts.allTextContents()) {
+    const data = JSON.parse(text);
+    if (data["@type"] === "JobPosting") return data;
+  }
+  return null;
 };
 
 for (const { name, width, height } of VIEWPORTS) {
@@ -421,9 +434,7 @@ test.describe("the JobPosting markup", () => {
   test("is only on job pages", async ({ page }) => {
     for (const path of ["/karriere", "/ueber-uns"]) {
       await page.goto(path);
-      await expect(
-        page.locator('script[type="application/ld+json"]'),
-      ).toHaveCount(0);
+      expect(await markupTypes(page)).toEqual(["BreadcrumbList"]);
     }
   });
 });

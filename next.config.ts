@@ -41,6 +41,22 @@ const withPayloadConfig = withPayload(withNextIntl(nextConfig), {
 const payloadHeaders = withPayloadConfig.headers;
 
 /*
+ * The demo keeps search engines out, AGENTS.md "Демо-режим": unless
+ * SITE_INDEXING is "true", every response says noindex, nofollow, as the
+ * robots meta tag of the pages does (src/lib/seo.ts reads the variable the
+ * same way). Read at build time, like the pages built ahead.
+ */
+const noindexHeaders =
+  process.env.SITE_INDEXING?.trim() === "true"
+    ? []
+    : [
+        {
+          source: "/:path*",
+          headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+        },
+      ];
+
+/*
  * withPayload sends the color-scheme client hint (Accept-CH, Critical-CH,
  * Vary) on every path. Only the admin panel reads it, for its light or dark
  * theme. On the site, Critical-CH makes the browser request each first page
@@ -49,11 +65,13 @@ const payloadHeaders = withPayloadConfig.headers;
  */
 export default {
   ...withPayloadConfig,
-  headers: async () =>
-    (payloadHeaders ? await payloadHeaders() : []).map((rule) =>
+  headers: async () => [
+    ...(payloadHeaders ? await payloadHeaders() : []).map((rule) =>
       rule.source === "/:path*" &&
       rule.headers.some((header) => header.key === "Critical-CH")
         ? { ...rule, source: "/admin/:path*" }
         : rule,
     ),
+    ...noindexHeaders,
+  ],
 } satisfies NextConfig;

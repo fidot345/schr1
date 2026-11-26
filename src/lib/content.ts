@@ -667,6 +667,34 @@ export const getSlugTranslations = cache(
   },
 );
 
+/** The slug of each document of a list in every language, in the list's order. */
+const allSlugs = (byLocale: SlugsByLocale): Record<Locale, string>[] =>
+  [...byLocale[routing.defaultLocale]].map(([id, slug]) =>
+    slugsOf(byLocale, id, slug),
+  );
+
+export type SitemapSlugs = {
+  services: Record<Locale, string>[];
+  projects: Record<Locale, string>[];
+  /** Only the open jobs: one switched off has no page. */
+  jobs: Record<Locale, string>[];
+};
+
+/** Every page with a slug, in both languages, for src/app/sitemap.ts. */
+export const getSitemapSlugs = cache(async (): Promise<SitemapSlugs> => {
+  const [services, projects, jobs] = await Promise.all([
+    serviceSlugsByLocale(),
+    projectSlugsByLocale(),
+    jobSlugsByLocale(),
+  ]);
+
+  return {
+    services: allSlugs(services),
+    projects: allSlugs(projects),
+    jobs: allSlugs(jobs),
+  };
+});
+
 export type TeamMember = {
   id: number;
   name: string;

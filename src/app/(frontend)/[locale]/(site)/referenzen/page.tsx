@@ -4,6 +4,8 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProjectList } from "@/components/projects/ProjectList";
 import { RequestCta } from "@/components/sections/RequestCta";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getProjects, getServices } from "@/lib/content";
@@ -50,10 +52,11 @@ export default async function ProjectsPage({
   }
   setRequestLocale(locale);
 
-  const [projects, services, query] = await Promise.all([
+  const [projects, services, query, trail] = await Promise.all([
     getProjects(locale),
     getServices(locale),
     searchParams,
+    breadcrumbs(locale, "/referenzen"),
   ]);
   const selected = selectedService(query, locale, services);
   const shown = selected
@@ -62,6 +65,7 @@ export default async function ProjectsPage({
 
   return (
     <>
+      <JsonLd data={trail} />
       <ProjectList
         projects={shown}
         services={services}

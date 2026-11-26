@@ -10,7 +10,9 @@ import { Process } from "@/components/home/Process";
 import { Projects } from "@/components/home/Projects";
 import { Services } from "@/components/home/Services";
 import { Testimonials } from "@/components/home/Testimonials";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { WardrobeSection } from "@/components/wardrobe/WardrobeSection";
+import { localBusiness } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import {
@@ -20,6 +22,7 @@ import {
   getServices,
   getTestimonials,
 } from "@/lib/content";
+import { homePreview } from "@/lib/preview";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -45,7 +48,7 @@ export async function generateMetadata({
     // title goes through the template.
     title: meta.title ? { absolute: meta.title } : hero.title,
     description: meta.description ?? hero.text,
-    ...(await pageMetadata(locale, () => "/")),
+    ...(await pageMetadata(locale, () => "/", await homePreview(locale))),
   };
 }
 
@@ -73,9 +76,11 @@ export default async function HomePage({ params }: PageProps) {
     getTranslations({ locale, namespace: "HomePage" }),
   ]);
   const { about, careers } = home;
+  const business = localBusiness(locale, contact);
 
   return (
     <>
+      {business ? <JsonLd data={business} /> : null}
       <Hero {...home.hero} />
       <Services services={services} />
       <WardrobeSection steps={home.sceneSteps} buttonLabel={home.sceneButton} />

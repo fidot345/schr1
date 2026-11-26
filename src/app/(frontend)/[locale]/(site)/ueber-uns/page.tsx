@@ -6,6 +6,8 @@ import { AboutIntro } from "@/components/about/AboutIntro";
 import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { TeamList } from "@/components/about/TeamList";
 import { RequestCta } from "@/components/sections/RequestCta";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getTeam } from "@/lib/content";
@@ -52,14 +54,16 @@ export default async function AboutPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [home, team, t] = await Promise.all([
+  const [home, team, t, trail] = await Promise.all([
     getHomePage(locale),
     getTeam(locale),
     getTranslations({ locale, namespace: "HomePage" }),
+    breadcrumbs(locale, "/ueber-uns"),
   ]);
 
   return (
     <>
+      <JsonLd data={trail} />
       <AboutIntro
         title={home.about.title}
         story={home.about.paragraphs}

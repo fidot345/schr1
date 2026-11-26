@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalPage } from "@/components/legal/LegalPage";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getLegalTexts } from "@/lib/content";
@@ -47,17 +49,21 @@ export default async function ImprintPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [t, { imprint }] = await Promise.all([
+  const [t, { imprint }, trail] = await Promise.all([
     getTranslations({ locale, namespace: "ImprintPage" }),
     getLegalTexts(locale),
+    breadcrumbs(locale, "/impressum"),
   ]);
 
   return (
-    <LegalPage
-      titleId="impressum-titel"
-      title={t("title")}
-      body={imprint.body}
-      conceptNote
-    />
+    <>
+      <JsonLd data={trail} />
+      <LegalPage
+        titleId="impressum-titel"
+        title={t("title")}
+        body={imprint.body}
+        conceptNote
+      />
+    </>
   );
 }

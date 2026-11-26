@@ -422,10 +422,16 @@ test.describe("the 404", () => {
     await expect(page).toHaveTitle(
       "Seite nicht gefunden | Schreinerei Tannrieder",
     );
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-      "content",
-      /noindex/,
-    );
+    // Next.js's own noindex of a 404 and the demo's noindex, nofollow.
+    const robots = await page
+      .locator('meta[name="robots"]')
+      .evaluateAll((metas) =>
+        metas.map((meta) => meta.getAttribute("content")),
+      );
+    expect(robots.length).toBeGreaterThan(0);
+    for (const content of robots) {
+      expect(content).toMatch(/noindex/);
+    }
     await expect(page.locator("h1")).toHaveText("Seite nicht gefunden");
     const main = page.locator("main");
     await expect(

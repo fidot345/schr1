@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalPage } from "@/components/legal/LegalPage";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getLegalTexts } from "@/lib/content";
@@ -47,16 +49,20 @@ export default async function PrivacyPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [t, { privacy }] = await Promise.all([
+  const [t, { privacy }, trail] = await Promise.all([
     getTranslations({ locale, namespace: "PrivacyPage" }),
     getLegalTexts(locale),
+    breadcrumbs(locale, "/datenschutz"),
   ]);
 
   return (
-    <LegalPage
-      titleId="datenschutz-titel"
-      title={t("heading")}
-      body={privacy.body}
-    />
+    <>
+      <JsonLd data={trail} />
+      <LegalPage
+        titleId="datenschutz-titel"
+        title={t("heading")}
+        body={privacy.body}
+      />
+    </>
   );
 }

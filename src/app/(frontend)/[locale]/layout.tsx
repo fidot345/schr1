@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { routing } from "@/i18n/routing";
+import { robotsMetadata, siteUrl } from "@/lib/seo";
 import "../globals.css";
 
 const zillaSlab = Zilla_Slab({
@@ -41,24 +42,24 @@ export async function generateMetadata({
   // For the metadata of (site)/not-found.tsx, which gets no params: it
   // awaits this metadata and then reads the locale set here.
   if (!hasLocale(routing.locales, locale)) {
-    // A path that is no language, such as /robots.txt (the proxy skips
+    // A path that is no language, such as /humans.txt (the proxy skips
     // file names), is a 404 too. Without a locale here, next-intl would
     // read the request headers, and the page built ahead fails with 500.
     setRequestLocale(routing.defaultLocale);
-    return {};
+    return { robots: robotsMetadata() };
   }
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Metadata" });
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   return {
     // Absolute URLs for alternates and previews; unset when the variable is.
-    metadataBase:
-      siteUrl && URL.canParse(siteUrl) ? new URL(siteUrl) : undefined,
+    metadataBase: siteUrl() ?? undefined,
     title: {
       default: t("title"),
       template: t("template"),
     },
+    // noindex, nofollow on every page of the demo, SITE_INDEXING.
+    robots: robotsMetadata(),
   };
 }
 

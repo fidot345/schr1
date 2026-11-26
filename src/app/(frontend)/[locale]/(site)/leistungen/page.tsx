@@ -4,6 +4,8 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Process } from "@/components/home/Process";
 import { ServiceList } from "@/components/services/ServiceList";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getServices } from "@/lib/content";
@@ -45,13 +47,15 @@ export default async function ServicesPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [services, home] = await Promise.all([
+  const [services, home, trail] = await Promise.all([
     getServices(locale),
     getHomePage(locale),
+    breadcrumbs(locale, "/leistungen"),
   ]);
 
   return (
     <>
+      <JsonLd data={trail} />
       <ServiceList services={services} />
       <Process steps={home.processSteps} />
     </>

@@ -7,8 +7,10 @@ import { ConceptNote } from "@/components/form/ConceptNote";
 import { NextSteps } from "@/components/form/NextSteps";
 import { RequestForm } from "@/components/request/RequestForm";
 import { Container } from "@/components/ui/Container";
+import { JsonLd } from "@/components/ui/JsonLd";
 import { Section } from "@/components/ui/Section";
 import { TextLink } from "@/components/ui/TextLink";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getSiteSettings } from "@/lib/content";
@@ -52,63 +54,67 @@ export default async function RequestPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [t, { company, openingHours }] = await Promise.all([
+  const [t, { company, openingHours }, trail] = await Promise.all([
     getTranslations({ locale, namespace: "RequestPage" }),
     getSiteSettings(locale),
+    breadcrumbs(locale, "/anfrage"),
   ]);
   const tel = telHref(company.phone);
 
   return (
-    <Section
-      labelledBy="anfrage-titel"
-      topSpace="none"
-      className="pt-10 pb-16 md:pt-14 md:pb-24"
-    >
-      <Container>
-        <h1 id="anfrage-titel" className="font-display text-h1">
-          {t("title")}
-        </h1>
-        <p className="mt-4 max-w-[34em] text-lead">{t("lead")}</p>
-        <noscript>
-          <p className="mt-6 max-w-[34em] rounded bg-moos px-6 py-5 font-bold">
-            {tel && company.phone
-              ? t.rich("noscript", {
-                  phone: company.phone,
-                  link: (chunks) => <TextLink href={tel}>{chunks}</TextLink>,
-                })
-              : t.rich("noscriptNoPhone", {
-                  link: (chunks) => (
-                    <TextLink href="/kontakt">{chunks}</TextLink>
-                  ),
-                })}
-          </p>
-        </noscript>
+    <>
+      <JsonLd data={trail} />
+      <Section
+        labelledBy="anfrage-titel"
+        topSpace="none"
+        className="pt-10 pb-16 md:pt-14 md:pb-24"
+      >
+        <Container>
+          <h1 id="anfrage-titel" className="font-display text-h1">
+            {t("title")}
+          </h1>
+          <p className="mt-4 max-w-[34em] text-lead">{t("lead")}</p>
+          <noscript>
+            <p className="mt-6 max-w-[34em] rounded bg-moos px-6 py-5 font-bold">
+              {tel && company.phone
+                ? t.rich("noscript", {
+                    phone: company.phone,
+                    link: (chunks) => <TextLink href={tel}>{chunks}</TextLink>,
+                  })
+                : t.rich("noscriptNoPhone", {
+                    link: (chunks) => (
+                      <TextLink href="/kontakt">{chunks}</TextLink>
+                    ),
+                  })}
+            </p>
+          </noscript>
 
-        <div className="mt-10 flex flex-wrap items-start gap-14">
-          <div className="min-w-0 flex-[7_1_560px]">
-            <RequestForm phone={company.phone} />
-            <ConceptNote className="mt-4" />
+          <div className="mt-10 flex flex-wrap items-start gap-14">
+            <div className="min-w-0 flex-[7_1_560px]">
+              <RequestForm phone={company.phone} />
+              <ConceptNote className="mt-4" />
+            </div>
+            <aside
+              aria-labelledby="anfrage-danach"
+              className="min-w-0 flex-[4_1_300px]"
+            >
+              <NextSteps
+                headingId="anfrage-danach"
+                steps={[
+                  t("nextSteps.first"),
+                  t("nextSteps.second"),
+                  t("nextSteps.third"),
+                ]}
+              />
+              <CallBox
+                className="mt-9"
+                phone={company.phone}
+                openingHours={openingHours}
+              />
+            </aside>
           </div>
-          <aside
-            aria-labelledby="anfrage-danach"
-            className="min-w-0 flex-[4_1_300px]"
-          >
-            <NextSteps
-              headingId="anfrage-danach"
-              steps={[
-                t("nextSteps.first"),
-                t("nextSteps.second"),
-                t("nextSteps.third"),
-              ]}
-            />
-            <CallBox
-              className="mt-9"
-              phone={company.phone}
-              openingHours={openingHours}
-            />
-          </aside>
-        </div>
-      </Container>
-    </Section>
+        </Container>
+      </Section>
+    </>
   );
 }
