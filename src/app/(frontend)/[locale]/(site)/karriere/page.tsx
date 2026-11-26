@@ -8,6 +8,8 @@ import { CareersFaq } from "@/components/careers/CareersFaq";
 import { CareersIntro } from "@/components/careers/CareersIntro";
 import { OpenJobs } from "@/components/careers/OpenJobs";
 import { TrialDay } from "@/components/careers/TrialDay";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getHomePage, getOpenJobs, getSiteSettings } from "@/lib/content";
@@ -56,14 +58,16 @@ export default async function CareersPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const [jobs, home, { company, openingHours }] = await Promise.all([
+  const [jobs, home, { company, openingHours }, trail] = await Promise.all([
     getOpenJobs(locale),
     getHomePage(locale),
     getSiteSettings(locale),
+    breadcrumbs(locale, "/karriere"),
   ]);
 
   return (
     <>
+      <JsonLd data={trail} />
       <CareersIntro
         intro={home.careers.paragraphs}
         photo={home.careers.photo}

@@ -11,6 +11,7 @@ import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getSiteSettings } from "@/lib/content";
 import { telHref } from "@/lib/phone";
+import { robotsMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -33,7 +34,8 @@ export async function generateMetadata({
   return {
     title: t("metaTitle"),
     // Only reached by sending the form: nothing for a search engine.
-    robots: { index: false, follow: true },
+    // The demo makes it nofollow too, as every page (src/lib/seo.ts).
+    robots: robotsMetadata({ index: false, follow: true }),
     ...(await pageMetadata(locale, () => "/anfrage/danke")),
   };
 }

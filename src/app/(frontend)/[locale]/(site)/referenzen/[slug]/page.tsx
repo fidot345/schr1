@@ -7,6 +7,8 @@ import { ProjectNeighbors } from "@/components/projects/ProjectNeighbors";
 import { ProjectStory } from "@/components/projects/ProjectStory";
 import { RequestCta } from "@/components/sections/RequestCta";
 import { ServiceGallery } from "@/components/services/ServiceGallery";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getProject, getProjects } from "@/lib/content";
@@ -81,9 +83,14 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!project) {
     notFound();
   }
+  const trail = await breadcrumbs(locale, "/referenzen", {
+    name: project.title,
+    href: { pathname: "/referenzen/[slug]", params: { slug } },
+  });
 
   return (
     <>
+      <JsonLd data={trail} />
       <ProjectIntro
         title={project.title}
         facts={project.facts}

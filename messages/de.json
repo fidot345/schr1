@@ -4,6 +4,14 @@
     "template": "%s | Schreinerei Tannrieder",
     "siteName": "Schreinerei Tannrieder"
   },
+  "Preview": {
+    "alt": "{name}: {title}",
+    "hiring": "Wir stellen ein",
+    "jobAlt": "{name} stellt ein: {title}"
+  },
+  "Breadcrumbs": {
+    "home": "Startseite"
+  },
   "SkipLink": {
     "label": "Zum Inhalt springen"
   },

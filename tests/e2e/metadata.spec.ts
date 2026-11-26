@@ -2,9 +2,9 @@ import { expect, type Page, test } from "@playwright/test";
 
 /*
  * The metadata of every page type of stage 3 in both languages, BRIEF.md
- * section 5: one title and description, canonical, hreflang and Open Graph.
- * Each page lists its German and English path; canonical and og:url are
- * the page itself, the alternates point to both versions.
+ * section 5: one title and description, canonical, hreflang, Open Graph
+ * and the X card. Each page lists its German and English path; canonical
+ * and og:url are the page itself, the alternates point to both versions.
  */
 const PAGES: [de: string, en: string][] = [
   ["/", "/en"],
@@ -26,6 +26,7 @@ type PageMetadata = {
   canonicals: string[];
   alternates: Record<string, string>;
   og: Record<string, string[]>;
+  twitter: Record<string, string[]>;
 };
 
 async function readMetadata(page: Page): Promise<PageMetadata> {
@@ -34,13 +35,17 @@ async function readMetadata(page: Page): Promise<PageMetadata> {
       [...document.head.querySelectorAll(selector)].map(
         (element) => element.getAttribute(attribute) ?? "",
       );
-    const og: Record<string, string[]> = {};
-    for (const meta of document.head.querySelectorAll(
-      'meta[property^="og:"]',
-    )) {
-      const key = meta.getAttribute("property")?.slice(3) ?? "";
-      og[key] = [...(og[key] ?? []), meta.getAttribute("content") ?? ""];
-    }
+    const group = (selector: string, attribute: string, prefix: string) => {
+      const result: Record<string, string[]> = {};
+      for (const meta of document.head.querySelectorAll(selector)) {
+        const key = meta.getAttribute(attribute)?.slice(prefix.length) ?? "";
+        result[key] = [
+          ...(result[key] ?? []),
+          meta.getAttribute("content") ?? "",
+        ];
+      }
+      return result;
+    };
     return {
       titles: [...document.head.querySelectorAll("title")].map(
         (title) => title.textContent ?? "",
@@ -55,13 +60,21 @@ async function readMetadata(page: Page): Promise<PageMetadata> {
           link.getAttribute("href"),
         ]),
       ),
-      og,
+      og: group('meta[property^="og:"]', "property", "og:"),
+      twitter: group('meta[name^="twitter:"]', "name", "twitter:"),
     };
   });
 }
 
 // Absolute with NEXT_PUBLIC_SITE_URL, relative without it.
 const pathOf = (url: string) => new URL(url, "http://localhost").pathname;
+
+/** The preview image of a page: its own on the home page and a job, else the site's. */
+const previewOf = (locale: "de" | "en", path: string): string => {
+  if (path === "/" || path === "/en") return `/${locale}/og/home.png`;
+  const job = path.match(/^(?:\/en)?\/(?:karriere|careers)\/([^/]+)$/)?.[1];
+  return job ? `/${locale}/og/jobs/${job}/image.png` : `/${locale}/og/site.png`;
+};
 
 for (const [de, en] of PAGES) {
   for (const [locale, path] of [
@@ -95,7 +108,21 @@ for (const [de, en] of PAGES) {
         site_name: ["Schreinerei Tannrieder"],
         locale: [locale === "de" ? "de_DE" : "en_GB"],
         "locale:alternate": [locale === "de" ? "en_GB" : "de_DE"],
+        image: [expect.any(String)],
+        "image:width": ["1200"],
+        "image:height": ["630"],
+        "image:type": ["image/png"],
+        "image:alt": [expect.stringContaining("Schreinerei Tannrieder")],
         type: ["website"],
+      });
+      expect(pathOf(meta.og.image[0])).toBe(previewOf(locale, path));
+
+      expect(meta.twitter).toMatchObject({
+        card: ["summary_large_image"],
+        title: meta.titles,
+        description: meta.descriptions,
+        image: meta.og.image,
+        "image:alt": meta.og["image:alt"],
       });
     });
   }

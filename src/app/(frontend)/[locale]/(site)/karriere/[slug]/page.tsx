@@ -6,10 +6,12 @@ import { ApplySection } from "@/components/careers/ApplySection";
 import { JobDetails } from "@/components/careers/JobDetails";
 import { JobIntro } from "@/components/careers/JobIntro";
 import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getJob, getOpenJobs, getSiteSettings } from "@/lib/content";
 import { buildJobPosting } from "@/lib/job-posting";
+import { jobPreview } from "@/lib/preview";
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -52,10 +54,14 @@ export async function generateMetadata({
     title: job.meta.title ? { absolute: job.meta.title } : job.title,
     // Without one from the admin panel, the first paragraph of the introduction.
     description: job.meta.description ?? job.intro[0],
-    ...(await pageMetadata(locale, (code) => ({
-      pathname: "/karriere/[slug]",
-      params: { slug: job.slugs[code] },
-    }))),
+    ...(await pageMetadata(
+      locale,
+      (code) => ({
+        pathname: "/karriere/[slug]",
+        params: { slug: job.slugs[code] },
+      }),
+      (await jobPreview(locale, slug)) ?? undefined,
+    )),
   };
 }
 
@@ -75,10 +81,14 @@ export default async function JobPage({ params }: PageProps) {
   if (!job) {
     notFound();
   }
-  const [{ company, openingHours }, jobs, t] = await Promise.all([
+  const [{ company, openingHours }, jobs, t, trail] = await Promise.all([
     getSiteSettings(locale),
     getOpenJobs(locale),
     getTranslations({ locale, namespace: "JobPage" }),
+    breadcrumbs(locale, "/karriere", {
+      name: job.title,
+      href: { pathname: "/karriere/[slug]", params: { slug } },
+    }),
   ]);
 
   return (
@@ -90,6 +100,7 @@ export default async function JobPage({ params }: PageProps) {
           benefits: t("benefitsTitle"),
         })}
       />
+      <JsonLd data={trail} />
       <JobIntro
         title={job.title}
         intro={job.intro}

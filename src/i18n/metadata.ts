@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getPathname } from "./navigation";
+import {
+  PREVIEW_SIZE,
+  PREVIEW_TYPE,
+  type Preview,
+  sitePreview,
+} from "@/lib/preview";
+import { type PathHref, pagePaths } from "./page-paths";
 import { type Locale, routing } from "./routing";
-
-type PathHref = Parameters<typeof getPathname>[0]["href"];
 
 /** Open Graph wants language_TERRITORY; the English texts are British. */
 const OG_LOCALE: Record<Locale, string> = {
@@ -21,29 +25,36 @@ export function pageAlternates(
   locale: Locale,
   hrefFor: (locale: Locale) => PathHref,
 ): NonNullable<Metadata["alternates"]> {
-  const path = (code: Locale) =>
-    getPathname({ locale: code, href: hrefFor(code) });
+  const paths = pagePaths(hrefFor);
 
   return {
-    canonical: path(locale),
+    canonical: paths[locale],
     languages: {
-      ...Object.fromEntries(routing.locales.map((code) => [code, path(code)])),
-      "x-default": path(routing.defaultLocale),
+      ...paths,
+      "x-default": paths[routing.defaultLocale],
     },
   };
 }
 
 /**
- * The alternates and the Open Graph data of a page. og:url is the
- * canonical URL. og:title and og:description are left out on purpose:
+ * The alternates, the Open Graph data and the X card of a page. og:url is
+ * the canonical URL. og:title and og:description are left out on purpose:
  * Next.js fills them from the page's resolved title and description, so
- * they never differ from <title>. The preview images come in stage 6.
+ * they never differ from <title>. og:image is the page's preview image
+ * (src/lib/preview.ts): the site's image unless the page passes its own,
+ * as the home page and the jobs do. X takes the title, the description and
+ * the image from Open Graph (Next.js fills twitter:* from it); only the
+ * size of the card is set here.
  */
 export async function pageMetadata(
   locale: Locale,
   hrefFor: (locale: Locale) => PathHref,
-): Promise<Pick<Metadata, "alternates" | "openGraph">> {
-  const t = await getTranslations({ locale, namespace: "Metadata" });
+  preview?: Preview,
+): Promise<Pick<Metadata, "alternates" | "openGraph" | "twitter">> {
+  const [t, image] = await Promise.all([
+    getTranslations({ locale, namespace: "Metadata" }),
+    preview ?? sitePreview(locale),
+  ]);
 
   return {
     alternates: pageAlternates(locale, hrefFor),
@@ -54,7 +65,16 @@ export async function pageMetadata(
       alternateLocale: routing.locales
         .filter((code) => code !== locale)
         .map((code) => OG_LOCALE[code]),
-      url: getPathname({ locale, href: hrefFor(locale) }),
+      url: pagePaths(hrefFor)[locale],
+      images: [
+        {
+          url: image.path,
+          ...PREVIEW_SIZE,
+          type: PREVIEW_TYPE,
+          alt: image.alt,
+        },
+      ],
     },
+    twitter: { card: "summary_large_image" },
   };
 }

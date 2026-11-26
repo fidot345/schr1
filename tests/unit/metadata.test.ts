@@ -1,38 +1,20 @@
 import { describe, expect, it, vi } from "vitest";
 import { pageAlternates, pageMetadata } from "@/i18n/metadata";
 
-vi.mock("next-intl/server", () => ({
-  getTranslations: async () => (key: string) =>
-    key === "siteName" ? "Schreinerei Tannrieder" : key,
+vi.mock("next-intl/server", () => import("./support/translations"));
+vi.mock("@/i18n/navigation", () => import("./support/navigation"));
+
+const TAGLINE = vi.hoisted(() => ({
+  de: "Schreinerei mit eigener Werkstatt in Wendelfing, seit 1989.",
+  en: "Joinery with its own workshop in Wendelfing, since 1989.",
 }));
 
-/*
- * next-intl's navigation needs the Next.js runtime. The stand-in builds
- * paths from routing.pathnames the same way: German without a prefix,
- * English under /en. The real paths are checked in the built pages.
- */
-vi.mock("@/i18n/navigation", async () => {
-  const { routing } = await import("@/i18n/routing");
-  type Internal = keyof typeof routing.pathnames;
-  return {
-    getPathname: ({
-      locale,
-      href,
-    }: {
-      locale: "de" | "en";
-      href: Internal | { pathname: Internal; params?: Record<string, string> };
-    }) => {
-      const internal = typeof href === "string" ? href : href.pathname;
-      const params = typeof href === "string" ? {} : (href.params ?? {});
-      const path = Object.entries(params).reduce(
-        (result, [key, value]) => result.replace(`[${key}]`, value),
-        routing.pathnames[internal][locale] as string,
-      );
-      if (locale === routing.defaultLocale) return path;
-      return path === "/" ? `/${locale}` : `/${locale}${path}`;
-    },
-  };
-});
+vi.mock("@/lib/content", () => ({
+  getSiteSettings: async (locale: "de" | "en") => ({
+    company: { logoWord: "Tannrieder" },
+    tagline: TAGLINE[locale],
+  }),
+}));
 
 describe("pageAlternates", () => {
   it("gives a static page its translated paths", () => {
@@ -93,7 +75,52 @@ describe("pageMetadata", () => {
       locale: "en_GB",
       alternateLocale: ["de_DE"],
       url: "/en/services/kitchens",
+      images: [
+        {
+          url: "/en/og/site.png",
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `Schreinerei Tannrieder: ${TAGLINE.en}`,
+        },
+      ],
     });
+  });
+
+  it("gives the site's image in the page's language to a page without its own", async () => {
+    const { openGraph } = await pageMetadata("de", () => "/kontakt");
+    expect(openGraph?.images).toEqual([
+      expect.objectContaining({
+        url: "/de/og/site.png",
+        alt: `Schreinerei Tannrieder: ${TAGLINE.de}`,
+      }),
+    ]);
+  });
+
+  it("takes the page's own image when it has one", async () => {
+    const { openGraph } = await pageMetadata("de", () => "/", {
+      path: "/de/og/home.png",
+      alt: "Startseite",
+      content: {
+        descriptor: "Schreinerei",
+        logoWord: "Tannrieder",
+        title: "T",
+      },
+    });
+    expect(openGraph?.images).toEqual([
+      {
+        url: "/de/og/home.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "Startseite",
+      },
+    ]);
+  });
+
+  it("asks X for the large card; Next.js fills it from Open Graph", async () => {
+    const { twitter } = await pageMetadata("en", () => "/");
+    expect(twitter).toEqual({ card: "summary_large_image" });
   });
 
   it("leaves the title and description to the page", async () => {

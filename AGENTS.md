@@ -46,6 +46,7 @@
 - `MAIL_TRANSPORT=log` — письмо пишется в консоль сервера, ничего не уходит. Так работают разработка, Vitest и Playwright.
 - `MAIL_TRANSPORT=resend` — отправка через Resend с `onboarding@resend.dev` на `MAIL_TO`. Нужны `RESEND_API_KEY` и `MAIL_TO` (почта аккаунта Resend). Нет ключа или адреса, ошибка Resend, нет ответа за 10 секунд — запись в лог сервера, человек видит телефон.
 - Значение `RESEND_API_KEY` не печатать, не логировать и не коммитить.
+- `SITE_INDEXING` (по умолчанию `false`, `src/lib/seo.ts`): только `true` пускает поисковики; иначе на всех страницах `noindex, nofollow`, заголовок `X-Robots-Tag` и `Disallow: /` в robots.txt. Читается при сборке; на Vercel ставит Максон.
 - e2e поднимает свой прод-сервер на :3100 с `MAIL_TRANSPORT=log` (сначала `npm run build`) и не переиспользует чужой: dev на :3000 может слать настоящие письма.
 
 ## Команды

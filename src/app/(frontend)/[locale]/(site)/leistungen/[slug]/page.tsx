@@ -7,6 +7,8 @@ import { ServiceGallery } from "@/components/services/ServiceGallery";
 import { ServiceIntro } from "@/components/services/ServiceIntro";
 import { ServiceOverview } from "@/components/services/ServiceOverview";
 import { ServiceProjects } from "@/components/services/ServiceProjects";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getService, getServices } from "@/lib/content";
@@ -81,9 +83,14 @@ export default async function ServicePage({ params }: PageProps) {
   if (!service) {
     notFound();
   }
+  const trail = await breadcrumbs(locale, "/leistungen", {
+    name: service.title,
+    href: { pathname: "/leistungen/[slug]", params: { slug } },
+  });
 
   return (
     <>
+      <JsonLd data={trail} />
       <ServiceIntro
         title={service.title}
         intro={service.intro}

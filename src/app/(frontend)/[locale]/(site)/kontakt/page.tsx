@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactDetails } from "@/components/contact/ContactDetails";
+import { JsonLd } from "@/components/ui/JsonLd";
+import { breadcrumbs, localBusiness } from "@/i18n/json-ld";
 import { pageMetadata } from "@/i18n/metadata";
 import { routing } from "@/i18n/routing";
 import { getContactDetails } from "@/lib/content";
@@ -54,7 +56,17 @@ export default async function ContactPage({ params }: PageProps) {
   }
   setRequestLocale(locale);
 
-  const contact = await getContactDetails(locale);
+  const [contact, trail] = await Promise.all([
+    getContactDetails(locale),
+    breadcrumbs(locale, "/kontakt"),
+  ]);
+  const business = localBusiness(locale, contact);
 
-  return <ContactDetails {...contact} />;
+  return (
+    <>
+      {business ? <JsonLd data={business} /> : null}
+      <JsonLd data={trail} />
+      <ContactDetails {...contact} />
+    </>
+  );
 }

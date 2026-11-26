@@ -22,4 +22,6 @@
 | textures/oak/normal.webp | дуб «Oak Veneer 01», нормали (OpenGL) | Jenelle van Heerden | https://polyhaven.com/a/oak_veneer_01 | CC0 |
 | textures/birch/color.webp | клён «White Maple Veneer», цвет; 1K, плитка 1 м, повёрнут на 90°, чтобы волокна шли вдоль картинки. Замена берёзовой фанеры для задней стенки: CC0-текстуры берёзовой фанеры на Poly Haven и ambientCG нет (решение Максона, сессия 34) | Jenelle van Heerden | https://polyhaven.com/a/white_maple_veneer | CC0 |
 
+| src/assets/fonts/ZillaSlab-SemiBold.ttf, ZillaSlab-Bold.ttf | шрифт Zilla Slab для картинок превью (`next/og` не читает woff2, которые отдаёт `next/font`) | The Mozilla Foundation, Typotheque | https://github.com/google/fonts/tree/main/ofl/zillaslab | SIL Open Font License 1.1, текст в `src/assets/fonts/OFL.txt` |
+
 Текстуры лежат в `public/textures/`: 1K-JPG с Poly Haven пересжаты в WebP (sharp), иначе файлы не влезали в 300 КБ.
