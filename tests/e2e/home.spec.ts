@@ -19,12 +19,12 @@ const PHOTOS = 10;
 /** Words of the photo stand-ins and of placeholder text that must be gone. */
 const PLACEHOLDER = /Platzhalter|Placeholder|Foto:|Photo:|Lorem|ipsum/i;
 
-/** Every photo of <main> except the flat wardrobe, with what the browser loaded. */
+/** Every photo of <main> except the picture of the wardrobe, with what the browser loaded. */
 const photosOf = (page: Page) =>
   page.$$eval("main img", (images) =>
     images
       .map((image) => image as HTMLImageElement)
-      .filter((image) => !image.currentSrc.includes("schrank-platzhalter"))
+      .filter((image) => !image.currentSrc.includes("schrank-fertig"))
       .map((image) => ({
         alt: image.alt,
         src: image.currentSrc,

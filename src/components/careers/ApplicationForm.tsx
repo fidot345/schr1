@@ -29,6 +29,7 @@ import { TextInput } from "@/components/form/TextInput";
 import { TrapField } from "@/components/form/TrapField";
 import { Button } from "@/components/ui/Button";
 import { TextLink } from "@/components/ui/TextLink";
+import { routerSkipsJump, watchLinkClicks } from "@/lib/anchor-links";
 import { submitApplication } from "@/lib/application-action";
 import {
   APPLICATION_FIELDS,
@@ -73,7 +74,8 @@ type Choice = { job: string | undefined; times: number };
  * Suspense: useSearchParams renders only this in the browser, while the
  * form around it stays in the prerendered page. It follows the URL, so the
  * trial day's button on the same page (a link to ?stelle=schnuppertag)
- * chooses it, too.
+ * chooses it, too. Once that address is open, the router leaves the button
+ * alone and ?stelle= stays the same: a click on it then chooses again.
  */
 function JobFromUrl({ onChoose }: { onChoose: (job: string) => void }) {
   const job = useSearchParams().get(JOB_PARAM);
@@ -83,6 +85,17 @@ function JobFromUrl({ onChoose }: { onChoose: (job: string) => void }) {
       onChoose(job);
     }
   }, [job, onChoose]);
+
+  useEffect(
+    () =>
+      watchLinkClicks((href, to) => {
+        const again = to.searchParams.get(JOB_PARAM);
+        if (again && routerSkipsJump(href, to, new URL(window.location.href))) {
+          onChoose(again);
+        }
+      }),
+    [onChoose],
+  );
 
   return null;
 }

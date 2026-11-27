@@ -12,6 +12,15 @@ import type { SceneStepItem } from "@/lib/content";
 /** The id of the heading that names the section. */
 export const SCENE_HEADING = "szene-titel";
 
+/**
+ * The finished wardrobe, BRIEF.md section 4 "Загрузка": a still of the
+ * scene's last step, taken from the canvas at 1920 × 1080 (1211 × 1617 px,
+ * AVIF, session 41). Its edges are Papier, so it has no frame on the page.
+ * Shown as it is (unoptimized): the file is small already, and
+ * images.localPatterns lets the optimizer serve only Payload's photos.
+ */
+export const WARDROBE_PICTURE = "/images/3d/schrank-fertig.avif";
+
 export type WardrobeStillProps = {
   /** The six steps, from "Zuschnitt" to "Fertig", from the captions in the admin panel. */
   steps: SceneStepItem[];
@@ -24,8 +33,8 @@ export type WardrobeStillProps = {
 };
 
 /**
- * "Vom Brett zum Schrank" as a still picture, mockup 01d: the flat wardrobe
- * from public/images/3d, all six captions as a list and the button to the
+ * "Vom Brett zum Schrank" as a still picture, mockup 01d: the finished
+ * wardrobe (WARDROBE_PICTURE), all six captions as a list and the button to the
  * request form. This is the fallback of BRIEF.md section 4 ("Запасной
  * вариант"): WardrobeSection shows it instead of the 3D scene while the
  * system asks to reduce motion, where the browser has no WebGL 2 and,
@@ -49,10 +58,10 @@ export function WardrobeStill({
         <div className="mt-4 flex flex-wrap items-center gap-12">
           <div className="relative h-72 min-w-0 flex-[3_1_520px] md:h-160">
             <Image
-              src="/images/3d/schrank-platzhalter.svg"
+              src={WARDROBE_PICTURE}
               alt={t("sceneImageAlt")}
               fill
-              sizes="(min-width: 1280px) 700px, 100vw"
+              unoptimized
               className="object-contain"
             />
           </div>

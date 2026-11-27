@@ -17,6 +17,11 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  fragmentTarget,
+  jumpWhenShown,
+  watchLinkClicks,
+} from "@/lib/anchor-links";
 import { watchSmoothScroll } from "@/lib/smooth-scroll";
 
 const LenisContext = createContext<Lenis | null>(null);
@@ -34,13 +39,43 @@ type SmoothScrollProps = {
 /**
  * Smooth scrolling for the whole site, BRIEF.md sections 3 and 4.
  *
- * A new page starts at the very top, without animation. Back and forward
- * are left alone: there the browser brings back the old position.
+ * A new page starts at the very top, without animation, or at the part of
+ * the page its #fragment names. Back and forward are left alone: there the
+ * browser brings back the old position.
+ *
+ * A link with a #fragment lands on its target: a smooth scroll that is
+ * still running (right after the wheel) stops first, so it cannot carry
+ * the page away again, and a link through the router jumps once the router
+ * shows its address, also when that address is open already, as a plain
+ * anchor does (jumpWhenShown).
  */
 export function SmoothScroll({ children }: SmoothScrollProps) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => watchSmoothScroll(setLenis), []);
+
+  useEffect(() => {
+    let cancelJump = () => {};
+    const stopWatching = watchLinkClicks((href, to) => {
+      cancelJump();
+      if (!to.hash) return;
+      if (lenis) {
+        // The public way to drop Lenis's running animation.
+        lenis.stop();
+        lenis.start();
+      }
+      // A plain anchor ("#id") is the browser's own jump; a link through
+      // the router gets its jump once the router shows the address.
+      if (!href.startsWith("#")) {
+        cancelJump = jumpWhenShown(to);
+      }
+    });
+
+    return () => {
+      stopWatching();
+      cancelJump();
+    };
+  }, [lenis]);
 
   const traversal = useRef(false);
   useEffect(() => {
@@ -59,6 +94,11 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
 
     if (traversal.current) {
       traversal.current = false;
+      return;
+    }
+    // A link to a part of the new page (/karriere?stelle=schnuppertag#bewerben
+    // from the home page): its jump takes the page there, not to the top.
+    if (fragmentTarget(window.location.hash)) {
       return;
     }
     if (lenis) {

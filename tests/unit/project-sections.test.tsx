@@ -315,10 +315,27 @@ describe("ProjectNeighbors", () => {
     expect(count(html, /<h3[ >]/g)).toBe(2);
   });
 
-  it("keeps the next project on the right without a previous one", () => {
-    const html = render(<ProjectNeighbors previous={null} next={next} />);
-    expect(html).toContain('<li class="md:col-start-2">');
-    expect(html).not.toContain("Vorherige Referenz");
+  it("puts a pair side by side, two of four columns each", () => {
+    const html = render(<ProjectNeighbors previous={previous} next={next} />);
+    expect(html).toContain("md:grid-cols-4");
+    expect(count(html, /<li class="md:col-span-2">/g)).toBe(2);
+    expect(html).not.toContain("md:col-start-2");
+  });
+
+  it("centres the only neighbour of the first and of the last project", () => {
+    for (const html of [
+      render(<ProjectNeighbors previous={null} next={next} />),
+      render(<ProjectNeighbors previous={previous} next={null} />),
+    ]) {
+      expect(count(html, /<li /g)).toBe(1);
+      expect(html).toContain('<li class="md:col-span-2 md:col-start-2">');
+    }
+    expect(
+      render(<ProjectNeighbors previous={null} next={next} />),
+    ).not.toContain("Vorherige Referenz");
+    expect(
+      render(<ProjectNeighbors previous={previous} next={null} />),
+    ).not.toContain("Nächste Referenz");
   });
 
   it("is not there for the only project", () => {
