@@ -252,9 +252,12 @@
    * leaves room for the 2px ring with its 2px offset. The action bar covers
    * the bottom edge below md. A margin on the element, not scroll-padding on
    * <html>: with that, every Tab through the sticky header scrolled the page.
+   * Every element with an id has it, not only :target: next/link changes the
+   * address with pushState, :target does not follow, and the trial day's
+   * button hid the form's heading under the header.
    */
   :focus,
-  :target {
+  [id] {
     scroll-margin-top: calc(var(--header-height) + var(--spacing) * 4);
   }
 
@@ -269,7 +272,8 @@
    * margin; with one, focus in the header or in the open phone menu would
    * scroll the page behind it.
    */
-  [data-sticky-bar] :focus {
+  [data-sticky-bar] :focus,
+  [data-sticky-bar] [id] {
     scroll-margin: 0;
   }
 }

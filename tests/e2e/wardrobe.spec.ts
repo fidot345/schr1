@@ -131,7 +131,7 @@ async function loseContext(page: Page, { restore }: { restore: boolean }) {
     }, restore);
 }
 
-/** Waits for the scene built anew: a new canvas with the wood drawn, the flat picture gone. */
+/** Waits for the scene built anew: a new canvas with the wood drawn, the picture gone. */
 async function expectBuiltAnew(page: Page) {
   await expect(page.locator(`${SECTION} canvas[data-lost]`)).toHaveCount(
     0,
@@ -154,7 +154,7 @@ async function expectStill(page: Page) {
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   await expect(page.locator(`${SECTION} img`)).toHaveAttribute(
     "src",
-    /schrank-platzhalter\.svg/,
+    /schrank-fertig\.avif/,
   );
   await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
   for (const item of await page.locator(`${SECTION} ol > li`).all()) {
@@ -294,7 +294,7 @@ test.describe("loading", () => {
     await expect(page.locator(`${SECTION} canvas`)).toHaveCount(0);
     await expect(page.locator(`${SECTION} img`)).toHaveAttribute(
       "src",
-      /schrank-platzhalter\.svg/,
+      /schrank-fertig\.avif/,
     );
 
     await page.locator(SECTION).scrollIntoViewIfNeeded();
@@ -399,7 +399,7 @@ test.describe("the still picture instead of the scene", () => {
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
     await expect(page.locator(`${SECTION} img`)).toHaveAttribute(
       "src",
-      /schrank-platzhalter\.svg/,
+      /schrank-fertig\.avif/,
     );
     await expect(page.locator(`${SECTION} ol > li`)).toHaveCount(6);
     for (const item of await page.locator(`${SECTION} ol > li`).all()) {
@@ -534,7 +534,7 @@ for (const { name, use, screens } of FAILING_SCREENS) {
       ]);
     });
 
-    test("a context that does not come back: the flat wardrobe, then a new scene", async ({
+    test("a context that does not come back: the picture, then a new scene", async ({
       page,
     }) => {
       const problems = watchConsole(page);
@@ -543,7 +543,7 @@ for (const { name, use, screens } of FAILING_SCREENS) {
 
       await loseContext(page, { restore: false });
 
-      // The flat wardrobe while the scene waits for its context.
+      // The picture of the finished wardrobe while the scene waits for its context.
       await expect(page.locator(`${SECTION} img`)).toHaveCount(1);
       await expectBuiltAnew(page);
       expect(await markedStep(page)).toBe(3);
@@ -832,7 +832,7 @@ test.describe("without JavaScript", () => {
     ).toBeVisible();
     await expect(still.locator("img")).toHaveAttribute(
       "src",
-      /schrank-platzhalter\.svg/,
+      /schrank-fertig\.avif/,
     );
     await expect(still.locator("ol > li")).toHaveCount(6);
     for (const item of await still.locator("ol > li").all()) {

@@ -3,7 +3,8 @@
 /*
  * Client component: the pinned 3D scene needs the reduced-motion setting,
  * WebGL and the scroll position, which exist only in the browser. The
- * server renders the panel with the flat wardrobe in place of the scene.
+ * server renders the panel with the picture of the finished wardrobe in
+ * place of the scene.
  */
 
 import dynamic from "next/dynamic";
@@ -35,7 +36,11 @@ import {
   type SceneFailure,
 } from "./scene-failure";
 import { type SceneStep, STEP_RANGES } from "./steps";
-import { SCENE_HEADING, WardrobeStill } from "./WardrobeStill";
+import {
+  SCENE_HEADING,
+  WARDROBE_PICTURE,
+  WardrobeStill,
+} from "./WardrobeStill";
 
 /** three, fiber, drei and GSAP: loaded only when the section comes near. */
 const WardrobeScene = dynamic(() => import("./WardrobeScene"), { ssr: false });
@@ -120,7 +125,8 @@ export type WardrobeSectionProps = {
  * screen with the current caption under it, BRIEF.md "Как ведёт себя": so
  * the scene takes most of the height and the wardrobe most of the width
  * (Maxon, session 37). There the other captions are for screen readers
- * only. The flat wardrobe stands in for the scene until its wood is
+ * only. The picture of the finished wardrobe (WARDROBE_PICTURE, a still
+ * of the scene's last step) stands in for the scene until its wood is
  * loaded, and while a lost WebGL context waits for the scene to be built
  * anew. When the wardrobe is finished (step 6), the button to the request
  * form comes up in the corner of the scene, as in mockup 02.
@@ -256,10 +262,10 @@ export function WardrobeSection({ steps, buttonLabel }: WardrobeSectionProps) {
                 <div className="relative col-start-1 row-start-1 min-h-0 md:row-span-2 md:row-start-1">
                   {ready ? null : (
                     <Image
-                      src="/images/3d/schrank-platzhalter.svg"
+                      src={WARDROBE_PICTURE}
                       alt={t("sceneImageAlt")}
                       fill
-                      sizes="(min-width: 768px) 60vw, 100vw"
+                      unoptimized
                       className="object-contain"
                     />
                   )}

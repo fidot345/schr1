@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import type { ReactNode } from "react";
+import sharp from "sharp";
 import { describe, expect, it, vi } from "vitest";
 import { AboutTeaser } from "@/components/home/AboutTeaser";
 import { Contact } from "@/components/home/Contact";
@@ -319,10 +320,10 @@ describe("WardrobeStill", () => {
     );
   });
 
-  it("shows the flat wardrobe with an alt text and the intro from messages", () => {
+  it("shows the finished wardrobe with an alt text and the intro from messages", () => {
     const [image] = images(html);
 
-    expect(image).toContain("schrank-platzhalter.svg");
+    expect(image).toContain('src="/images/3d/schrank-fertig.avif"');
     expect(image).toContain(`alt="${de.HomePage.sceneImageAlt}"`);
     expect(html).toContain(de.HomePage.sceneIntro);
   });
@@ -396,7 +397,7 @@ describe("WardrobeStill", () => {
 
 describe("WardrobeSection", () => {
   // The server's markup: the still picture for browsers without
-  // JavaScript, then the panel of the scene with the flat wardrobe in place.
+  // JavaScript, then the panel of the scene with the finished wardrobe in place.
   const html = render(
     <WardrobeSection steps={sceneSteps} buttonLabel={BUTTON} />,
   );
@@ -417,10 +418,10 @@ describe("WardrobeSection", () => {
     expect(panel).toContain(de.HomePage.sceneIntro);
   });
 
-  it("shows the flat wardrobe until the scene is there, and no canvas yet", () => {
+  it("shows the finished wardrobe until the scene is there, and no canvas yet", () => {
     const [image] = images(panel);
 
-    expect(image).toContain("schrank-platzhalter.svg");
+    expect(image).toContain('src="/images/3d/schrank-fertig.avif"');
     expect(image).toContain(`alt="${de.HomePage.sceneImageAlt}"`);
     expect(html).not.toContain("<canvas");
   });
@@ -463,7 +464,7 @@ describe("WardrobeSection", () => {
     expect(count(fallback, /<li /g)).toBe(6);
     expect(fallback).not.toContain("aria-current");
     expect(fallback).toContain('href="#projekte"');
-    expect(images(fallback)[0]).toContain("schrank-platzhalter.svg");
+    expect(images(fallback)[0]).toContain("schrank-fertig.avif");
     expect(fallback).toMatch(/<a href="\/anfrage"[^>]*>Projekt anfragen<\/a>/);
     expect(fallback).toContain('aria-labelledby="szene-titel-bild"');
     expect(panel).toMatch(/^<section [^>]*class="[^"]*\bnoscript:hidden\b/);
@@ -752,11 +753,17 @@ describe("texts and files of the home sections", () => {
     }
   });
 
-  it("keeps the flat wardrobe as a file with the viewBox of the mockup", () => {
-    const path = "public/images/3d/schrank-platzhalter.svg";
+  it("keeps the finished wardrobe as a small AVIF, about 1600 px high", async () => {
+    const path = "public/images/3d/schrank-fertig.avif";
+    const file = readFileSync(path);
+    const { format, width, height } = await sharp(file).metadata();
 
-    expect(existsSync(path)).toBe(true);
-    expect(readFileSync(path, "utf8")).toContain('viewBox="-260 -340 520 420"');
+    expect(format).toBe("heif");
+    expect(file.subarray(4, 12).toString("latin1")).toBe("ftypavif");
+    expect(Math.max(width ?? 0, height ?? 0)).toBeGreaterThanOrEqual(1600);
+    expect(file.length).toBeLessThan(100 * 1024);
+    // The flat drawing it replaced is gone.
+    expect(existsSync("public/images/3d/schrank-platzhalter.svg")).toBe(false);
   });
 
   it("has no photo stand-ins or demo data left", () => {

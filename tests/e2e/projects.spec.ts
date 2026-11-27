@@ -237,6 +237,90 @@ test.describe("a project page", () => {
   });
 });
 
+/*
+ * "Weitere Referenzen" on the first, a middle and the last project (the
+ * seed's order: Wohnküche first, Badmöbel last). A pair stands side by
+ * side; one neighbour stands in the middle, as wide as in a pair, with no
+ * empty cell beside it. On a phone each card takes the width.
+ */
+const NEIGHBOURS = [
+  {
+    path: "/referenzen/wohnkueche-in-eiche",
+    region: "Weitere Referenzen",
+    labels: ["Nächste Referenz"],
+  },
+  {
+    path: "/referenzen/garderobe-mit-sitzbank",
+    region: "Weitere Referenzen",
+    labels: ["Vorherige Referenz", "Nächste Referenz"],
+  },
+  {
+    path: "/referenzen/badmoebel-aus-massivholz",
+    region: "Weitere Referenzen",
+    labels: ["Vorherige Referenz"],
+  },
+  {
+    path: "/en/projects/bathroom-furniture-in-solid-wood",
+    region: "More projects",
+    labels: ["Previous project"],
+  },
+] as const;
+
+/** The boxes of the list and of its cards, in the order of the page. */
+const neighbourBoxes = (page: Page, region: string) =>
+  page
+    .getByRole("region", { name: region })
+    .locator("ul")
+    .evaluate((list) => {
+      const box = (element: Element) => {
+        const { left, right, top, width } = element.getBoundingClientRect();
+        return { left, right, top, width };
+      };
+      return { list: box(list), cards: [...list.children].map(box) };
+    });
+
+test.describe("more projects on a project page", () => {
+  for (const { path, region, labels } of NEIGHBOURS) {
+    test(`${path} shows ${labels.length === 2 ? "a pair" : "one neighbour in the middle"} at 1440 px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(path);
+      const more = page.getByRole("region", { name: region });
+      const links = more.getByRole("link");
+      await expect(links).toHaveCount(labels.length);
+      for (const [index, label] of labels.entries()) {
+        await expect(links.nth(index)).toContainText(label);
+      }
+
+      const { list, cards } = await neighbourBoxes(page, region);
+      // A card is half the row less half the gap of 32 px.
+      for (const card of cards) {
+        expect(Math.abs(card.width - (list.width - 32) / 2)).toBeLessThan(2);
+      }
+      if (cards.length === 2) {
+        expect(cards[0].top).toBe(cards[1].top);
+        expect(Math.abs(cards[0].left - list.left)).toBeLessThan(1);
+        expect(Math.abs(cards[1].right - list.right)).toBeLessThan(1);
+      } else {
+        const [card] = cards;
+        const leftGap = card.left - list.left;
+        const rightGap = list.right - card.right;
+        expect(Math.abs(leftGap - rightGap)).toBeLessThan(2);
+      }
+    });
+  }
+
+  test("one neighbour takes the width on a phone", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/referenzen/wohnkueche-in-eiche");
+    const { list, cards } = await neighbourBoxes(page, "Weitere Referenzen");
+
+    expect(cards).toHaveLength(1);
+    expect(Math.abs(cards[0].width - list.width)).toBeLessThan(1);
+  });
+});
+
 test.describe("links to the projects", () => {
   for (const path of [
     "/",

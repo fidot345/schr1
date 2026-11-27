@@ -554,8 +554,10 @@ describe("scroll margins under the sticky bars (WCAG 2.4.11)", () => {
   });
 
   it("keeps focus and anchors below the header, and focus above the mobile bar", () => {
+    // Every element with an id, not :target: a jump through next/link
+    // changes the address with pushState, and :target does not follow it.
     expect(css).toMatch(
-      /:focus,\s*:target \{\s*scroll-margin-top: calc\(var\(--header-height\) \+ var\(--spacing\) \* 4\);/,
+      /:focus,\s*\[id\] \{\s*scroll-margin-top: calc\(var\(--header-height\) \+ var\(--spacing\) \* 4\);/,
     );
     expect(css).toMatch(
       /:focus \{\s*@variant max-md \{\s*scroll-margin-bottom: calc\(var\(--action-bar-height\) \+ var\(--spacing\) \* 4\);/,
@@ -563,6 +565,8 @@ describe("scroll margins under the sticky bars (WCAG 2.4.11)", () => {
   });
 
   it("leaves the bars' own elements alone", () => {
-    expect(css).toMatch(/\[data-sticky-bar\] :focus \{\s*scroll-margin: 0;/);
+    expect(css).toMatch(
+      /\[data-sticky-bar\] :focus,\s*\[data-sticky-bar\] \[id\] \{\s*scroll-margin: 0;/,
+    );
   });
 });
